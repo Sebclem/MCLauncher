@@ -1,4 +1,4 @@
-package sample;
+package Broken;
 
 public class Controller {
 }
