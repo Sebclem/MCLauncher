@@ -24,7 +24,7 @@ import java.io.IOException;
  */
 public class Launcher {
     public static final GameVersion MC_VERSION = new GameVersion("1.7.10", GameType.V1_7_10);
-    public static final GameInfos MC_INFOS = new GameInfos("Imerir",MC_VERSION,new GameTweak[]{});
+    public static final GameInfos MC_INFOS = new GameInfos("Imerir",MC_VERSION,new GameTweak[]{GameTweak.FORGE});
     public static final File MC_DIR = MC_INFOS.getGameDir();
     private static AuthInfos authInfos;
 
