@@ -35,37 +35,21 @@ public class Launcher {
 
     }
 
-    public static void update() throws BadServerResponseException, IOException, BadServerVersionException, ServerDisabledException, ServerMissingSomethingException {
+    public static SUpdate update() throws BadServerResponseException, IOException, BadServerVersionException, ServerDisabledException, ServerMissingSomethingException {
         SUpdate su = new SUpdate("http://192.168.1.9/",MC_DIR);
         su.getServerRequester().setRewriteEnabled(true);
+        return su;
 
-        Thread thread = new Thread(){
-            long value = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
-            long max = BarAPI.getNumberOfTotalBytesToDownload()/1000;
 
-            @Override
-            public void run() {
-                while(!this.isInterrupted())
-                {
-                    max = BarAPI.getNumberOfTotalBytesToDownload()/1000;
-                    if(value != BarAPI.getNumberOfTotalDownloadedBytes()/1000)
-                    {
-                        value = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
-                        float pour = (value*100)/max;
-                        System.out.println(value+"/"+max+"   -> "+pour);
-                    }
-
-                }
-            }
-        };
-        thread.start();
-        su.start();
-        thread.interrupt();
     }
 
     public static void lauch() throws LaunchException {
         InternalLaunchProfile profile = MinecraftLauncher.createInternalProfile(MC_INFOS,GameFolder.BASIC,authInfos);
         InternalLauncher launcher = new InternalLauncher(profile);
         launcher.launch();
+    }
+
+    public static AuthInfos getAuthInfos() {
+        return authInfos;
     }
 }

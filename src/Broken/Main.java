@@ -2,6 +2,7 @@ package Broken;
 
 import fr.theshark34.openauth.AuthenticationException;
 import fr.theshark34.openlauncherlib.LaunchException;
+import fr.theshark34.openlauncherlib.util.Saver;
 import fr.theshark34.supdate.exception.BadServerResponseException;
 import fr.theshark34.supdate.exception.BadServerVersionException;
 import fr.theshark34.supdate.exception.ServerDisabledException;
@@ -13,15 +14,22 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import javax.swing.plaf.synth.SynthTextAreaUI;
+import java.io.File;
 import java.io.IOException;
 
 public class Main extends Application {
+    public static Saver saver = new Saver(new File(Launcher.MC_DIR,"launcher.properties"));
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        if(!Launcher.MC_DIR.exists())
+        {
+            Launcher.MC_DIR.mkdir();
+        }
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 1024, 600));
+        primaryStage.setScene(new Scene(root, 1014, 595));
+        primaryStage.setResizable(false);
 
         primaryStage.show();
 //        try {
