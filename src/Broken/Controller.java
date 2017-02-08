@@ -2,6 +2,7 @@ package Broken;
 
 import com.sun.org.apache.bcel.internal.generic.LADD;
 import fr.theshark34.openauth.AuthenticationException;
+import fr.theshark34.openlauncherlib.LaunchException;
 import fr.theshark34.supdate.BarAPI;
 import fr.theshark34.supdate.SUpdate;
 import fr.theshark34.supdate.exception.BadServerResponseException;
@@ -23,6 +24,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ResourceBundle;
 
 public class Controller {
@@ -133,15 +135,16 @@ public class Controller {
 
                         while (max == 0) max = BarAPI.getNumberOfTotalBytesToDownload() / 1000;
                         Platform.runLater(()-> labelBar.setText("Télécharment: 0%"));
+                        DecimalFormat myFormatter = new DecimalFormat("###.##");
                         while (!this.isInterrupted()) {
 
                             if (value != BarAPI.getNumberOfTotalDownloadedBytes() / 1000) {
                                 value = BarAPI.getNumberOfTotalDownloadedBytes() / 1000;
-                                float pour = (value*100) / max;
+                                double pour = (value*100.0) / max;
                                 System.out.println(value + "/" + max + "   -> " + pour);
                                 Platform.runLater(() -> {
-                                    progressBar.setProgress((double)pour/100);
-                                    labelBar.setText("Téléchargement: "+pour+"%");
+                                    progressBar.setProgress(pour/100.0);
+                                    labelBar.setText("Téléchargement: "+myFormatter.format(pour)+"%");
 
                                 });
                             }
@@ -158,6 +161,22 @@ public class Controller {
                     labelBar.setText("Lancement du jeu...");
 
                 });
+                try {
+                    Launcher.lauch();
+                    labelBar.getScene().getWindow().hide();
+                } catch (LaunchException e) {
+                    System.out.println(e.getMessage());
+                    Platform.runLater(()->{
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setHeaderText("Echec de lancement!");
+                        alert.setContentText("Echec lors du lancement du jeu:\n"+e.getMessage());
+                        alert.setTitle("Erreur");
+                        progressBar.setProgress(0);
+                        labelBar.setText("Echec de lancement du jeu!");
+                        alert.showAndWait();
+                        grid.setDisable(false);
+                    });
+                }
 
             } catch (AuthenticationException e) {
                 e.printStackTrace();
@@ -176,19 +195,47 @@ public class Controller {
             } catch (IOException e) {
                 e.printStackTrace();
                 grid.setDisable(false);
-            } catch (BadServerVersionException e) {
+            } catch (BadServerVersionException |ServerMissingSomethingException e) {
                 e.printStackTrace();
+                Platform.runLater(()->{
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setHeaderText("Erreur Serveur!");
+                    alert.setContentText("Ereur Serveur: "+e.getMessage());
+                    alert.setTitle("Erreur");
+                    progressBar.setProgress(0);
+                    labelBar.setText("Erreur serveur!");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                });
                 grid.setDisable(false);
-            } catch (ServerMissingSomethingException e) {
-                e.printStackTrace();
-                grid.setDisable(false);
+
             } catch (ServerDisabledException e) {
                 e.printStackTrace();
+                Platform.runLater(()->{
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setHeaderText("Erreur Serveur!");
+                    alert.setContentText("Le serveur de mise à jour est désactivé.");
+                    alert.setTitle("Erreur");
+                    progressBar.setProgress(0);
+                    labelBar.setText("Erreur serveur!");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                });
                 grid.setDisable(false);
             } catch (BadServerResponseException e) {
                 e.printStackTrace();
+                Platform.runLater(()->{
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setHeaderText("Erreur Serveur!");
+                    alert.setContentText("Mauvaise reponsse du serveur: \n"+e.getMessage());
+                    alert.setTitle("Erreur");
+                    progressBar.setProgress(0);
+                    labelBar.setText("Erreur serveur!");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                });
                 grid.setDisable(false);
-            }
+        }
 
 
         }

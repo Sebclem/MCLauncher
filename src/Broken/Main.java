@@ -3,6 +3,7 @@ package Broken;
 import fr.theshark34.openauth.AuthenticationException;
 import fr.theshark34.openlauncherlib.LaunchException;
 import fr.theshark34.openlauncherlib.util.Saver;
+import fr.theshark34.openlauncherlib.util.ramselector.RamSelector;
 import fr.theshark34.supdate.exception.BadServerResponseException;
 import fr.theshark34.supdate.exception.BadServerVersionException;
 import fr.theshark34.supdate.exception.ServerDisabledException;
@@ -19,7 +20,7 @@ import java.io.IOException;
 
 public class Main extends Application {
     public static Saver saver = new Saver(new File(Launcher.MC_DIR,"launcher.properties"));
-
+    public static RamSelector selector;
     @Override
     public void start(Stage primaryStage) throws Exception{
         if(!Launcher.MC_DIR.exists())
@@ -30,7 +31,8 @@ public class Main extends Application {
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 1014, 595));
         primaryStage.setResizable(false);
-
+        selector = new RamSelector(new File("ram.txt"));
+        selector.display();
         primaryStage.show();
 //        try {
 //            Launcher.auth("","");
