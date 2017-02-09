@@ -31,8 +31,6 @@ public class Main extends Application {
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 1014, 595));
         primaryStage.setResizable(false);
-        selector = new RamSelector(new File("ram.txt"));
-        selector.display();
         primaryStage.show();
 //        try {
 //            Launcher.auth("","");

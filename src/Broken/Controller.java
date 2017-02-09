@@ -163,7 +163,7 @@ public class Controller {
                 });
                 try {
                     Launcher.lauch();
-                    labelBar.getScene().getWindow().hide();
+                    Platform.runLater(() ->labelBar.getScene().getWindow().hide());
                 } catch (LaunchException e) {
                     System.out.println(e.getMessage());
                     Platform.runLater(()->{
@@ -179,7 +179,7 @@ public class Controller {
                 }
 
             } catch (AuthenticationException e) {
-                e.printStackTrace();
+                System.out.println(e.getErrorModel().getCause()+"   "+e.getErrorModel().getError()+"    "+e.getErrorModel().getErrorMessage());
 
                 Platform.runLater(()->{
                     Alert alert = new Alert(Alert.AlertType.WARNING);
