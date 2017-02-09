@@ -24,8 +24,11 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Time;
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.Stack;
 
 public class Controller {
 
@@ -62,6 +65,15 @@ public class Controller {
     @FXML
     private VBox vbox;
 
+    @FXML
+    private Label leftLabelBar;
+
+    @FXML
+    private Label rightLabelBar;
+
+    @FXML
+    private Label dlSpeed;
+
 
 
     boolean firstTime = true;
@@ -69,8 +81,8 @@ public class Controller {
 
     @FXML
     void initialize() {
+
         userText.setText(Main.saver.get("username"));
-        passwordField.setText(Main.saver.get("password"));
         if(!userText.textProperty().isEmpty().get()&&!passwordField.textProperty().isEmpty().get())
         {
             playButton.setDisable(false);
@@ -117,53 +129,150 @@ public class Controller {
             {
                 grid.setDisable(true);
                 labelBar.setText("Authentification...");
+                progressBar.getStylesheets().clear();
                 progressBar.setProgress(-1);
             });
 
             try {
                 Launcher.auth(userText.getText(),passwordField.getText());
                 Main.saver.set("username",userText.getText());
-                Main.saver.set("password",passwordField.getText());
                 SUpdate su = Launcher.update();
+                Thread threadSpeed= new Thread(){
+                    boolean test = true;
+                    @Override
+                    public void run() {
+                        DecimalFormat myFormatter = new DecimalFormat("##0.0");
+                        DecimalFormat timeFormatter = new DecimalFormat("00");
+                        long save;
+                        long val;
+                        long max;
+                        int compterTime = 0;
+                        int seconde=0;
+
+                        double speedAverage=0;
+                        Platform.runLater(()->{
+                            dlSpeed.setText("  -  --MB/s");
+                            rightLabelBar.setText("--min --sec");
+                        });
+                        while(!this.isInterrupted())
+                        {
+                            save = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
+                            try {
+                                Thread.sleep(1000);
+                                max = BarAPI.getNumberOfTotalBytesToDownload()/1000;
+                                val = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
+                                final double speed = (val-save);
+
+
+                                seconde= (int) ((max-val)/speed);
+                                int hours = seconde / 3600;
+                                int remainder = seconde - hours * 3600;
+                                int mins = remainder / 60;
+                                remainder = remainder - mins * 60;
+                                int secs = remainder;
+                                String toDisplay="";
+                                if(hours>=1)
+                                    toDisplay=toDisplay+hours+"h ";
+                                if(mins>=1||hours>=1)
+                                    toDisplay=toDisplay+timeFormatter.format(mins)+"min ";
+                                toDisplay=toDisplay+timeFormatter.format(secs)+"sec";
+                                String finalToDisplay = toDisplay;
+                                if(!this.isInterrupted())
+                                {
+                                    if(speed>1000)
+                                        Platform.runLater(()->dlSpeed.setText("  -  "+myFormatter.format(speed/1000)+"MB/s"));
+                                    else
+                                        Platform.runLater(()->dlSpeed.setText("  -  "+myFormatter.format(speed)+"kB/s"));
+                                    Platform.runLater(()->rightLabelBar.setText(finalToDisplay));
+                                }
+                                else
+                                {
+                                    Platform.runLater(() -> {
+                                        leftLabelBar.setText("");
+                                        rightLabelBar.setText("");
+                                        dlSpeed.setText("");
+                                    });
+                                }
+
+                                System.out.println("ok");
+
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                };
+
+
+
                 Thread thread = new Thread(){
                     long value = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
                     long max = BarAPI.getNumberOfTotalBytesToDownload()/1000;
 
+
                     @Override
                     public void run() {
+
                         Platform.runLater(()-> labelBar.setText("Verification des fichiers..."));
 
                         while (max == 0) max = BarAPI.getNumberOfTotalBytesToDownload() / 1000;
-                        Platform.runLater(()-> labelBar.setText("Télécharment: 0%"));
-                        DecimalFormat myFormatter = new DecimalFormat("###.##");
+
+
+                        threadSpeed.start();
+
+
+                        Platform.runLater(()-> {
+                            labelBar.setText("Télécharment: 0.00%");
+                            leftLabelBar.setText("0MB / 0MB");
+                            progressBar.getStylesheets().add("Broken/Resources/triped-progress.css");
+                            progressBar.setProgress(0);
+                        });
+
+                        DecimalFormat myFormatter = new DecimalFormat("##0.00");
                         while (!this.isInterrupted()) {
+                            System.out.println("ok2");
 
                             if (value != BarAPI.getNumberOfTotalDownloadedBytes() / 1000) {
                                 value = BarAPI.getNumberOfTotalDownloadedBytes() / 1000;
+
                                 double pour = (value*100.0) / max;
-                                System.out.println(value + "/" + max + "   -> " + pour);
+                                System.out.println(value/1000 + "M/" + max/1000 + "M -> " +myFormatter.format(pour));
                                 Platform.runLater(() -> {
                                     progressBar.setProgress(pour/100.0);
-                                    labelBar.setText("Téléchargement: "+myFormatter.format(pour)+"%");
+                                    leftLabelBar.setText(value/1000 + "MB / " + max/1000 + "MB");
+                                    if(pour>100)
+                                        labelBar.setText("Téléchargement: 100%");
+                                    else
+                                        labelBar.setText("Téléchargement: "+myFormatter.format(pour)+"%");
 
                                 });
                             }
 
                         }
 
+
                     }
                 };
                 thread.start();
                 su.start();
                 thread.interrupt();
+                threadSpeed.interrupt();
                 Platform.runLater(() -> {
+                    progressBar.getStylesheets().clear();
                     progressBar.setProgress(-1);
+                    leftLabelBar.setText("");
+                    rightLabelBar.setText("");
+                    leftLabelBar.setText("");
+                    rightLabelBar.setText("");
+                    dlSpeed.setText("");
+                    dlSpeed.setText("");
                     labelBar.setText("Lancement du jeu...");
 
                 });
                 try {
                     Launcher.lauch();
-                    Platform.runLater(() ->labelBar.getScene().getWindow().hide());
+                    //Platform.runLater(() ->labelBar.getScene().getWindow().hide());
                 } catch (LaunchException e) {
                     System.out.println(e.getMessage());
                     Platform.runLater(()->{

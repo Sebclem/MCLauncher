@@ -54,10 +54,10 @@ public class Launcher {
 
     public static void lauch() throws LaunchException {
 
-        ExternalLaunchProfile profile = MinecraftLauncher.createExternalProfile(MC_INFOS,GameFolder.BASIC,authInfos);
-        ExternalLauncher launcher = new ExternalLauncher(profile);
-//        InternalLaunchProfile profile = MinecraftLauncher.createInternalProfile(MC_INFOS,GameFolder.BASIC,authInfos);
-//        InternalLauncher launcher = new InternalLauncher(profile);
+//        ExternalLaunchProfile profile = MinecraftLauncher.createExternalProfile(MC_INFOS,GameFolder.BASIC,authInfos);
+//        ExternalLauncher launcher = new ExternalLauncher(profile);
+        InternalLaunchProfile profile = MinecraftLauncher.createInternalProfile(MC_INFOS,GameFolder.BASIC,authInfos);
+        InternalLauncher launcher = new InternalLauncher(profile);
 
         launcher.launch();
         try {
