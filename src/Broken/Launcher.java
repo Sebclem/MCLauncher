@@ -36,7 +36,7 @@ public class Launcher {
     private static AuthInfos authInfos;
 
     public static void auth(String user, String password) throws AuthenticationException {
-        Authenticator authenticator = new Authenticator("http://imerir-launcher.livehost.fr/", AuthPoints.NORMAL_AUTH_POINTS);
+        Authenticator authenticator = new Authenticator("http://seb6596.freeboxos.fr:600", AuthPoints.NORMAL_AUTH_POINTS);
         //Authenticator authenticator = new Authenticator(Authenticator.MOJANG_AUTH_URL, AuthPoints.NORMAL_AUTH_POINTS);
         AuthResponse authResponse = authenticator.authenticate(AuthAgent.MINECRAFT,user,password,"");
         authInfos = new AuthInfos(authResponse.getSelectedProfile().getName(),authResponse.getClientToken(),authResponse.getSelectedProfile().getId());
