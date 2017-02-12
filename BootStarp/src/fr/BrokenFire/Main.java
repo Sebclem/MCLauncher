@@ -51,6 +51,7 @@ public class Main extends Application {
         ExploredDirectory gamedir = Explorer.dir(MC_DIR);
         constructor.add(gamedir.get("Launcher.jar"));
         ExternalLaunchProfile profile = new ExternalLaunchProfile("Broken.Main",constructor.make());
+        profile.setDirectory(MC_DIR);
         ExternalLauncher externalLauncher = new ExternalLauncher(profile);
 
         Process p = externalLauncher.launch();

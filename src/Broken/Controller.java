@@ -14,6 +14,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -21,6 +24,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -77,12 +83,14 @@ public class Controller {
 
 
     boolean firstTime = true;
-    ThreadSpeed threadSpeed = new ThreadSpeed();
+    public static ThreadSpeed threadSpeed;
+    public static DlListenner dlListenner;
 
 
     @FXML
     void initialize() {
-
+        threadSpeed = new ThreadSpeed();
+        dlListenner = new DlListenner();
         userText.setText(Main.saver.get("username"));
         if(!userText.textProperty().isEmpty().get()&&!passwordField.textProperty().isEmpty().get())
         {
@@ -116,6 +124,29 @@ public class Controller {
         });
 
 
+        optionButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+//                Alert alert = new Alert(Alert.AlertType.WARNING);
+//                alert.setHeaderText("Work in progress...");
+//                alert.setContentText("Fonction en cour de developpement");
+//                alert.setTitle("Erreur");
+//                alert.showAndWait();
+                try {
+                    Parent popup = FXMLLoader.load(getClass().getResource("option.fxml"));
+                    final Stage dialog = new Stage();
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    dialog.initOwner(Main.getPrimaryStage());
+                    Scene dialogScene = new Scene(popup, 400, 230);
+                    dialog.setScene(dialogScene);
+                    dialog.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
 
 
 
@@ -130,7 +161,6 @@ public class Controller {
             {
                 grid.setDisable(true);
                 labelBar.setText("Authentification...");
-                //progressBar.getStylesheets().clear();
                 progressBar.setProgress(-1);
             });
 
@@ -138,13 +168,11 @@ public class Controller {
                 Launcher.auth(userText.getText(),passwordField.getText());
                 Main.saver.set("username",userText.getText());
                 SUpdate su = Launcher.update();
-                DlListenner dlListenner = new DlListenner();
                 dlListenner.start();
                 su.start();
                 dlListenner.interrupt();
                 threadSpeed.interrupt();
                 Platform.runLater(() -> {
-                    //progressBar.getStylesheets().clear();
                     progressBar.setProgress(-1);
                     leftLabelBar.setText("");
                     rightLabelBar.setText("");

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Broken.OptionController">
+   <children>
+      <VBox maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" prefWidth="400.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="386.0">
+               <children>
+                  <Label text="Ram:">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <VBox alignment="CENTER_LEFT" prefWidth="316.0" spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="35.0">
+                           <children>
+                              <RadioButton fx:id="radioPredef" mnemonicParsing="false" selected="true" text="Prédéfini">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="ramToogle" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <ChoiceBox fx:id="predefRam" prefHeight="25.0" prefWidth="120.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <RadioButton fx:id="radioPerso" mnemonicParsing="false" text="Personnaliser" toggleGroup="$ramToogle" />
+                              <HBox fx:id="persoHBox" alignment="CENTER_LEFT" disable="true">
+                                 <children>
+                                    <Label text="Min:">
+                                       <HBox.margin>
+                                          <Insets right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <TextField fx:id="minRam" prefHeight="25.0" prefWidth="60.0" promptText="MB" />
+                                    <Label text="Max:">
+                                       <HBox.margin>
+                                          <Insets left="20.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <TextField fx:id="maxRam" prefHeight="25.0" prefWidth="60.0" promptText="MB" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="18.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <Line startX="400.0" />
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="386.0">
+               <children>
+                  <Label prefHeight="38.0" prefWidth="270.0" text="Authentification:" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="316.0" spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="35.0">
+                           <children>
+                              <RadioButton fx:id="radioMojang" mnemonicParsing="false" prefHeight="17.0" prefWidth="114.0" selected="true" text="Mojang">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="authToggle" />
+                                 </toggleGroup>
+                              </RadioButton>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <RadioButton fx:id="radioCrack" mnemonicParsing="false" prefHeight="17.0" prefWidth="64.0" text="Crack" toggleGroup="$authToggle" />
+                              <Button fx:id="buttonRegister" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="Inscription" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="18.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets left="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</Pane>
