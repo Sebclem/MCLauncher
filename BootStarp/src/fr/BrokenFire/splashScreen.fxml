@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<Pane xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.BrokenFire.Controller">
+   <children>
+      <StackPane fx:id="stack" prefHeight="350.0" prefWidth="300.0" style="-fx-background-color: radial-gradient(center 50% 50%, radius 100%, rgba(55,63,76,1) 0%, rgba(23,32,40,1) 60%, rgba(16,21,28,1) 84%);;">
+         <children>
+            <HBox fx:id="hbox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="41.0" prefWidth="300.0">
+               <children>
+                  <Label fx:id="label" alignment="CENTER" text="Checking Launcher Update..." textAlignment="CENTER" textFill="#ff9ff7" translateY="-114.0">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </StackPane>
+   </children>
+</Pane>

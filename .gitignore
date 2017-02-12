@@ -2,7 +2,16 @@
 config/
 lib/
 logs/
+META-INF/
 out/
 *.iml
-META-INF/
 *.uml
+
+BootStarp/.idea/
+BootStarp/config/
+BootStarp/lib/
+BootStarp/logs/
+BootStarp/META-INF/
+BootStarp/out/
+BootStarp/*.iml
+BootStarp/*.uml

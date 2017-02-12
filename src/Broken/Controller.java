@@ -77,6 +77,7 @@ public class Controller {
 
 
     boolean firstTime = true;
+    ThreadSpeed threadSpeed = new ThreadSpeed();
 
 
     @FXML
@@ -129,7 +130,7 @@ public class Controller {
             {
                 grid.setDisable(true);
                 labelBar.setText("Authentification...");
-                progressBar.getStylesheets().clear();
+                //progressBar.getStylesheets().clear();
                 progressBar.setProgress(-1);
             });
 
@@ -137,155 +138,57 @@ public class Controller {
                 Launcher.auth(userText.getText(),passwordField.getText());
                 Main.saver.set("username",userText.getText());
                 SUpdate su = Launcher.update();
-                Thread threadSpeed= new Thread(){
-                    boolean test = true;
-                    @Override
-                    public void run() {
-                        DecimalFormat myFormatter = new DecimalFormat("##0.0");
-                        DecimalFormat timeFormatter = new DecimalFormat("00");
-                        long save;
-                        long val;
-                        long max;
-                        int compterTime = 0;
-                        int seconde=0;
-
-                        double speedAverage=0;
-                        Platform.runLater(()->{
-                            dlSpeed.setText("  -  --MB/s");
-                            rightLabelBar.setText("--min --sec");
-                        });
-                        while(!this.isInterrupted())
-                        {
-                            save = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
-                            try {
-                                Thread.sleep(1000);
-                                max = BarAPI.getNumberOfTotalBytesToDownload()/1000;
-                                val = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
-                                final double speed = (val-save);
-
-
-                                seconde= (int) ((max-val)/speed);
-                                int hours = seconde / 3600;
-                                int remainder = seconde - hours * 3600;
-                                int mins = remainder / 60;
-                                remainder = remainder - mins * 60;
-                                int secs = remainder;
-                                String toDisplay="";
-                                if(hours>=1)
-                                    toDisplay=toDisplay+hours+"h ";
-                                if(mins>=1||hours>=1)
-                                    toDisplay=toDisplay+timeFormatter.format(mins)+"min ";
-                                toDisplay=toDisplay+timeFormatter.format(secs)+"sec";
-                                String finalToDisplay = toDisplay;
-                                if(!this.isInterrupted())
-                                {
-                                    if(speed>1000)
-                                        Platform.runLater(()->dlSpeed.setText("  -  "+myFormatter.format(speed/1000)+"MB/s"));
-                                    else
-                                        Platform.runLater(()->dlSpeed.setText("  -  "+myFormatter.format(speed)+"kB/s"));
-                                    Platform.runLater(()->rightLabelBar.setText(finalToDisplay));
-                                }
-                                else
-                                {
-                                    Platform.runLater(() -> {
-                                        leftLabelBar.setText("");
-                                        rightLabelBar.setText("");
-                                        dlSpeed.setText("");
-                                    });
-                                }
-
-                                System.out.println("ok");
-
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }
-                };
-
-
-
-                Thread thread = new Thread(){
-                    long value = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
-                    long max = BarAPI.getNumberOfTotalBytesToDownload()/1000;
-
-
-                    @Override
-                    public void run() {
-
-                        Platform.runLater(()-> labelBar.setText("Verification des fichiers..."));
-
-                        while (max == 0) max = BarAPI.getNumberOfTotalBytesToDownload() / 1000;
-
-
-                        threadSpeed.start();
-
-
-                        Platform.runLater(()-> {
-                            labelBar.setText("Télécharment: 0.00%");
-                            leftLabelBar.setText("0MB / 0MB");
-                            progressBar.getStylesheets().add("Broken/Resources/triped-progress.css");
-                            progressBar.setProgress(0);
-                        });
-
-                        DecimalFormat myFormatter = new DecimalFormat("##0.00");
-                        while (!this.isInterrupted()) {
-                            System.out.println("ok2");
-
-                            if (value != BarAPI.getNumberOfTotalDownloadedBytes() / 1000) {
-                                value = BarAPI.getNumberOfTotalDownloadedBytes() / 1000;
-
-                                double pour = (value*100.0) / max;
-                                System.out.println(value/1000 + "M/" + max/1000 + "M -> " +myFormatter.format(pour));
-                                Platform.runLater(() -> {
-                                    progressBar.setProgress(pour/100.0);
-                                    leftLabelBar.setText(value/1000 + "MB / " + max/1000 + "MB");
-                                    if(pour>100)
-                                        labelBar.setText("Téléchargement: 100%");
-                                    else
-                                        labelBar.setText("Téléchargement: "+myFormatter.format(pour)+"%");
-
-                                });
-                            }
-
-                        }
-
-
-                    }
-                };
-                thread.start();
+                DlListenner dlListenner = new DlListenner();
+                dlListenner.start();
                 su.start();
-                thread.interrupt();
+                dlListenner.interrupt();
                 threadSpeed.interrupt();
                 Platform.runLater(() -> {
-                    progressBar.getStylesheets().clear();
+                    //progressBar.getStylesheets().clear();
                     progressBar.setProgress(-1);
                     leftLabelBar.setText("");
                     rightLabelBar.setText("");
                     leftLabelBar.setText("");
-                    rightLabelBar.setText("");
-                    dlSpeed.setText("");
                     dlSpeed.setText("");
                     labelBar.setText("Lancement du jeu...");
 
                 });
+
+                Thread threadLaunch=new Thread(){
+                    @Override
+                    public void run(){
+
+                        try{
+                            Launcher.lauch();
+                        }catch (LaunchException e)
+                        {
+                            System.out.println(e.getMessage());
+                            Platform.runLater(()->
+                            {
+                                Alert alert = new Alert(Alert.AlertType.WARNING);
+                                alert.setHeaderText("Echec de lancement!");
+                                alert.setContentText("Echec lors du lancement du jeu:\n"+e.getMessage());
+                                alert.setTitle("Erreur");
+                                progressBar.setProgress(0);
+                                labelBar.setText("Echec de lancement du jeu!");
+                                alert.showAndWait();
+                                grid.setDisable(false);
+                            });
+                        }
+
+                    }
+                };
+
+                threadLaunch.start();
+
                 try {
-                    Launcher.lauch();
-                    //Platform.runLater(() ->labelBar.getScene().getWindow().hide());
-                } catch (LaunchException e) {
-                    System.out.println(e.getMessage());
-                    Platform.runLater(()->{
-                        Alert alert = new Alert(Alert.AlertType.WARNING);
-                        alert.setHeaderText("Echec de lancement!");
-                        alert.setContentText("Echec lors du lancement du jeu:\n"+e.getMessage());
-                        alert.setTitle("Erreur");
-                        progressBar.setProgress(0);
-                        labelBar.setText("Echec de lancement du jeu!");
-                        alert.showAndWait();
-                        grid.setDisable(false);
-                    });
+                    Thread.sleep(5000);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                Platform.runLater(() ->labelBar.getScene().getWindow().hide());
+
 
             } catch (AuthenticationException e) {
                 System.out.println(e.getErrorModel().getCause()+"   "+e.getErrorModel().getError()+"    "+e.getErrorModel().getErrorMessage());
@@ -344,7 +247,112 @@ public class Controller {
                     grid.setDisable(false);
                 });
                 grid.setDisable(false);
+            }
         }
+    }
+
+
+
+    class ThreadSpeed extends Thread{
+        @Override
+        public void run() {
+            DecimalFormat myFormatter = new DecimalFormat("##0.0");
+            DecimalFormat timeFormatter = new DecimalFormat("00");
+            long save;
+            long val;
+            long max;
+            int seconde;
+
+            Platform.runLater(()->{
+                rightLabelBar.setVisible(true);
+                dlSpeed.setVisible(true);
+                dlSpeed.setVisible(true);
+                dlSpeed.setText("  -  --MB/s");
+                rightLabelBar.setText("--min --sec");
+            });
+            while(!this.isInterrupted())
+            {
+                save = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
+                try {
+                    Thread.sleep(1000);
+                    max = BarAPI.getNumberOfTotalBytesToDownload()/1000;
+                    val = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
+                    final double speed = (val-save);
+
+
+                    seconde= (int) ((max-val)/speed);
+                    int hours = seconde / 3600;
+                    int remainder = seconde - hours * 3600;
+                    int mins = remainder / 60;
+                    remainder = remainder - mins * 60;
+                    int secs = remainder;
+                    String toDisplay="";
+                    if(hours>=1)
+                        toDisplay=toDisplay+hours+"h ";
+                    if(mins>=1||hours>=1)
+                        toDisplay=toDisplay+timeFormatter.format(mins)+"min ";
+                    toDisplay=toDisplay+timeFormatter.format(secs)+"sec";
+                    String finalToDisplay = toDisplay;
+                    if(speed>1000)
+                        Platform.runLater(()->dlSpeed.setText("  -  "+myFormatter.format(speed/1000)+"MB/s"));
+                    else
+                        Platform.runLater(()->dlSpeed.setText("  -  "+myFormatter.format(speed)+"kB/s"));
+                    Platform.runLater(()->rightLabelBar.setText(finalToDisplay));
+
+                } catch (InterruptedException e) {
+                    this.interrupt();
+                }
+
+            }
+
+        }
+
+    }
+
+    class DlListenner extends Thread
+    {
+        long value = BarAPI.getNumberOfTotalDownloadedBytes()/1000;
+        long max = BarAPI.getNumberOfTotalBytesToDownload()/1000;
+
+
+        @Override
+        public void run() {
+
+            Platform.runLater(()-> labelBar.setText("Verification des fichiers..."));
+
+            while (max == 0) max = BarAPI.getNumberOfTotalBytesToDownload() / 1000;
+
+
+            threadSpeed.start();
+
+
+            Platform.runLater(()-> {
+                labelBar.setText("Télécharment: 0.00%");
+                leftLabelBar.setText("0MB / 0MB");
+                //progressBar.getStylesheets().add("Broken/Resources/triped-progress.css");
+                progressBar.setProgress(0);
+            });
+
+            DecimalFormat myFormatter = new DecimalFormat("##0.00");
+            while (!this.isInterrupted()) {
+                if (value != BarAPI.getNumberOfTotalDownloadedBytes() / 1000) {
+                    value = BarAPI.getNumberOfTotalDownloadedBytes() / 1000;
+
+                    double pour = (value*100.0) / max;
+                    System.out.println(value/1000 + "M/" + max/1000 + "M -> " +myFormatter.format(pour));
+                    Platform.runLater(() -> {
+                        progressBar.setProgress(pour/100.0);
+                        leftLabelBar.setText(value/1000 + "MB / " + max/1000 + "MB");
+                        if(pour>100)
+                            labelBar.setText("Téléchargement: 100%");
+                        else
+                            labelBar.setText("Téléchargement: "+myFormatter.format(pour)+"%");
+
+                    });
+                }
+
+            }
+
 
 
         }
