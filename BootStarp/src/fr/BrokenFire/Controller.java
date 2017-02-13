@@ -132,9 +132,18 @@ public class Controller {
                 });
             } catch (IOException e) {
                 e.printStackTrace();
-                dlListenner.interrupt();
-                Platform.exit();
-                System.exit(1);
+                Platform.runLater(()->{
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setHeaderText("Erreur !");
+                    alert.setContentText("Erreur : \n"+e.getMessage());
+                    alert.setTitle("Erreur");
+                    progress.setProgress(-1);
+                    alert.showAndWait();
+                    dlListenner.interrupt();
+                    Platform.exit();
+                    System.exit(1);
+                });
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (LaunchException e) {

@@ -5,6 +5,7 @@ import fr.theshark34.openlauncherlib.external.ClasspathConstructor;
 import fr.theshark34.openlauncherlib.external.ExternalLaunchProfile;
 import fr.theshark34.openlauncherlib.external.ExternalLauncher;
 import fr.theshark34.openlauncherlib.minecraft.util.GameDirGenerator;
+import fr.theshark34.openlauncherlib.util.Saver;
 import fr.theshark34.openlauncherlib.util.explorer.ExploredDirectory;
 import fr.theshark34.openlauncherlib.util.explorer.Explorer;
 import fr.theshark34.supdate.SUpdate;
@@ -20,6 +21,7 @@ import javafx.stage.StageStyle;
 import fr.theshark34.*;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class Main extends Application {
 
@@ -52,6 +54,17 @@ public class Main extends Application {
         constructor.add(gamedir.get("Launcher.jar"));
         ExternalLaunchProfile profile = new ExternalLaunchProfile("Broken.Main",constructor.make());
         profile.setDirectory(MC_DIR);
+        Saver saver = new Saver(new File(MC_DIR,"launcher.properties"));
+        String min = saver.get("ramMin");
+        String max = saver.get("ramMax");
+        if(min==null)
+            min="256m";
+        if(max==null)
+            max="2G";
+        ArrayList<String> ram = new ArrayList<String>();
+        ram.add("-Xms"+min);
+        ram.add("-Xmx"+max);
+        profile.setVmArgs(ram);
         ExternalLauncher externalLauncher = new ExternalLauncher(profile);
 
         Process p = externalLauncher.launch();

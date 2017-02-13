@@ -85,6 +85,7 @@ public class Controller {
     boolean firstTime = true;
     public static ThreadSpeed threadSpeed;
     public static DlListenner dlListenner;
+    public static Scene dialogScene;
 
 
     @FXML
@@ -137,8 +138,9 @@ public class Controller {
                     final Stage dialog = new Stage();
                     dialog.initModality(Modality.APPLICATION_MODAL);
                     dialog.initOwner(Main.getPrimaryStage());
-                    Scene dialogScene = new Scene(popup, 400, 230);
+                    dialogScene = new Scene(popup, 390, 247);
                     dialog.setScene(dialogScene);
+                    dialog.setResizable(false);
                     dialog.show();
                 } catch (IOException e) {
                     e.printStackTrace();
