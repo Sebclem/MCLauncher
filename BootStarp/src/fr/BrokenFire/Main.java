@@ -16,6 +16,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import fr.theshark34.*;
@@ -36,6 +37,7 @@ public class Main extends Application {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setTitle("Launcher BootStrap");
         primaryStage.setScene(new Scene(root, 300, 350));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("Resources/icon.png")));
         primaryStage.show();
 
     }

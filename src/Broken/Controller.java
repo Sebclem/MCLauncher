@@ -222,11 +222,15 @@ public class Controller {
 
             } catch (AuthenticationException e) {
                 System.out.println(e.getErrorModel().getCause()+"   "+e.getErrorModel().getError()+"    "+e.getErrorModel().getErrorMessage());
-
+                String serveur;
+                if(Main.saver.get("authType").equals("0"))
+                    serveur = "Mojang (Officiel)";
+                else
+                    serveur = "Private (Crack)";
                 Platform.runLater(()->{
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setHeaderText("Echec d'Authentification!");
-                    alert.setContentText("Echec d'Authentification: "+e.getErrorModel().getErrorMessage());
+                    alert.setContentText("Echec d'Authentification : "+e.getErrorModel().getErrorMessage()+"\n\nType de serveur: "+serveur);
                     alert.setTitle("Erreur");
                     progressBar.setProgress(0);
                     labelBar.setText("Echec d'Authentification!");

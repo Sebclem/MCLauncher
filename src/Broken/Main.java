@@ -7,13 +7,13 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.File;
 
 public class Main extends Application {
     public static Saver saver = new Saver(new File(Launcher.MC_DIR,"launcher.properties"));
-    public static RamSelector selector;
     private static Stage primaryStageS;
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -31,7 +31,9 @@ public class Main extends Application {
             Controller.threadSpeed.interrupt();
             Platform.exit();
         });
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("Resources/minecraftLogo.png")));
         primaryStageS=primaryStage;
+
         primaryStage.show();
 
     }
