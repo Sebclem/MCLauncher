@@ -67,14 +67,15 @@ public class OptionController {
     @FXML
     private Button annuler;
 
-    String ramType;
-    String ramMax;
-    String ramMin;
-    String authType;
+    static String ramType;
+    static String ramMax;
+    static String ramMin;
+    static String authType;
     boolean edited=false;
 
     @FXML
     void initialize() {
+        checkConfig();
         annuler.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -107,38 +108,7 @@ public class OptionController {
 
         predefRam.getItems().addAll("1G","2G","3G","4G","5G","6G","7G","8G");
 
-        ramType = Main.saver.get("ramType");
-        ramMax = Main.saver.get("ramMax");
-        ramMin = Main.saver.get("ramMin");
 
-        authType = Main.saver.get("authType");
-        //Init all ram param if it don't exits
-        if(ramType ==null)
-        {
-
-            Main.saver.set("ramType","0");
-            ramType ="0";
-            Main.saver.set("ramMax","2G");
-            ramMax = "2G";
-            Main.saver.set("ramMin","256m");
-            ramMin = "256m";
-
-        }
-
-        if (ramType.equals("0")){
-            ramToogle.selectToggle(radioPredef);
-            persoHBox.setDisable(true);
-            predefRam.setDisable(false);
-            predefRam.getSelectionModel().select(ramMax);
-        }
-        else
-        {
-            ramToogle.selectToggle(radioPerso);
-            minRam.setText(ramMin);
-            maxRam.setText(ramMax);
-            persoHBox.setDisable(false);
-            predefRam.setDisable(true);
-        }
 
         maxRam.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -155,6 +125,20 @@ public class OptionController {
             }
         });
 
+        if (ramType.equals("0")){
+            ramToogle.selectToggle(radioPredef);
+            persoHBox.setDisable(true);
+            predefRam.setDisable(false);
+            predefRam.getSelectionModel().select(ramMax);
+        }
+        else
+        {
+            ramToogle.selectToggle(radioPerso);
+            minRam.setText(ramMin);
+            maxRam.setText(ramMax);
+            persoHBox.setDisable(false);
+            predefRam.setDisable(true);
+        }
 
         ramToogle.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -186,11 +170,10 @@ public class OptionController {
             }
         });
 
-        if(authType==null)
-        {
-            Main.saver.set("authType","0");
-            authType="0";
-        }
+
+
+
+
 
         if(authType.equals("0"))
             authToggle.selectToggle(radioMojang);
@@ -224,5 +207,33 @@ public class OptionController {
             }
         });
 
+    }
+
+
+    public static void checkConfig()
+    {
+        ramType = Main.saver.get("ramType");
+        ramMax = Main.saver.get("ramMax");
+        ramMin = Main.saver.get("ramMin");
+
+        authType = Main.saver.get("authType");
+        //Init all ram param if it don't exits
+        if(ramType ==null)
+        {
+
+            Main.saver.set("ramType","0");
+            ramType ="0";
+            Main.saver.set("ramMax","2G");
+            ramMax = "2G";
+            Main.saver.set("ramMin","256m");
+            ramMin = "256m";
+
+        }
+
+        if(authType==null)
+        {
+            Main.saver.set("authType","0");
+            authType="0";
+        }
     }
 }

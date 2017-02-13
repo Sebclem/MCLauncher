@@ -90,6 +90,7 @@ public class Controller {
 
     @FXML
     void initialize() {
+        OptionController.checkConfig();
         threadSpeed = new ThreadSpeed();
         dlListenner = new DlListenner();
         userText.setText(Main.saver.get("username"));
