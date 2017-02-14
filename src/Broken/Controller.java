@@ -98,7 +98,6 @@ public class Controller {
         {
             playButton.setDisable(false);
         }
-        Platform.runLater(()->optionButton.requestFocus());
         userText.textProperty().addListener((observable, oldValue, newValue) -> {
             playButton.setDisable(newValue.trim().isEmpty()||passwordField.textProperty().isEmpty().get());
 
