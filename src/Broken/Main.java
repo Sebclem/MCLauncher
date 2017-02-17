@@ -44,7 +44,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        AccountManager.setJSON("tttesssstttt",null,null,null,null);
-        //launch(args);
+//        AccountManager.setJSON("tttesssstttt",null,null,null,null);
+        launch(args);
     }
 }
