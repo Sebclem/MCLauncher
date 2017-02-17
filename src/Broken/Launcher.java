@@ -15,11 +15,13 @@ import fr.theshark34.supdate.exception.BadServerResponseException;
 import fr.theshark34.supdate.exception.BadServerVersionException;
 import fr.theshark34.supdate.exception.ServerDisabledException;
 import fr.theshark34.supdate.exception.ServerMissingSomethingException;
+import nologin.NoLogin;
 import nologin.account.Account;
 
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by seb65 on 06/02/2017.
@@ -41,7 +43,15 @@ public class Launcher {
 
         AuthResponse authResponse = authenticator.authenticate(AuthAgent.MINECRAFT, user, password, "");
         authInfos = new AuthInfos(authResponse.getSelectedProfile().getName(), authResponse.getClientToken(), authResponse.getSelectedProfile().getId());
-        new Account(authInfos.getUuid(), authInfos.getUsername(), authInfos.getAccessToken(), authResponse.getSelectedProfile().getId(),user);
+
+        NoLogin noLogin = new NoLogin();
+        List<Account> accounts = noLogin.getAccountManager().getAccounts();
+        for(Account acc : accounts)
+        {
+            if(noLogin.getValidator().validateAccount(acc))
+            {
+            }
+        }
     }
     public static SUpdate update() throws BadServerResponseException, IOException, BadServerVersionException, ServerDisabledException, ServerMissingSomethingException {
         SUpdate su = new SUpdate("http://imerir-launcher.livehost.fr/",MC_DIR);

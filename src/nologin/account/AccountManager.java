@@ -52,6 +52,7 @@ public class AccountManager
 			JSONObject authDb = profilesObj.getJSONObject("authenticationDatabase");
 			for(String accountName : authDb.keySet())
 			{
+				System.out.println(accountName);
 				JSONObject obj = authDb.getJSONObject(accountName);
 				accounts.add(new Account(obj.getString("uuid"), obj.getString("displayName"), obj.getString("accessToken"), obj.getString("userid"), obj.getString("username")));
 			}
@@ -66,5 +67,29 @@ public class AccountManager
 	{
 		return accounts;
 	}
+
+    static public void setJSON(String uuid, String displayName, String accessToken, String userid, String username)
+    {
+        File profiles = new File(Utilities.getMinecraftDirectory(), "launcher_profiles.json");
+        try
+        {
+            FileInputStream fis = new FileInputStream(profiles);
+            byte[] data = new byte[(int) fis.available()];
+            fis.read(data);
+            fis.close();
+            String jsonProfiles = new String(data, "UTF-8");
+            JSONObject profilesObj = new JSONObject(jsonProfiles);
+            JSONObject authDb = profilesObj.getJSONObject("authenticationDatabase");
+            for(String accountName : authDb.keySet())
+            {
+                JSONObject obj = authDb.getJSONObject(accountName);
+				obj.put("uuid",uuid);
+			}
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
 }
