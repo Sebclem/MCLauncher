@@ -43,7 +43,6 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        //AccountManager.setJSON("tttesssstttt",null,null,null,null);
-        launch(args);
+8        launch(args);
     }
 }
