@@ -15,6 +15,7 @@ import java.io.File;
 public class Main extends Application {
     public static Saver saver = new Saver(new File(Launcher.MC_DIR,"launcher.properties"));
     private static Stage primaryStageS;
+    public static Controller controller;
     @Override
     public void start(Stage primaryStage) throws Exception{
         if(!Launcher.MC_DIR.exists())
@@ -22,7 +23,9 @@ public class Main extends Application {
             Launcher.MC_DIR.mkdir();
         }
 
-        Parent root = FXMLLoader.load(getClass().getResource("mainPage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("mainPage.fxml"));
+        Parent root = (Parent) loader.load();
+        controller = loader.getController();
         primaryStage.setTitle("Minecraft IMERIR Launcher");
         primaryStage.setScene(new Scene(root, 1014, 595));
         primaryStage.setResizable(false);
@@ -42,7 +45,9 @@ public class Main extends Application {
         return primaryStageS;
     }
 
+
+
     public static void main(String[] args) {
-8        launch(args);
+        launch(args);
     }
 }

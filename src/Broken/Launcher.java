@@ -40,7 +40,6 @@ public class Launcher {
         else
             authenticator = new Authenticator("http://seb6596.freeboxos.fr/", AuthPoints.NORMAL_AUTH_POINTS);
         AuthResponse authResponse;
-        System.out.println("Logged: "+isLogged);
         if(!isLogged)
         {
             authResponse = authenticator.authenticate(AuthAgent.MINECRAFT, user, password, "");
@@ -57,17 +56,6 @@ public class Launcher {
 
         else
             return refreshAccount(account,authenticator);
-       //authInfos = new AuthInfos(authResponse.getSelectedProfile().getName(), authResponse.getClientToken(), authResponse.getSelectedProfile().getId());
-
-        //authenticator.refresh(authResponse.getAccessToken(),authResponse.getClientToken());
-//        NoLogin noLogin = new NoLogin();
-//        List<Account> accounts = noLogin.getAccountManager().getAccounts();
-//        for(Account acc : accounts)
-//        {
-//            if(noLogin.getValidator().validateAccount(acc))
-//            {
-//            }
-//        }
     }
     public static SUpdate update() throws BadServerResponseException, IOException, BadServerVersionException, ServerDisabledException, ServerMissingSomethingException {
         SUpdate su = new SUpdate("http://imerir-launcher.livehost.fr/",MC_DIR);
@@ -114,7 +102,6 @@ public class Launcher {
         if(name==null || uuid==null || id == null || userName == null || accessToken == null)
             throw new LoadingSaveException("Failed to load saved Account!");
         if(!name.equals("") && !uuid.equals("") && !accessToken.equals("") && !id.equals("") && !userName.equals("")){
-            System.out.println("ok");
             return new Account(uuid,name,accessToken,clientToken,id,userName);
         }
 
@@ -125,12 +112,7 @@ public class Launcher {
 
     private static String convertToUUID(String id)
     {
-        //c5ef3347-4593-4f39-8bb1-2eaa40dd986e
-        //121a1ca0-8122-0101-27f99595b63f637f
-        //121a1ca0-8122-0101-27f99595b63f637f
         String temp = id.substring(0,8)+"-"+id.substring(8,12)+"-"+id.substring(12,16)+"-"+id.substring(16,32);
-        System.out.println(id);
-        System.out.println(temp);
         return temp;
     }
 }

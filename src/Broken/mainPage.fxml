@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
@@ -26,6 +27,9 @@
                      <image>
                         <Image url="@Resources/minecrafter.png" />
                      </image>
+                     <effect>
+                        <DropShadow />
+                     </effect>
                   </ImageView>
                   <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="591.0" translateX="-170.0" translateY="228.0">
                      <children>
@@ -38,15 +42,21 @@
                             <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="98.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label fx:id="pseudoLabel" text="pseudo" textFill="#f2f2f2" GridPane.columnIndex="1">
+                              <Label fx:id="pseudoLabel" text="pseudo" textFill="WHITE" GridPane.columnIndex="1">
                                  <font>
                                     <Font name="System Bold" size="49.0" />
                                  </font>
                                  <GridPane.margin>
-                                    <Insets left="10.0" />
+                                    <Insets left="40.0" right="20.0" />
                                  </GridPane.margin>
+                                 <effect>
+                                    <DropShadow color="#6b59d0" height="25.0" radius="12.0" width="25.0" />
+                                 </effect>
                               </Label>
-                              <ImageView fx:id="faceImg" fitHeight="98.0" fitWidth="98.0" pickOnBounds="true" preserveRatio="true" />
+                              <ImageView fx:id="faceImg" fitHeight="98.0" fitWidth="98.0" pickOnBounds="true" preserveRatio="true">
+                                 <effect>
+                                    <DropShadow color="#6b59d0" height="35.0" radius="17.0" width="35.0" />
+                                 </effect></ImageView>
                            </children>
                         </GridPane>
                      </children>
@@ -66,38 +76,59 @@
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
                         </Label>
                         <Label fx:id="passwordLabel" alignment="CENTER" prefHeight="30.0" prefWidth="172.0" text="Mot de passe :" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
                         </Label>
                         <PasswordField fx:id="passwordField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="35.0" prefWidth="250.0" promptText="Mot de passe" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="17.0" />
                            </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
                         </PasswordField>
                         <Button fx:id="optionButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="Option" GridPane.columnIndex="2">
                            <font>
                               <Font size="15.0" />
                            </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
                         </Button>
                         <Button fx:id="playButton" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="Jouer" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="15.0" />
                            </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
                         </Button>
                         <TextField fx:id="userText" prefHeight="35.0" prefWidth="250.0" promptText="Email ou Pseudo" GridPane.columnIndex="1">
                            <font>
                               <Font size="17.0" />
                            </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
                         </TextField>
                      </children>
                   </GridPane>
-                  <Button fx:id="disconectButton" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="Déconnexion " translateX="360.0" translateY="205.0" visible="false">
+                  <Button fx:id="disconectButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="Déconnexion " translateX="360.0" translateY="205.0" visible="false">
                      <font>
                         <Font size="15.0" />
                      </font>
+                     <effect>
+                        <DropShadow />
+                     </effect>
                   </Button>
                </children>
             </StackPane>
@@ -118,6 +149,9 @@
                            <font>
                               <Font name="System Bold Italic" size="15.0" />
                            </font>
+                           <effect>
+                              <DropShadow color="#64b2fc" height="10.0" radius="4.5" width="10.0" />
+                           </effect>
                         </Label>
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                            <children>
@@ -128,11 +162,17 @@
                                  <padding>
                                     <Insets left="10.0" />
                                  </padding>
+                                 <effect>
+                                    <DropShadow color="#64b2fc" height="10.0" radius="4.5" width="10.0" />
+                                 </effect>
                               </Label>
                               <Label fx:id="dlSpeed" contentDisplay="CENTER" textAlignment="CENTER">
                                  <font>
                                     <Font name="System Bold Italic" size="15.0" />
                                  </font>
+                                 <effect>
+                                    <DropShadow color="#64b2fc" height="10.0" radius="4.5" width="10.0" />
+                                 </effect>
                               </Label>
                            </children>
                         </HBox>
@@ -143,6 +183,9 @@
                            <padding>
                               <Insets right="10.0" />
                            </padding>
+                           <effect>
+                              <DropShadow color="#64b2fc" height="10.0" radius="4.5" width="10.0" />
+                           </effect>
                         </Label>
                      </children>
                   </GridPane>

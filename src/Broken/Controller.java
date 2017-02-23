@@ -163,11 +163,6 @@ public class Controller {
         optionButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-//                Alert alert = new Alert(Alert.AlertType.WARNING);
-//                alert.setHeaderText("Work in progress...");
-//                alert.setContentText("Fonction en cour de developpement");
-//                alert.setTitle("Erreur");
-//                alert.showAndWait();
                 try {
                     Parent popup = FXMLLoader.load(getClass().getResource("option.fxml"));
                     final Stage dialog = new Stage();
@@ -185,7 +180,6 @@ public class Controller {
 
         if(isLogged)
         {
-            passwordField.setDisable(true);
             userText.setDisable(true);
             userText.setVisible(false);
             passwordField.setVisible(false);
@@ -198,31 +192,60 @@ public class Controller {
             disconectButton.setDisable(false);
 
             // And as before now you can use URL and URLConnection
-            String httpsURL = "https://mc-heads.net/avatar/0615d890-db50-40ff-ac1b60f92dc184f0";
+            String httpsURL ;
+            if(Main.saver.get("authType").equals("0"))
+                httpsURL = "https://mc-heads.net/avatar/"+Main.saver.get("uuid")+"/98";
+            else
+                httpsURL = "https://mc-heads.net/avatar/8667ba71-b85a-4004-af54-457a9734eed7/98";
             URL myurl = new URL(httpsURL);
             HttpsURLConnection con = null;
             try {
                 con = (HttpsURLConnection)myurl.openConnection();
                 con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                 InputStream ins = con.getInputStream();
-                OutputStream out = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Seb\\Desktop\\ll.png"));
                 Image image = new Image(ins);
                 faceImg.setImage(image);
                 ins.close();
-                out.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            //faceImg.setImage(head);
         }
 
 
+        disconectButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                disconnect();
+
+            }
+        });
 
 
 
 
 
+
+
+    }
+    protected void disconnect()
+    {
+        Platform.runLater(()->{
+            passwordField.setDisable(false);
+            userText.setDisable(false);
+            userText.setVisible(true);
+            passwordField.setVisible(true);
+            playButton.setDisable(true);
+            userLabel.setVisible(true);
+            passwordLabel.setVisible(true);
+            gridLogged.setVisible(false);
+            disconectButton.setVisible(false);
+            Main.saver.set("accessToken","");
+            Main.saver.set("clientToken","");
+            Main.saver.set("uuid","");
+            Main.saver.set("name","");
+            Main.saver.set("id","");
+        });
     }
 
 
@@ -232,12 +255,13 @@ public class Controller {
             Platform.runLater(()->
             {
                 grid.setDisable(true);
+                disconectButton.setDisable(true);
                 labelBar.setText("Authentification...");
                 progressBar.setProgress(-1);
             });
 
             try {
-                Launcher.auth(userText.getText(),passwordField.getText(),isLogged,account);
+                account = Launcher.auth(userText.getText(),passwordField.getText(),isLogged,account);
 
                 SUpdate su = Launcher.update();
                 dlListenner.start();
@@ -310,8 +334,7 @@ public class Controller {
                     passwordLabel.setVisible(true);
                     userText.setVisible(true);
                     passwordField.setVisible(true);
-                    userText.setDisable(false);
-                    passwordField.setDisable(false);
+                    disconectButton.setDisable(false);
                     Main.saver.set("accessToken","");
                     Main.saver.set("clientToken","");
                 });
@@ -327,6 +350,7 @@ public class Controller {
                     labelBar.setText("Erreur !");
                     alert.showAndWait();
                     grid.setDisable(false);
+                    disconectButton.setDisable(false);
                 });
                 grid.setDisable(false);
             } catch (BadServerVersionException |ServerMissingSomethingException e) {
@@ -340,6 +364,7 @@ public class Controller {
                     labelBar.setText("Erreur serveur!");
                     alert.showAndWait();
                     grid.setDisable(false);
+                    disconectButton.setDisable(false);
                 });
                 grid.setDisable(false);
 
@@ -354,6 +379,7 @@ public class Controller {
                     labelBar.setText("Erreur serveur!");
                     alert.showAndWait();
                     grid.setDisable(false);
+                    disconectButton.setDisable(false);
                 });
                 grid.setDisable(false);
             } catch (BadServerResponseException e) {
@@ -367,6 +393,7 @@ public class Controller {
                     labelBar.setText("Erreur serveur!");
                     alert.showAndWait();
                     grid.setDisable(false);
+                    disconectButton.setDisable(false);
                 });
                 grid.setDisable(false);
             }

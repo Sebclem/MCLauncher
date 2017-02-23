@@ -93,6 +93,11 @@ public class OptionController {
                 Main.saver.set("ramMax",ramMax);
                 Main.saver.set("ramMin",ramMin);
                 Main.saver.set("authType",authType);
+                Main.saver.set("accessToken","");
+                Main.saver.set("clientToken","");
+                Main.saver.set("uuid","");
+                Main.saver.set("name","");
+                Main.saver.set("id","");
                 if(edited)
                 {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -102,6 +107,7 @@ public class OptionController {
                     alert.showAndWait();
                 }
                 Controller.dialogScene.getWindow().hide();
+                Main.controller.disconnect();
             }
         });
 
