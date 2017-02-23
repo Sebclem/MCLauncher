@@ -279,7 +279,7 @@ public class Controller {
                     }
                 };
 
-                //threadLaunch.start();
+                threadLaunch.start();
 
                 try {
                     Thread.sleep(5000);
@@ -318,6 +318,16 @@ public class Controller {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                Platform.runLater(()->{
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setHeaderText("Erreur !");
+                    alert.setContentText("Ereur : "+e.getMessage());
+                    alert.setTitle("Erreur");
+                    progressBar.setProgress(0);
+                    labelBar.setText("Erreur !");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                });
                 grid.setDisable(false);
             } catch (BadServerVersionException |ServerMissingSomethingException e) {
                 e.printStackTrace();
