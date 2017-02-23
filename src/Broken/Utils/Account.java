@@ -16,19 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with NoLogin.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nologin.account;
+package Broken.Utils;
 
 public class Account
 {
-    private String uuid, displayName, accessToken, userId, username;
+    private String uuid, displayName, accessToken, clientToken, userId, username;
     
-    public Account(String uuid, String displayName, String accessToken, String userId, String username)
+    public Account(String uuid, String displayName, String accessToken,String clientToken, String userId, String username)
     {
     	this.uuid = uuid;
     	this.displayName = displayName;
     	this.accessToken = accessToken;
     	this.userId = userId;
     	this.username = username;
+    	this.clientToken = clientToken;
     }
     
     public String getUUID()
@@ -59,4 +60,12 @@ public class Account
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
+
+    public String getClientToken() {
+        return clientToken;
+    }
+
+    public void setClientToken(String clientToken) {
+        this.clientToken = clientToken;
+    }
 }

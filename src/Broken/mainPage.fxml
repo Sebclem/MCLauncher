@@ -27,6 +27,30 @@
                         <Image url="@Resources/minecrafter.png" />
                      </image>
                   </ImageView>
+                  <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="591.0" translateX="-170.0" translateY="228.0">
+                     <children>
+                        <GridPane fx:id="gridLogged" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" visible="false">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="98.0" />
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="98.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label fx:id="pseudoLabel" text="pseudo" textFill="#f2f2f2" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="49.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <ImageView fx:id="faceImg" fitHeight="98.0" fitWidth="98.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </GridPane>
+                     </children>
+                  </HBox>
                   <GridPane fx:id="grid" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="584.0" translateY="228.0">
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="340.0" minWidth="10.0" prefWidth="163.0" />
@@ -38,12 +62,12 @@
                       <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="43.0" valignment="CENTER" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label alignment="CENTER" prefHeight="30.0" prefWidth="144.0" text="Utilisateur:  " textAlignment="CENTER" textFill="WHITE">
+                        <Label fx:id="userLabel" alignment="CENTER" prefHeight="30.0" prefWidth="144.0" text="Utilisateur:  " textAlignment="CENTER" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" prefHeight="30.0" prefWidth="172.0" text="Mot de passe :" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label fx:id="passwordLabel" alignment="CENTER" prefHeight="30.0" prefWidth="172.0" text="Mot de passe :" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="20.0" />
                            </font>
@@ -70,6 +94,11 @@
                         </TextField>
                      </children>
                   </GridPane>
+                  <Button fx:id="disconectButton" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="Déconnexion " translateX="360.0" translateY="205.0" visible="false">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Button>
                </children>
             </StackPane>
             <StackPane prefHeight="30.0" prefWidth="1024.0">

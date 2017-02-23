@@ -1,5 +1,7 @@
 package Broken;
 
+import Broken.Utils.Account;
+import Broken.Utils.LoadingSaveException;
 import com.sun.org.apache.bcel.internal.generic.LADD;
 import fr.theshark34.openauth.AuthenticationException;
 import fr.theshark34.openlauncherlib.LaunchException;
@@ -18,6 +20,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -28,8 +32,16 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Time;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -38,11 +50,12 @@ import java.util.Stack;
 
 public class Controller {
 
-    @FXML
-    private ResourceBundle resources;
 
     @FXML
-    private URL location;
+    private Label userLabel;
+
+    @FXML
+    private VBox vbox;
 
     @FXML
     private Button optionButton;
@@ -51,34 +64,46 @@ public class Controller {
     private TextField userText;
 
     @FXML
-    private Label labelBar;
+    private GridPane gridLogged;
 
     @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private Button playButton;
-
-    @FXML
-    private ProgressBar progressBar;
-
-    @FXML
-    private Pane body;
-
-    @FXML
-    private GridPane grid;
-
-    @FXML
-    private VBox vbox;
+    private ImageView faceImg;
 
     @FXML
     private Label leftLabelBar;
 
     @FXML
+    private Label labelBar;
+
+    @FXML
+    private Pane body;
+
+    @FXML
+    private Button playButton;
+
+    @FXML
+    private Label passwordLabel;
+
+    @FXML
+    private GridPane grid;
+
+    @FXML
+    private ProgressBar progressBar;
+
+    @FXML
     private Label rightLabelBar;
 
     @FXML
+    private PasswordField passwordField;
+
+    @FXML
+    private Label pseudoLabel;
+
+    @FXML
     private Label dlSpeed;
+
+    @FXML
+    private Button disconectButton;
 
 
 
@@ -86,11 +111,21 @@ public class Controller {
     public static ThreadSpeed threadSpeed;
     public static DlListenner dlListenner;
     public static Scene dialogScene;
+    Account account;
+    boolean isLogged= false;
 
 
     @FXML
-    void initialize() {
+    void initialize() throws MalformedURLException {
         OptionController.checkConfig();
+        try {
+            account = Launcher.getSavedAcount();
+            isLogged = true;
+        } catch (LoadingSaveException e) {
+            e.printStackTrace();
+            isLogged = false;
+        }
+
         threadSpeed = new ThreadSpeed();
         dlListenner = new DlListenner();
         userText.setText(Main.saver.get("username"));
@@ -148,6 +183,41 @@ public class Controller {
             }
         });
 
+        if(isLogged)
+        {
+            passwordField.setDisable(true);
+            userText.setDisable(true);
+            userText.setVisible(false);
+            passwordField.setVisible(false);
+            playButton.setDisable(false);
+            userLabel.setVisible(false);
+            passwordLabel.setVisible(false);
+            gridLogged.setVisible(true);
+            pseudoLabel.setText(Main.saver.get("name"));
+            disconectButton.setVisible(true);
+            disconectButton.setDisable(false);
+
+            // And as before now you can use URL and URLConnection
+            String httpsURL = "https://mc-heads.net/avatar/0615d890-db50-40ff-ac1b60f92dc184f0";
+            URL myurl = new URL(httpsURL);
+            HttpsURLConnection con = null;
+            try {
+                con = (HttpsURLConnection)myurl.openConnection();
+                con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                InputStream ins = con.getInputStream();
+                OutputStream out = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Seb\\Desktop\\ll.png"));
+                Image image = new Image(ins);
+                faceImg.setImage(image);
+                ins.close();
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //faceImg.setImage(head);
+        }
+
+
 
 
 
@@ -167,8 +237,8 @@ public class Controller {
             });
 
             try {
-                Launcher.auth(userText.getText(),passwordField.getText());
-                Main.saver.set("username",userText.getText());
+                Launcher.auth(userText.getText(),passwordField.getText(),isLogged,account);
+
                 SUpdate su = Launcher.update();
                 dlListenner.start();
                 su.start();
@@ -189,7 +259,7 @@ public class Controller {
                     public void run(){
 
                         try{
-                            Launcher.lauch();
+                            Launcher.lauch(account);
                         }catch (LaunchException e)
                         {
                             System.out.println(e.getMessage());
@@ -236,6 +306,14 @@ public class Controller {
                     labelBar.setText("Echec d'Authentification!");
                     alert.showAndWait();
                     grid.setDisable(false);
+                    userLabel.setVisible(true);
+                    passwordLabel.setVisible(true);
+                    userText.setVisible(true);
+                    passwordField.setVisible(true);
+                    userText.setDisable(false);
+                    passwordField.setDisable(false);
+                    Main.saver.set("accessToken","");
+                    Main.saver.set("clientToken","");
                 });
 
             } catch (IOException e) {

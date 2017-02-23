@@ -1,10 +1,13 @@
 package Broken;
 
+import Broken.Utils.Account;
+import Broken.Utils.LoadingSaveException;
 import fr.theshark34.openauth.AuthPoints;
 import fr.theshark34.openauth.AuthenticationException;
 import fr.theshark34.openauth.Authenticator;
 import fr.theshark34.openauth.model.AuthAgent;
 import fr.theshark34.openauth.model.response.AuthResponse;
+import fr.theshark34.openauth.model.response.RefreshResponse;
 import fr.theshark34.openlauncherlib.LaunchException;
 import fr.theshark34.openlauncherlib.internal.InternalLaunchProfile;
 import fr.theshark34.openlauncherlib.internal.InternalLauncher;
@@ -15,13 +18,11 @@ import fr.theshark34.supdate.exception.BadServerResponseException;
 import fr.theshark34.supdate.exception.BadServerVersionException;
 import fr.theshark34.supdate.exception.ServerDisabledException;
 import fr.theshark34.supdate.exception.ServerMissingSomethingException;
-import nologin.NoLogin;
-import nologin.account.Account;
 
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by seb65 on 06/02/2017.
@@ -31,27 +32,42 @@ public class Launcher {
     public static final GameVersion MC_VERSION = new GameVersion("1.7.10", GameType.V1_7_10);
     public static final GameInfos MC_INFOS = new GameInfos("Imerir",MC_VERSION,new GameTweak[]{GameTweak.FORGE});
     public static final File MC_DIR = MC_INFOS.getGameDir();
-    private static AuthInfos authInfos;
 
-
-    public static void auth(String user, String password) throws AuthenticationException {
+    public static Account auth(String user, String password, boolean isLogged, Account account) throws AuthenticationException {
         Authenticator authenticator;
         if (Main.saver.get("authType").equals("0"))
             authenticator = new Authenticator(Authenticator.MOJANG_AUTH_URL, AuthPoints.NORMAL_AUTH_POINTS);
         else
             authenticator = new Authenticator("http://seb6596.freeboxos.fr/", AuthPoints.NORMAL_AUTH_POINTS);
-
-        AuthResponse authResponse = authenticator.authenticate(AuthAgent.MINECRAFT, user, password, "");
-        authInfos = new AuthInfos(authResponse.getSelectedProfile().getName(), authResponse.getClientToken(), authResponse.getSelectedProfile().getId());
-
-        NoLogin noLogin = new NoLogin();
-        List<Account> accounts = noLogin.getAccountManager().getAccounts();
-        for(Account acc : accounts)
+        AuthResponse authResponse;
+        System.out.println("Logged: "+isLogged);
+        if(!isLogged)
         {
-            if(noLogin.getValidator().validateAccount(acc))
-            {
-            }
+            authResponse = authenticator.authenticate(AuthAgent.MINECRAFT, user, password, "");
+
+            Main.saver.set("name",authResponse.getSelectedProfile().getName());
+            Main.saver.set("uuid",convertToUUID(authResponse.getSelectedProfile().getId()));
+            Main.saver.set("id",authResponse.getSelectedProfile().getId());
+            Main.saver.set("accessToken",authResponse.getAccessToken());
+            Main.saver.set("clientToken",authResponse.getClientToken());
+            Main.saver.set("username",user);
+            return new Account(authResponse.getSelectedProfile().getId(),authResponse.getSelectedProfile().getName(),authResponse.getAccessToken(),authResponse.getClientToken(),authResponse.getSelectedProfile().getId(),user);
+
         }
+
+        else
+            return refreshAccount(account,authenticator);
+       //authInfos = new AuthInfos(authResponse.getSelectedProfile().getName(), authResponse.getClientToken(), authResponse.getSelectedProfile().getId());
+
+        //authenticator.refresh(authResponse.getAccessToken(),authResponse.getClientToken());
+//        NoLogin noLogin = new NoLogin();
+//        List<Account> accounts = noLogin.getAccountManager().getAccounts();
+//        for(Account acc : accounts)
+//        {
+//            if(noLogin.getValidator().validateAccount(acc))
+//            {
+//            }
+//        }
     }
     public static SUpdate update() throws BadServerResponseException, IOException, BadServerVersionException, ServerDisabledException, ServerMissingSomethingException {
         SUpdate su = new SUpdate("http://imerir-launcher.livehost.fr/",MC_DIR);
@@ -62,8 +78,8 @@ public class Launcher {
 
     }
 
-    public static void lauch() throws LaunchException {
-
+    public static void lauch(Account account) throws LaunchException {
+        AuthInfos authInfos = new AuthInfos(account.getDisplayName(),account.getAccessToken(),account.getUserId());
         InternalLaunchProfile profile = MinecraftLauncher.createInternalProfile(MC_INFOS,GameFolder.BASIC,authInfos);
         InternalLauncher launcher = new InternalLauncher(profile);
 
@@ -72,8 +88,49 @@ public class Launcher {
 
     }
 
-    public static AuthInfos getAuthInfos() {
 
-        return authInfos;
+
+    private static Account refreshAccount(Account account,Authenticator authenticator) throws AuthenticationException {
+        try {
+            authenticator.validate(account.getAccessToken());
+            System.out.println("Account validation success!");
+        } catch (AuthenticationException e) {
+            System.out.println("Validation fail, refresh account...");
+            RefreshResponse refreshR = authenticator.refresh(account.getAccessToken(),account.getClientToken());
+            account.setAccessToken(refreshR.getAccessToken());
+            Main.saver.set("accessToken",refreshR.getAccessToken());
+        }
+        return  account;
+    }
+
+    public static Account getSavedAcount() throws LoadingSaveException
+    {
+        String name = Main.saver.get("name");
+        String uuid = Main.saver.get("uuid");
+        String id = Main.saver.get("id");
+        String userName = Main.saver.get("username");
+        String accessToken = Main.saver.get("accessToken");
+        String clientToken = Main.saver.get("clientToken");
+        if(name==null || uuid==null || id == null || userName == null || accessToken == null)
+            throw new LoadingSaveException("Failed to load saved Account!");
+        if(!name.equals("") && !uuid.equals("") && !accessToken.equals("") && !id.equals("") && !userName.equals("")){
+            System.out.println("ok");
+            return new Account(uuid,name,accessToken,clientToken,id,userName);
+        }
+
+        else
+            throw new LoadingSaveException("Failed to load saved Account!");
+
+    }
+
+    private static String convertToUUID(String id)
+    {
+        //c5ef3347-4593-4f39-8bb1-2eaa40dd986e
+        //121a1ca0-8122-0101-27f99595b63f637f
+        //121a1ca0-8122-0101-27f99595b63f637f
+        String temp = id.substring(0,8)+"-"+id.substring(8,12)+"-"+id.substring(12,16)+"-"+id.substring(16,32);
+        System.out.println(id);
+        System.out.println(temp);
+        return temp;
     }
 }
