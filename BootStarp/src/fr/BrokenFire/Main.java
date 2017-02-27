@@ -53,7 +53,7 @@ public class Main extends Application {
         System.out.println("test");
         ClasspathConstructor constructor = new ClasspathConstructor();
         ExploredDirectory gamedir = Explorer.dir(MC_DIR);
-        constructor.add(gamedir.get("Launcher.jar"));
+        constructor.add(new File(MC_DIR,"Launcher.jar"));
         ExternalLaunchProfile profile = new ExternalLaunchProfile("Broken.Main",constructor.make());
         profile.setDirectory(MC_DIR);
         Saver saver = new Saver(new File(MC_DIR,"launcher.properties"));
@@ -76,6 +76,8 @@ public class Main extends Application {
 
     public static SUpdate getUpdater()
     {
+        if(!MC_DIR.exists())
+            MC_DIR.mkdir();
         SUpdate su = new SUpdate("http://imerir-launcher.livehost.fr/bootstarp",MC_DIR);
         su.getServerRequester().setRewriteEnabled(true);
         return su;
