@@ -74,12 +74,13 @@ public class Main extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                Platform.exit();
                 try {
-                    Thread.sleep(5000);
+                    p.waitFor();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Platform.exit();
                 System.exit(0);
             }
         }).start();

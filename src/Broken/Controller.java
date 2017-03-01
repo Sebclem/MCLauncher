@@ -174,7 +174,6 @@ public class Controller {
 
         if(isLogged)
         {
-            userText.setDisable(true);
             userText.setVisible(false);
             passwordField.setVisible(false);
             playButton.setDisable(false);
@@ -226,10 +225,12 @@ public class Controller {
     {
         Platform.runLater(()->{
             passwordField.setDisable(false);
-            userText.setDisable(false);
             userText.setVisible(true);
             passwordField.setVisible(true);
-            playButton.setDisable(true);
+            if(passwordField.textProperty().isEmpty().get())
+                playButton.setDisable(true);
+            else
+                playButton.setDisable(false);
             userLabel.setVisible(true);
             passwordLabel.setVisible(true);
             gridLogged.setVisible(false);
@@ -239,6 +240,7 @@ public class Controller {
             Main.saver.set("uuid","");
             Main.saver.set("name","");
             Main.saver.set("id","");
+            isLogged=false;
         });
     }
 
@@ -309,12 +311,13 @@ public class Controller {
 
 
             } catch (AuthenticationException e) {
-                logger.warn(e.getErrorModel().getCause()+"   "+e.getErrorModel().getError()+"    "+e.getErrorModel().getErrorMessage());
+
                 String serveur;
                 if(Main.saver.get("authType").equals("0"))
                     serveur = "Mojang (Officiel)";
                 else
                     serveur = "Private (Crack)";
+                logger.warn("Authentication Fail : "+e.getErrorModel().getErrorMessage()+" Serveur type: "+serveur);
                 Platform.runLater(()->{
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setHeaderText("Echec d'Authentification!");
@@ -329,8 +332,8 @@ public class Controller {
                     userText.setVisible(true);
                     passwordField.setVisible(true);
                     disconectButton.setDisable(false);
-                    Main.saver.set("accessToken","");
-                    Main.saver.set("clientToken","");
+                    gridLogged.setVisible(false);
+                    disconnect();
                 });
 
             } catch (IOException e) {
@@ -344,7 +347,12 @@ public class Controller {
                     labelBar.setText("Erreur !");
                     alert.showAndWait();
                     grid.setDisable(false);
+                    userLabel.setVisible(true);
+                    passwordLabel.setVisible(true);
+                    userText.setVisible(true);
+                    passwordField.setVisible(true);
                     disconectButton.setDisable(false);
+                    gridLogged.setVisible(false);
                 });
                 grid.setDisable(false);
             } catch (BadServerVersionException |ServerMissingSomethingException e) {
@@ -358,7 +366,12 @@ public class Controller {
                     labelBar.setText("Erreur serveur!");
                     alert.showAndWait();
                     grid.setDisable(false);
+                    userLabel.setVisible(true);
+                    passwordLabel.setVisible(true);
+                    userText.setVisible(true);
+                    passwordField.setVisible(true);
                     disconectButton.setDisable(false);
+                    gridLogged.setVisible(false);
                 });
                 grid.setDisable(false);
 
@@ -373,7 +386,12 @@ public class Controller {
                     labelBar.setText("Erreur serveur!");
                     alert.showAndWait();
                     grid.setDisable(false);
+                    userLabel.setVisible(true);
+                    passwordLabel.setVisible(true);
+                    userText.setVisible(true);
+                    passwordField.setVisible(true);
                     disconectButton.setDisable(false);
+                    gridLogged.setVisible(false);
                 });
                 grid.setDisable(false);
             } catch (BadServerResponseException e) {
@@ -387,7 +405,12 @@ public class Controller {
                     labelBar.setText("Erreur serveur!");
                     alert.showAndWait();
                     grid.setDisable(false);
+                    userLabel.setVisible(true);
+                    passwordLabel.setVisible(true);
+                    userText.setVisible(true);
+                    passwordField.setVisible(true);
                     disconectButton.setDisable(false);
+                    gridLogged.setVisible(false);
                 });
                 grid.setDisable(false);
             }
