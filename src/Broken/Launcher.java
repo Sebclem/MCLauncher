@@ -18,6 +18,8 @@ import fr.theshark34.supdate.exception.BadServerResponseException;
 import fr.theshark34.supdate.exception.BadServerVersionException;
 import fr.theshark34.supdate.exception.ServerDisabledException;
 import fr.theshark34.supdate.exception.ServerMissingSomethingException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import javax.swing.plaf.synth.SynthTextAreaUI;
@@ -32,6 +34,7 @@ public class Launcher {
     public static final GameVersion MC_VERSION = new GameVersion("1.7.10", GameType.V1_7_10);
     public static final GameInfos MC_INFOS = new GameInfos("Imerir",MC_VERSION,new GameTweak[]{GameTweak.FORGE});
     public static final File MC_DIR = MC_INFOS.getGameDir();
+    static Logger logger = LogManager.getLogger();
 
     public static Account auth(String user, String password, boolean isLogged, Account account) throws AuthenticationException {
         Authenticator authenticator;
@@ -67,9 +70,14 @@ public class Launcher {
     }
 
     public static void lauch(Account account) throws LaunchException {
+
         AuthInfos authInfos = new AuthInfos(account.getDisplayName(),account.getAccessToken(),account.getUserId());
         InternalLaunchProfile profile = MinecraftLauncher.createInternalProfile(MC_INFOS,GameFolder.BASIC,authInfos);
         InternalLauncher launcher = new InternalLauncher(profile);
+        logger.info("End of launcher logs, Launching Game...\n\n\n\n");
+        logger.info("/******************************************************************/");
+        logger.info("/**************************Minecraft Logs**************************/");
+        logger.info("/******************************************************************/");
 
         launcher.launch();
 
@@ -81,9 +89,9 @@ public class Launcher {
     private static Account refreshAccount(Account account,Authenticator authenticator) throws AuthenticationException {
         try {
             authenticator.validate(account.getAccessToken());
-            System.out.println("Account validation success!");
+            logger.info("Account validation success!");
         } catch (AuthenticationException e) {
-            System.out.println("Validation fail, refresh account...");
+            logger.warn("Validation fail, refresh account...");
             RefreshResponse refreshR = authenticator.refresh(account.getAccessToken(),account.getClientToken());
             account.setAccessToken(refreshR.getAccessToken());
             Main.saver.set("accessToken",refreshR.getAccessToken());

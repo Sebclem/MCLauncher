@@ -10,6 +10,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import java.awt.*;
 import java.io.IOException;
@@ -72,6 +75,7 @@ public class OptionController {
     static String ramMin;
     static String authType;
     boolean edited=false;
+    Logger logger = LogManager.getLogger();
 
     @FXML
     void initialize() {
@@ -205,10 +209,8 @@ public class OptionController {
             public void handle(MouseEvent event) {
                 try {
                     Desktop.getDesktop().browse(new URI("http://seb6596.freeboxos.fr/register"));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
+                } catch (IOException | URISyntaxException e1) {
+                    logger.catching(e1);
                 }
             }
         });

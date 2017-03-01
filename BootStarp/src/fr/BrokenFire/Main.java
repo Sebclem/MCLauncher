@@ -21,7 +21,10 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import fr.theshark34.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Main extends Application {
@@ -50,10 +53,8 @@ public class Main extends Application {
     }
 
     public static void launchB() throws LaunchException, InterruptedException {
-        System.out.println("test");
         ClasspathConstructor constructor = new ClasspathConstructor();
-        ExploredDirectory gamedir = Explorer.dir(MC_DIR);
-        constructor.add(new File(MC_DIR,"Launcher.jar"));
+        constructor.add(new File(MC_DIR,"launcher.jar"));
         ExternalLaunchProfile profile = new ExternalLaunchProfile("Broken.Main",constructor.make());
         profile.setDirectory(MC_DIR);
         Saver saver = new Saver(new File(MC_DIR,"launcher.properties"));
@@ -70,8 +71,19 @@ public class Main extends Application {
         ExternalLauncher externalLauncher = new ExternalLauncher(profile);
 
         Process p = externalLauncher.launch();
-        Platform.exit();
-        System.exit(0);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.exit();
+                System.exit(0);
+            }
+        }).start();
+
     }
 
     public static SUpdate getUpdater()
@@ -82,4 +94,5 @@ public class Main extends Application {
         su.getServerRequester().setRewriteEnabled(true);
         return su;
     }
+
 }

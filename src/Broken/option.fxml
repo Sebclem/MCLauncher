@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
@@ -58,18 +59,21 @@
                   </VBox>
                </children>
                <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" top="10.0" />
+                  <Insets bottom="9.0" left="10.0" top="10.0" />
                </VBox.margin>
             </HBox>
-            <Line startX="400.0" />
-            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="386.0">
+            <Line startX="400.0" strokeWidth="2.0">
+               <effect>
+                  <DropShadow />
+               </effect></Line>
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="386.0">
                <children>
                   <Label prefHeight="38.0" prefWidth="270.0" text="Authentification:" wrapText="true">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
                   </Label>
-                  <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="316.0" spacing="10.0">
+                  <VBox alignment="CENTER_LEFT" prefWidth="316.0" spacing="10.0">
                      <children>
                         <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="35.0">
                            <children>
@@ -93,10 +97,13 @@
                   </VBox>
                </children>
                <VBox.margin>
-                  <Insets left="10.0" />
+                  <Insets bottom="22.0" left="10.0" top="22.0" />
                </VBox.margin>
             </HBox>
-            <Line startX="400.0" />
+            <Line startX="400.0" strokeWidth="2.0">
+               <effect>
+                  <DropShadow />
+               </effect></Line>
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
                   <Button fx:id="confirmer" mnemonicParsing="false" text="Confirmer" />
@@ -106,7 +113,7 @@
                   <Insets right="10.0" />
                </padding>
                <VBox.margin>
-                  <Insets top="5.0" />
+                  <Insets top="7.0" />
                </VBox.margin>
             </HBox>
          </children>

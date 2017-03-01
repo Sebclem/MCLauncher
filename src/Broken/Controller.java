@@ -2,7 +2,6 @@ package Broken;
 
 import Broken.Utils.Account;
 import Broken.Utils.LoadingSaveException;
-import com.sun.org.apache.bcel.internal.generic.LADD;
 import fr.theshark34.openauth.AuthenticationException;
 import fr.theshark34.openlauncherlib.LaunchException;
 import fr.theshark34.supdate.BarAPI;
@@ -12,8 +11,6 @@ import fr.theshark34.supdate.exception.BadServerVersionException;
 import fr.theshark34.supdate.exception.ServerDisabledException;
 import fr.theshark34.supdate.exception.ServerMissingSomethingException;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,25 +25,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.sql.Time;
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.ResourceBundle;
-import java.util.Stack;
 
 public class Controller {
 
@@ -113,16 +102,19 @@ public class Controller {
     public static Scene dialogScene;
     Account account;
     boolean isLogged= false;
+    Logger logger = LogManager.getLogger(Launcher.class);
+
 
 
     @FXML
     void initialize() throws MalformedURLException {
         OptionController.checkConfig();
+
         try {
             account = Launcher.getSavedAcount();
             isLogged = true;
         } catch (LoadingSaveException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             isLogged = false;
         }
 
@@ -168,12 +160,14 @@ public class Controller {
                     final Stage dialog = new Stage();
                     dialog.initModality(Modality.APPLICATION_MODAL);
                     dialog.initOwner(Main.getPrimaryStage());
+                    dialog.setTitle("Option");
+                    dialog.getIcons().add(new Image(getClass().getResourceAsStream("Resources/settingsIcon.png")));
                     dialogScene = new Scene(popup, 390, 247);
                     dialog.setScene(dialogScene);
                     dialog.setResizable(false);
                     dialog.show();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.catching(e);
                 }
             }
         });
@@ -207,7 +201,7 @@ public class Controller {
                 faceImg.setImage(image);
                 ins.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.catching(e);
             }
 
         }
@@ -286,7 +280,7 @@ public class Controller {
                             Launcher.lauch(account);
                         }catch (LaunchException e)
                         {
-                            System.out.println(e.getMessage());
+                            logger.error(e.getMessage());
                             Platform.runLater(()->
                             {
                                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -309,13 +303,13 @@ public class Controller {
                     Thread.sleep(5000);
 
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.catching(e);
                 }
                 Platform.runLater(() ->labelBar.getScene().getWindow().hide());
 
 
             } catch (AuthenticationException e) {
-                System.out.println(e.getErrorModel().getCause()+"   "+e.getErrorModel().getError()+"    "+e.getErrorModel().getErrorMessage());
+                logger.warn(e.getErrorModel().getCause()+"   "+e.getErrorModel().getError()+"    "+e.getErrorModel().getErrorMessage());
                 String serveur;
                 if(Main.saver.get("authType").equals("0"))
                     serveur = "Mojang (Officiel)";
@@ -340,7 +334,7 @@ public class Controller {
                 });
 
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.catching(e);
                 Platform.runLater(()->{
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setHeaderText("Erreur !");
@@ -354,7 +348,7 @@ public class Controller {
                 });
                 grid.setDisable(false);
             } catch (BadServerVersionException |ServerMissingSomethingException e) {
-                e.printStackTrace();
+                logger.catching(e);
                 Platform.runLater(()->{
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setHeaderText("Erreur Serveur!");
@@ -369,7 +363,7 @@ public class Controller {
                 grid.setDisable(false);
 
             } catch (ServerDisabledException e) {
-                e.printStackTrace();
+                logger.catching(e);
                 Platform.runLater(()->{
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setHeaderText("Erreur Serveur!");
@@ -383,7 +377,7 @@ public class Controller {
                 });
                 grid.setDisable(false);
             } catch (BadServerResponseException e) {
-                e.printStackTrace();
+                logger.catching(e);
                 Platform.runLater(()->{
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setHeaderText("Erreur Serveur!");
@@ -488,7 +482,7 @@ public class Controller {
                     value = BarAPI.getNumberOfTotalDownloadedBytes() / 1000;
 
                     double pour = (value*100.0) / max;
-                    System.out.println(value/1000 + "M/" + max/1000 + "M -> " +myFormatter.format(pour));
+                    logger.debug(value/1000 + "M/" + max/1000 + "M -> " +myFormatter.format(pour));
                     Platform.runLater(() -> {
                         progressBar.setProgress(pour/100.0);
                         leftLabelBar.setText(value/1000 + "MB / " + max/1000 + "MB");

@@ -9,6 +9,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
@@ -16,13 +18,16 @@ public class Main extends Application {
     public static Saver saver = new Saver(new File(Launcher.MC_DIR,"launcher.properties"));
     private static Stage primaryStageS;
     public static Controller controller;
+    Logger logger = LogManager.getLogger();
     @Override
     public void start(Stage primaryStage) throws Exception{
         if(!Launcher.MC_DIR.exists())
         {
             Launcher.MC_DIR.mkdir();
         }
-
+        logger.info("/*****************************************************************/");
+        logger.info("/**************************Launcher Logs**************************/");
+        logger.info("/*****************************************************************/");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("mainPage.fxml"));
         Parent root = (Parent) loader.load();
         controller = loader.getController();
