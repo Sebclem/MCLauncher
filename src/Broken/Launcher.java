@@ -34,6 +34,8 @@ public class Launcher {
     public static final GameVersion MC_VERSION = new GameVersion("1.7.10", GameType.V1_7_10);
     public static final GameInfos MC_INFOS = new GameInfos("Imerir",MC_VERSION,new GameTweak[]{GameTweak.FORGE});
     public static final File MC_DIR = MC_INFOS.getGameDir();
+    public static final String crackAuthURL = "http://minecraft-imerir.ovh/openauth/";
+    public static final String majURL = "http://minecraft-imerir.ovh/game/";
     static Logger logger = LogManager.getLogger();
 
     public static Account auth(String user, String password, boolean isLogged, Account account) throws AuthenticationException {
@@ -41,7 +43,7 @@ public class Launcher {
         if (Main.saver.get("authType").equals("0"))
             authenticator = new Authenticator(Authenticator.MOJANG_AUTH_URL, AuthPoints.NORMAL_AUTH_POINTS);
         else
-            authenticator = new Authenticator("http://seb6596.freeboxos.fr/", AuthPoints.NORMAL_AUTH_POINTS);
+            authenticator = new Authenticator(crackAuthURL, AuthPoints.NORMAL_AUTH_POINTS);
         AuthResponse authResponse;
         if(!isLogged)
         {
@@ -61,7 +63,7 @@ public class Launcher {
             return refreshAccount(account,authenticator);
     }
     public static SUpdate update() throws BadServerResponseException, IOException, BadServerVersionException, ServerDisabledException, ServerMissingSomethingException {
-        SUpdate su = new SUpdate("http://imerir-launcher.livehost.fr/",MC_DIR);
+        SUpdate su = new SUpdate(majURL, MC_DIR);
         su.getServerRequester().setRewriteEnabled(true);
         su.addApplication(new FileDeleter());
         return su;

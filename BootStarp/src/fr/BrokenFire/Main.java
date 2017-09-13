@@ -31,6 +31,7 @@ public class Main extends Application {
 
 
     static File MC_DIR = GameDirGenerator.createGameDir("Imerir");
+    static String UPDATE_URL = "http://minecraft-imerir.ovh/bootstrap/";
 
 
     @Override
@@ -91,7 +92,7 @@ public class Main extends Application {
     {
         if(!MC_DIR.exists())
             MC_DIR.mkdir();
-        SUpdate su = new SUpdate("http://imerir-launcher.livehost.fr/bootstarp",MC_DIR);
+        SUpdate su = new SUpdate(UPDATE_URL, MC_DIR);
         su.getServerRequester().setRewriteEnabled(true);
         return su;
     }
