@@ -31,7 +31,7 @@ import java.io.IOException;
  */
 
 public class Launcher {
-    public static final GameVersion MC_VERSION = new GameVersion("1.7.10", GameType.V1_7_10);
+    public static final GameVersion MC_VERSION = new GameVersion("1.12", GameType.V1_8_HIGHER);
     public static final GameInfos MC_INFOS = new GameInfos("Imerir",MC_VERSION,new GameTweak[]{GameTweak.FORGE});
     public static final File MC_DIR = MC_INFOS.getGameDir();
     public static final String crackAuthURL = "http://minecraft-imerir.ovh/openauth/";
