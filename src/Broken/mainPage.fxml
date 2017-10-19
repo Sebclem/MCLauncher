@@ -53,7 +53,7 @@
                                     <DropShadow color="#6b59d0" height="25.0" radius="12.0" width="25.0" />
                                  </effect>
                               </Label>
-                              <ImageView fx:id="faceImg" fitHeight="98.0" fitWidth="98.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="faceImg" fitHeight="128" fitWidth="128" pickOnBounds="true" preserveRatio="true">
                                  <effect>
                                     <DropShadow color="#6b59d0" height="35.0" radius="17.0" width="35.0" />
                                  </effect></ImageView>
