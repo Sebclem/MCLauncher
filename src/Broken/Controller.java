@@ -187,11 +187,8 @@ public class Controller {
 
             // And as before now you can use URL and URLConnection
             String httpsURL ;
-            if(Main.saver.get("authType").equals("0"))
-                httpsURL = "http://avatar.yourminecraftservers.com/avatar/trnsp/steve/classic/128/"+Main.saver.get("name")+".png";
+            httpsURL = "http://avatar.yourminecraftservers.com/avatar/trnsp/steve/classic/128/"+Main.saver.get("name")+".png";
 //                httpsURL = "https://mc-heads.net/avatar/"+Main.saver.get("uuid")+"/98";
-            else
-                httpsURL = "https://mc-heads.net/avatar/8667ba71-b85a-4004-af54-457a9734eed7/98";
             URL myurl = new URL(httpsURL);
             HttpURLConnection con = null;
             try {

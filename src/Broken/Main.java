@@ -25,14 +25,21 @@ public class Main extends Application {
         {
             Launcher.MC_DIR.mkdir();
         }
+        int screenCorecter = 0;
+        String os = System.getProperty("os.name");
+
+        if(os.toLowerCase().contains("linux"))
+            screenCorecter = 10;
         logger.info("/*****************************************************************/");
         logger.info("/**************************Launcher Logs**************************/");
         logger.info("/*****************************************************************/");
+        logger.info("OS: "+os);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("mainPage.fxml"));
         Parent root = (Parent) loader.load();
         controller = loader.getController();
         primaryStage.setTitle("Minecraft IMERIR Launcher");
-        primaryStage.setScene(new Scene(root, 1014, 595));
+
+        primaryStage.setScene(new Scene(root, 1014, 595+screenCorecter));
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(e -> {
             Controller.dlListenner.interrupt();
