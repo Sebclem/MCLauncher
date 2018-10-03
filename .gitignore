@@ -8,7 +8,6 @@ out/
 *.iml
 *.uml
 .gradle/
-gradle/
 
 BootStarp/.idea/
 BootStarp/config/

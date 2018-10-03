@@ -13,10 +13,9 @@ buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
+
     }
 }
-
-
 
 
 plugins {
@@ -28,9 +27,17 @@ plugins {
     id 'idea'
 }
 
+def versionObj = new Version(major: 0, minor: 1, revision: 0)
+
+archivesBaseName = "BrokenDiscordBot"
+version = "$versionObj"
+
+
+apply plugin: 'javafx-gradle-plugin'
+
 // Define the main class for the application
 mainClassName = 'App'
-apply plugin: 'javafx-gradle-plugin'
+
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
@@ -48,11 +55,13 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-// In this section you declare where to find the dependencies of your project
 repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
     jcenter()
+}
+
+
+jar.doFirst {
+    delete "${buildDir}/libs/*"
 }
 
 jar {
@@ -62,4 +71,21 @@ jar {
         )
     }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    delete "${buildDir}/libs/*"
+    baseName = 'MCLauncher'
 }
+
+
+class Version {
+    String major, minor, revision
+
+    static String getBuild() {
+        System.getenv("BUILD_NUMBER") ?: System.getProperty("BUILD_NUMBER") ?:
+                System.getenv("GIT_COMMIT")?.substring(0, 7) ?: System.getProperty("GIT_COMMIT")?.substring(0, 7) ?:"DEV"
+    }
+
+    String toString() {
+        "${major}.${minor}.${revision}_$build"
+    }
+}
+
