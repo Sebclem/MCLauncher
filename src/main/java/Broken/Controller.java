@@ -106,7 +106,6 @@ public class Controller {
 
     @FXML
     void initialize() throws MalformedURLException {
-//        OptionController.checkConfig();
         saveUtils = SaveUtils.getINSTANCE();
 
         try {
@@ -131,22 +130,14 @@ public class Controller {
             playButton.setDisable(newValue.trim().isEmpty() || userText.textProperty().isEmpty().get());
 
         });
-        passwordField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    new LaunchThread().start();
-                }
-            }
-        });
-
-
-        playButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+        passwordField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
                 new LaunchThread().start();
             }
         });
+
+
+        playButton.setOnMouseClicked(event -> new LaunchThread().start());
 
 
         optionButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -182,7 +173,6 @@ public class Controller {
 
             // And as before now you can use URL and URLConnection
             String httpsURL ;
-//            httpsURL = "http://avatar.yourminecraftservers.com/avatar/trnsp/steve/classic/128/"+account.getDisplayName()+".png";
             httpsURL = "https://mc-heads.net/head/" + account.getUUID()+"/98.png";
             URL myurl = new URL(httpsURL);
             HttpURLConnection con = null;

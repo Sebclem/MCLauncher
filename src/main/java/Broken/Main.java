@@ -49,10 +49,7 @@ public class Main extends Application {
 
         primaryStage.setScene(new Scene(root, 1014, 595+screenCorecter));
         primaryStage.setResizable(false);
-        primaryStage.setOnCloseRequest(e -> {
-
-            Platform.exit();
-        });
+        primaryStage.setOnCloseRequest(e -> Platform.exit());
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/minecraftLogo.png")));
         primaryStageS=primaryStage;
 
@@ -65,7 +62,7 @@ public class Main extends Application {
     }
 
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) {
         launch(args);
 
         System.exit(0);
