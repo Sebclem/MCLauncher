@@ -17,6 +17,7 @@ plugins {
 
 // Define the main class for the application
 mainClassName = 'App'
+apply plugin: 'javafx-gradle-plugin'
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
