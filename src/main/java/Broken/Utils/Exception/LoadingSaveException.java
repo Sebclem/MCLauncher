@@ -1,4 +1,4 @@
-package Broken.Utils;
+package Broken.Utils.Exception;
 
 /**
  * Created by Seb on 22/02/2017.

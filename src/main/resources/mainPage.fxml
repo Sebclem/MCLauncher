@@ -20,12 +20,12 @@
                <children>
                   <ImageView fitHeight="576.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@Resources/imerir_logo.jpg" />
+                        <Image url="@imerir_logo.jpg" />
                      </image>
                   </ImageView>
                   <ImageView fitHeight="149.0" fitWidth="383.0" pickOnBounds="true" preserveRatio="true" translateY="-230.0">
                      <image>
-                        <Image url="@Resources/minecrafter.png" />
+                        <Image url="@minecrafter.png" />
                      </image>
                      <effect>
                         <DropShadow />
