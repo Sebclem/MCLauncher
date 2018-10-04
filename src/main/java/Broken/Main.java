@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public class Main extends Application {
 
-    public static String gamePath = "/home/sebastien/test/";
+    public static String gamePath = System.getProperty("user.home") + ".MCLauncher/";
     public static String version = "1.10.2";
 
     private static SaveUtils saveUtils;
