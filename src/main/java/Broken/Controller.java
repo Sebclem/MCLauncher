@@ -107,6 +107,7 @@ public class Controller {
     @FXML
     void initialize() throws MalformedURLException {
         saveUtils = SaveUtils.getINSTANCE();
+        SaveUtils.getINSTANCE().checkConfig();
 
         try {
             account = saveUtils.getAccount();

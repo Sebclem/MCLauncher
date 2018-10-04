@@ -63,6 +63,8 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
+        System.setProperty("user.dir", gamePath);
+
         launch(args);
 
         System.exit(0);
