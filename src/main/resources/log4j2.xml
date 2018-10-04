@@ -6,8 +6,8 @@
             <!--{FATAL=red blink, ERROR=red, WARN=orange, INFO=yellow, DEBUG=green bold, TRACE=blue}-->
         </Console>
 
-        <RollingFile name="RollingFile" fileName="logs/last.log"
-                     filePattern="logs/archives/$${date:yyyy-MM}/Logs-Archive-%d{yyyy-MM-dd-HH}-%i.log.gz">
+        <RollingFile name="RollingFile" fileName="${sys:user.home}/.MCLauncher/launcherLog/last.log"
+                     filePattern="${sys:user.home}/.MCLauncher/launcherLog/archives/$${date:yyyy-MM}/Logs-Archive-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout>
                 <Pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger{1}] %msg%n</Pattern>
             </PatternLayout>
