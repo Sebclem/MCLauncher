@@ -289,7 +289,8 @@ public class Controller {
 
                 });
 
-//                threadLaunch.start();
+                threadLaunch.start();
+
 
                 try {
                     Thread.sleep(10000);
