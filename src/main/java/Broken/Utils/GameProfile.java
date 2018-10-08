@@ -1,5 +1,6 @@
 package Broken.Utils;
 
+import Broken.Main;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,6 +64,7 @@ public class GameProfile {
         command.add("java");
         command.add("-Djava.library.path=" +  gameDir +sysLibDir);
         command.add("-Dminecraft.client.jar=" + gameDir +"/client.jar");
+        command.add("-Duser.dir="+ Main.gamePath);
 
         command.add("-Xmx" + ram);
 
