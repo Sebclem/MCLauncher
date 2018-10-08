@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -119,8 +120,12 @@ public class GameProfile {
     public void launch() throws IOException, InterruptedException {
         List<String> commandList = buildCommand();
         Runtime re = Runtime.getRuntime();
+        ProcessBuilder builder = new ProcessBuilder();
+        builder.directory(new File(Main.gamePath));
+        builder.command(commandList);
+
         //final Process command = re.exec(cmdString, args.toArray(new String[0]));
-        Process command = re.exec(commandList.toArray(new String[0]));
+        Process command = builder.start();
 //        this.error = new BufferedReader(new InputStreamReader(command.getErrorStream()));
 //        this.op = new BufferedReader(new InputStreamReader(command.getInputStream()));
         // Wait for the application to Finish
