@@ -106,6 +106,7 @@
                </effect></Line>
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
+                  <Button fx:id="forceDownload" mnemonicParsing="false" text="Force Download" />
                   <Button fx:id="confirmer" mnemonicParsing="false" text="Confirmer" />
                   <Button fx:id="annuler" mnemonicParsing="false" text="Annuler" />
                </children>

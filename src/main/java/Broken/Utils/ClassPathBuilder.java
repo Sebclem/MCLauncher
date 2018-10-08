@@ -16,7 +16,7 @@ public class ClassPathBuilder {
     }
 
     public String build(){
-        File filePath = new File(path + "lib/");
+        File filePath = new File(path + "libraries/");
         Collection<File> files = FileUtils.listFiles(filePath, new String[]{"jar"}, true);
         String seperator;
         if(OsIdentifer.isLinux() || OsIdentifer.isMac()){

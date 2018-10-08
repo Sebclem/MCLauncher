@@ -237,9 +237,20 @@ public class Controller {
                     throw new TokenRefreshException();
                 }
 
-                VaniaGameInstaller vaniaGameInstaller = new VaniaGameInstaller();
-                vaniaGameInstaller.addObserver(new DlListenner());
-                vaniaGameInstaller.installGame(Main.gamePath, Main.version);
+                Platform.runLater(() -> {
+                    progressBar.setProgress(-1);
+                    leftLabelBar.setText("");
+                    rightLabelBar.setText("");
+                    leftLabelBar.setText("");
+                    dlSpeed.setText("");
+                    labelBar.setText("Checking game files...");
+
+                });
+
+                FullGameInstaller gameInstaller = new FullGameInstaller();
+                gameInstaller.init(Main.gamePath);
+                gameInstaller.addObserver(new DlListenner());
+                gameInstaller.download(Main.gamePath, Main.version);
                 String cassPath = new ClassPathBuilder(Main.gamePath).build();
 
                 GameProfile gameProfile = new GameProfile(account, saveUtils.get("ramMax"), saveUtils.get("assetId"), Main.gamePath, Main.version, cassPath , GameProfile.MainClass.FORGE, saveUtils.get("logConfigPath") );
@@ -256,35 +267,32 @@ public class Controller {
 
                 });
 
-                Thread threadLaunch=new Thread(){
-                    @Override
-                    public void run(){
+                Thread threadLaunch= new Thread(() -> {
 
-                        try{
-                            gameProfile.launch();
-                        }catch (IOException | InterruptedException e)
+                    try{
+                        gameProfile.launch();
+                    }catch (IOException | InterruptedException e)
+                    {
+                        logger.error(e.getMessage());
+                        Platform.runLater(()->
                         {
-                            logger.error(e.getMessage());
-                            Platform.runLater(()->
-                            {
-                                Alert alert = new Alert(Alert.AlertType.WARNING);
-                                alert.setHeaderText("Echec de lancement!");
-                                alert.setContentText("Echec lors du lancement du jeu:\n"+e.getMessage());
-                                alert.setTitle("Erreur");
-                                progressBar.setProgress(0);
-                                labelBar.setText("Echec de lancement du jeu!");
-                                alert.showAndWait();
-                                grid.setDisable(false);
-                            });
-                        }
-
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setHeaderText("Echec de lancement!");
+                            alert.setContentText("Echec lors du lancement du jeu:\n"+e.getMessage());
+                            alert.setTitle("Erreur");
+                            progressBar.setProgress(0);
+                            labelBar.setText("Echec de lancement du jeu!");
+                            alert.showAndWait();
+                            grid.setDisable(false);
+                        });
                     }
-                };
 
-                threadLaunch.start();
+                });
+
+//                threadLaunch.start();
 
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(10000);
 
                 } catch (InterruptedException e) {
                     logger.catching(e);
@@ -393,65 +401,7 @@ public class Controller {
                     disconnect();
                 });
             }
-//            } catch (BadServerVersionException |ServerMissingSomethingException e) {
-//                logger.catching(e);
-//                Platform.runLater(()->{
-//                    Alert alert = new Alert(Alert.AlertType.WARNING);
-//                    alert.setHeaderText("Erreur Serveur!");
-//                    alert.setContentText("Ereur Serveur: "+e.getMessage());
-//                    alert.setTitle("Erreur");
-//                    progressBar.setProgress(0);
-//                    labelBar.setText("Erreur serveur!");
-//                    alert.showAndWait();
-//                    grid.setDisable(false);
-//                    userLabel.setVisible(true);
-//                    passwordLabel.setVisible(true);
-//                    userText.setVisible(true);
-//                    passwordField.setVisible(true);
-//                    disconectButton.setDisable(false);
-//                    gridLogged.setVisible(false);
-//                });
-//                grid.setDisable(false);
-//
-//            } catch (ServerDisabledException e) {
-//                logger.catching(e);
-//                Platform.runLater(()->{
-//                    Alert alert = new Alert(Alert.AlertType.WARNING);
-//                    alert.setHeaderText("Erreur Serveur!");
-//                    alert.setContentText("Le serveur de mise à jour est désactivé.");
-//                    alert.setTitle("Erreur");
-//                    progressBar.setProgress(0);
-//                    labelBar.setText("Erreur serveur!");
-//                    alert.showAndWait();
-//                    grid.setDisable(false);
-//                    userLabel.setVisible(true);
-//                    passwordLabel.setVisible(true);
-//                    userText.setVisible(true);
-//                    passwordField.setVisible(true);
-//                    disconectButton.setDisable(false);
-//                    gridLogged.setVisible(false);
-//                });
-//                grid.setDisable(false);
-//            } catch (BadServerResponseException e) {
-//                logger.catching(e);
-//                Platform.runLater(()->{
-//                    Alert alert = new Alert(Alert.AlertType.WARNING);
-//                    alert.setHeaderText("Erreur Serveur!");
-//                    alert.setContentText("Mauvaise reponsse du serveur: \n"+e.getMessage());
-//                    alert.setTitle("Erreur");
-//                    progressBar.setProgress(0);
-//                    labelBar.setText("Erreur serveur!");
-//                    alert.showAndWait();
-//                    grid.setDisable(false);
-//                    userLabel.setVisible(true);
-//                    passwordLabel.setVisible(true);
-//                    userText.setVisible(true);
-//                    passwordField.setVisible(true);
-//                    disconectButton.setDisable(false);
-//                    gridLogged.setVisible(false);
-//                });
-//                grid.setDisable(false);
-//            }
+
         }
     }
 
@@ -518,7 +468,7 @@ public class Controller {
 
         @Override
         public void update(Observable observable, Object o) {
-            VaniaGameInstaller installer = (VaniaGameInstaller) observable;
+            FullGameInstaller installer = (FullGameInstaller) observable;
 
             DecimalFormat myFormatter = new DecimalFormat("##0.00");
 

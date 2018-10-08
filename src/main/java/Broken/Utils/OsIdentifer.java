@@ -20,4 +20,14 @@ public class OsIdentifer {
         return (OS.contains("nix") || OS.contains("nux") || OS.indexOf("aix") > 0 );
 
     }
+
+
+    public static String getInstallPath(){
+        if(isLinux() || isMac()){
+            return System.getProperty("user.home") + "/.MCLauncher/";
+        }
+        else{
+            return System.getenv("APPDATA") + "/.MCLauncher/";
+        }
+    }
 }

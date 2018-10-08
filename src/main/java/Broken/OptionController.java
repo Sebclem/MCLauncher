@@ -1,6 +1,7 @@
 package Broken;
 
 import Broken.Utils.SaveUtils;
+import Broken.Utils.VaniaGameInstaller;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -70,6 +71,10 @@ public class OptionController {
     private Button annuler;
 
     @FXML
+    private Button forceDownload;
+
+
+    @FXML
     private HBox authBox;
 
     private static String ramType;
@@ -107,6 +112,14 @@ public class OptionController {
 
         predefRam.getItems().addAll("1G","2G","3G","4G","5G","6G","7G","8G");
 
+        if(!new VaniaGameInstaller().checkInstall()){
+            forceDownload.setDisable(true);
+        }
+
+        forceDownload.setOnMouseClicked(event -> {
+            SaveUtils.getINSTANCE().save("install", "false");
+            forceDownload.setDisable(true);
+        });
 
 
         maxRam.textProperty().addListener((observable, oldValue, newValue) -> ramMax = newValue);

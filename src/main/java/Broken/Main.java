@@ -17,8 +17,9 @@ import java.io.IOException;
 
 public class Main extends Application {
 
-    public static String gamePath = System.getProperty("user.home") + "/.MCLauncher/";
+    public static String gamePath = OsIdentifer.getInstallPath();
     public static String version = "1.10.2";
+
 
     private static SaveUtils saveUtils;
     private static Stage primaryStageS;
@@ -39,6 +40,7 @@ public class Main extends Application {
         logger.info("/**************************Launcher Logs**************************/");
         logger.info("/*****************************************************************/");
         logger.info("OS: "+os);
+        logger.info("Install path: " + gamePath);
         saveUtils = SaveUtils.getINSTANCE(gamePath + "launcher.properties");
 
         FXMLLoader loader = new FXMLLoader();

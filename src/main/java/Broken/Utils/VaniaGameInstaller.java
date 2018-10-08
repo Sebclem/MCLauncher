@@ -20,7 +20,7 @@ public class VaniaGameInstaller extends Observable {
     private Logger logger = LogManager.getLogger();
     private String manifestUrl = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
     private String resourcesURL = "http://resources.download.minecraft.net/";
-    public static String libSubFolder = "lib/";
+    public static String libSubFolder = "libraries/";
     public static String sysLibSubFolder = "sysLib/";
 
     public long totalSize = 0;
@@ -139,22 +139,16 @@ public class VaniaGameInstaller extends Observable {
 
     public void installGame(String installPath, String version) throws IOException, InterruptedException, DownloadFailException {
 
-        if (!checkInstall()) {
-            logger.info("Need Install!");
-            Game game = getGame(version);
-            totalSize = getTotalSize(game);
-            logger.info("Size to download: " + totalSize / 1024 + "KB");
+        Game game = getGame(version);
+        logger.info("Size to download: " + totalSize / 1024 + "KB");
 
-            downloadGame(installPath, game);
-            assetsDownloader(installPath + "assets/", game);
-            getLogConfig(installPath + "assets/log_configs/", game);
-            SaveUtils.getINSTANCE().save("assetId", game.assetIndex.id);
-            SaveUtils.getINSTANCE().save("mainClass", game.mainClass);
-            SaveUtils.getINSTANCE().save("install", "true");
-            SaveUtils.getINSTANCE().save("logConfigPath", installPath + "assets/log_configs/" +game.logging.client.file.id);
-        }
-        else
-            logger.info("Install Ok");
+        downloadGame(installPath, game);
+        assetsDownloader(installPath + "assets/", game);
+        getLogConfig(installPath + "assets/log_configs/", game);
+        SaveUtils.getINSTANCE().save("assetId", game.assetIndex.id);
+        SaveUtils.getINSTANCE().save("mainClass", game.mainClass);
+        SaveUtils.getINSTANCE().save("install", "true");
+        SaveUtils.getINSTANCE().save("logConfigPath", installPath + "assets/log_configs/" + game.logging.client.file.id);
 
 
     }
@@ -197,12 +191,13 @@ public class VaniaGameInstaller extends Observable {
     }
 
 
-    private boolean checkInstall() {
+    public boolean checkInstall() {
         return SaveUtils.getINSTANCE().get("install") != null && SaveUtils.getINSTANCE().get("install").equals("true");
     }
 
 
     private long getTotalSize(Game game) {
+
         totalSize = game.assetIndex.totalSize;
         for (Game.Libraries lib : game.libraries) {
             if (lib.downloads.classifiers == null) {
@@ -224,6 +219,11 @@ public class VaniaGameInstaller extends Observable {
             }
         }
         return totalSize;
+    }
+
+    public long getTotalSize(String version) throws IOException {
+        Game game = getGame(version);
+        return getTotalSize(game);
     }
 
     private void getLogConfig(String path, Game game) throws InterruptedException, DownloadFailException, MalformedURLException {
