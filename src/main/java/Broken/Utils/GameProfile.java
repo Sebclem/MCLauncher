@@ -121,10 +121,18 @@ public class GameProfile {
         Runtime re = Runtime.getRuntime();
         //final Process command = re.exec(cmdString, args.toArray(new String[0]));
         Process command = re.exec(commandList.toArray(new String[0]));
-        this.error = new BufferedReader(new InputStreamReader(command.getErrorStream()));
-        this.op = new BufferedReader(new InputStreamReader(command.getInputStream()));
+//        this.error = new BufferedReader(new InputStreamReader(command.getErrorStream()));
+//        this.op = new BufferedReader(new InputStreamReader(command.getInputStream()));
         // Wait for the application to Finish
-        command.waitFor();
+        String line;
+        BufferedReader input =
+                new BufferedReader
+                        (new InputStreamReader(command.getInputStream()));
+        while ((line = input.readLine()) != null) {
+            System.out.println(line);
+        }
+        input.close();
+
         this.exitVal = command.exitValue();
         if (this.exitVal != 0) {
             throw new IOException("Failed to execute Minecraft:\n " +getExecutionLog());

@@ -2,6 +2,7 @@ package Broken.Utils;
 
 import Broken.Json.Game;
 import Broken.Json.Manifest;
+import Broken.Main;
 import Broken.Utils.Exception.DownloadFailException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,7 +10,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,6 +56,8 @@ public class VaniaGameInstaller extends Observable {
         } else {
             logger.error("Game Not Found");
         }
+
+
 
         return null;
 
@@ -141,10 +144,11 @@ public class VaniaGameInstaller extends Observable {
 
         Game game = getGame(version);
         logger.info("Size to download: " + totalSize / 1024 + "KB");
+        getLogConfig(installPath + "assets/log_configs/", game);
 
         downloadGame(installPath, game);
         assetsDownloader(installPath + "assets/", game);
-        getLogConfig(installPath + "assets/log_configs/", game);
+
         SaveUtils.getINSTANCE().save("assetId", game.assetIndex.id);
         SaveUtils.getINSTANCE().save("mainClass", game.mainClass);
         SaveUtils.getINSTANCE().save("install", "true");
@@ -223,6 +227,7 @@ public class VaniaGameInstaller extends Observable {
 
     public long getTotalSize(String version) throws IOException {
         Game game = getGame(version);
+
         return getTotalSize(game);
     }
 
@@ -234,6 +239,33 @@ public class VaniaGameInstaller extends Observable {
         }
         if (downloader.getStatus() != Downloader.COMPLETE)
             throw new DownloadFailException();
+        editLogs(path + game.logging.client.file.id);
+    }
+
+
+    public void editLogs(String path){
+        try
+        {
+            File file = new File(path);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+            StringBuilder oldtext = new StringBuilder();
+            while((line = reader.readLine()) != null)
+            {
+                oldtext.append(line).append("\r\n");
+            }
+            reader.close();
+            // replace a word in a file
+            String newText = oldtext.toString().replaceAll("logs/", Main.gamePath.replaceAll( "\\\\", "/") + "log/");
+
+
+            FileWriter writer = new FileWriter(path);
+            writer.write(newText);writer.close();
+        }
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
     }
 
 

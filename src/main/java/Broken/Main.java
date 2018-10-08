@@ -55,6 +55,7 @@ public class Main extends Application {
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/minecraftLogo.png")));
         primaryStageS=primaryStage;
 
+
         primaryStage.show();
 
     }
@@ -69,7 +70,7 @@ public class Main extends Application {
 
         launch(args);
 
-        System.exit(0);
+//        System.exit(0);
 
 
     }
