@@ -84,6 +84,8 @@ public class CustomDownloader extends Observable{
     private void modsDeleter(String path){
 
         File filePath = new File(path + "/mods");
+        if(!filePath.exists())
+            return;
         Collection<File> files = FileUtils.listFiles(filePath, new String[]{"jar"}, false);
         for(File file : files){
             boolean found = false;
