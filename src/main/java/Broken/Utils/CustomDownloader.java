@@ -109,7 +109,7 @@ public class CustomDownloader extends Observable{
 
         for(CustomManifestItem item : needDownload){
             logger.debug(item.id);
-            downloader = new Downloader(new URL(customURL + item.path), path + item.path);
+            downloader = new Downloader(new URL(customURL + item.path.replaceAll(" ","%20")), path + item.path);
             downloader.addObserver(new DlObserver());
             while (downloader.getStatus() == Downloader.DOWNLOADING) {
                 Thread.sleep(10);
