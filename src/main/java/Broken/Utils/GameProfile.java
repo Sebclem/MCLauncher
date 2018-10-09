@@ -26,7 +26,7 @@ public class GameProfile {
 
 
     private BufferedReader error;
-    private BufferedReader op;
+    private BufferedReader input;
     private int exitVal;
 
     public enum MainClass{
@@ -126,17 +126,15 @@ public class GameProfile {
 
         //final Process command = re.exec(cmdString, args.toArray(new String[0]));
         Process command = builder.start();
-//        this.error = new BufferedReader(new InputStreamReader(command.getErrorStream()));
-//        this.op = new BufferedReader(new InputStreamReader(command.getInputStream()));
+        this.error = new BufferedReader(new InputStreamReader(command.getErrorStream()));
+        this.input = new BufferedReader(new InputStreamReader(command.getInputStream()));
         // Wait for the application to Finish
         String line;
-        BufferedReader input =
-                new BufferedReader
-                        (new InputStreamReader(command.getInputStream()));
-        while ((line = input.readLine()) != null) {
+
+        while ((line = this.input.readLine()) != null) {
             System.out.println(line);
         }
-        input.close();
+        this.input.close();
 
         this.exitVal = command.exitValue();
         if (this.exitVal != 0) {
@@ -156,14 +154,14 @@ public class GameProfile {
         }
         String output = "";
         try {
-            while((line = this.op.readLine()) != null) {
+            while((line = this.input.readLine()) != null) {
                 output = output + "\n" + line;
             }
         } catch (final IOException e) {
         }
         try {
             this.error.close();
-            this.op.close();
+            this.input.close();
         } catch (final IOException e) {
         }
         return "exitVal: " + this.exitVal + ", error: " + error + ", output: " + output;
