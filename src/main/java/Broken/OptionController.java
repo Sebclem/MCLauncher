@@ -87,7 +87,7 @@ public class OptionController {
     void initialize() {
         SaveUtils.getINSTANCE().checkConfig();
         getConfig();
-        authBox.setDisable(true);
+//        authBox.setDisable(true);
 
         annuler.setOnMouseClicked(event -> Controller.dialogScene.getWindow().hide());
 
@@ -98,15 +98,15 @@ public class OptionController {
 
             SaveUtils.getINSTANCE().save("ramMax",ramMax);
 //                SaveUtils.getINSTANCE().save("ramMin",ramMin);
-//                SaveUtils.getINSTANCE().save("authType",authType);
-//                SaveUtils.getINSTANCE().save("accessToken","");
-//                SaveUtils.getINSTANCE().save("clientToken","");
-//                SaveUtils.getINSTANCE().save("uuid","");
+                SaveUtils.getINSTANCE().save("authType",authType);
+                SaveUtils.getINSTANCE().save("accessToken","");
+                SaveUtils.getINSTANCE().save("clientToken","");
+                SaveUtils.getINSTANCE().save("uuid","");
 //                SaveUtils.getINSTANCE().save("name","");
 //                SaveUtils.getINSTANCE().save("id","");
 
             Controller.dialogScene.getWindow().hide();
-//            Main.controller.disconnect();
+            Main.controller.disconnect();
         });
 
 
@@ -181,7 +181,7 @@ public class OptionController {
 
         buttonRegister.setOnMouseClicked(event -> {
             try {
-                Desktop.getDesktop().browse(new URI("http://seb6596.freeboxos.fr/register"));
+                Desktop.getDesktop().browse(new URI("https://auth.minecraft.seb6596.ovh/register"));
             } catch (IOException | URISyntaxException e1) {
                 logger.catching(e1);
             }

@@ -22,14 +22,15 @@ public class MojanLogin {
 
     private Logger logger = LogManager.getLogger();
     private String mojangAuthServer = "https://authserver.mojang.com/";
+    private String customAuthServer = "https://auth.minecraft.seb6596.ovh/";
 
 
-    public Account login(String username, String password) throws LoginException, IOException {
+    public Account login(String username, String password, boolean official) throws LoginException, IOException {
         logger.debug("Send login info...");
         LoginPost loginPost = new LoginPost(username, password);
         GsonBuilder gsonBuilder = new GsonBuilder();
         String json = gsonBuilder.create().toJson(loginPost);
-        LoginResponse response = postLogin(json);
+        LoginResponse response = postLogin(json, official);
         if(response != null){
 
             Account account = new Account(response.selectedProfile.id,response.selectedProfile.name, response.accessToken, response.clientToken, response.selectedProfile.userId, username);
@@ -40,8 +41,15 @@ public class MojanLogin {
         throw new LoginException("");
     }
 
-    private LoginResponse postLogin(String json) throws LoginException, IOException {
-        HttpResponse response = post(mojangAuthServer +"authenticate", json);
+    private LoginResponse postLogin(String json, boolean official) throws LoginException, IOException {
+        String url;
+        if(official)
+            url = mojangAuthServer;
+        else
+            url = customAuthServer;
+
+
+        HttpResponse response = post(url +"authenticate", json);
 
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -64,12 +72,18 @@ public class MojanLogin {
 
     }
 
-    public Account refreshAccount(Account account) throws IOException {
-        if(validate(account)){
+    public Account refreshAccount(Account account, boolean official) throws IOException {
+        String url;
+        if(official)
+            url = mojangAuthServer;
+        else
+            url = customAuthServer;
+
+        if(validate(account, url)){
             return account;
         }
 
-        return refresh(account);
+        return refresh(account, url);
     }
 
 
@@ -91,20 +105,20 @@ public class MojanLogin {
 
     }
 
-    private boolean validate(Account account) throws IOException {
+    private boolean validate(Account account, String url) throws IOException {
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         String json = gsonBuilder.create().toJson(new ValidatePost(account.getAccessToken(), account.getClientToken()));
-        HttpResponse response = post(mojangAuthServer + "validate", json);
+        HttpResponse response = post(url + "validate", json);
         logger.debug("Token is valid ? " + (response.getStatusLine().getStatusCode() == 204));
         return response.getStatusLine().getStatusCode() == 204;
     }
 
 
-    private Account refresh(Account account) throws IOException {
+    private Account refresh(Account account, String url) throws IOException {
         GsonBuilder gsonBuilder = new GsonBuilder();
         String json = gsonBuilder.create().toJson(new ValidatePost(account.getAccessToken(), account.getClientToken()));
-        HttpResponse response = post(mojangAuthServer + "refresh", json);
+        HttpResponse response = post(url + "refresh", json);
         if(response.getStatusLine().getStatusCode() == 200){
             StringBuilder stringBuilder = new StringBuilder();
             String line = null;

@@ -98,10 +98,10 @@ public class Controller {
     boolean firstTime = true;
     //    public static ThreadSpeed threadSpeed;
     public static Scene dialogScene;
-    Account account;
-    boolean isLogged = false;
-    Logger logger = LogManager.getLogger();
-    SaveUtils saveUtils;
+    private Account account;
+    private boolean isLogged = false;
+    private Logger logger = LogManager.getLogger();
+    private SaveUtils saveUtils;
 
 
     @FXML
@@ -118,7 +118,6 @@ public class Controller {
         }
 
 //        threadSpeed = new ThreadSpeed();
-//        dlListenner = new DlListenner();
         userText.setText(saveUtils.get("username"));
         if (!userText.textProperty().isEmpty().get() && !passwordField.textProperty().isEmpty().get()) {
             playButton.setDisable(false);
@@ -227,11 +226,14 @@ public class Controller {
             });
 
             try {
+
+                boolean official = SaveUtils.getINSTANCE().get("authType").equals("0");
+
                 MojanLogin mojanLogin = new MojanLogin();
                 if (!isLogged)
-                    account = mojanLogin.login(userText.getText(), passwordField.getText());
+                    account = mojanLogin.login(userText.getText(), passwordField.getText(), official);
                 else{
-                    account = mojanLogin.refreshAccount(account);
+                    account = mojanLogin.refreshAccount(account, official);
                 }
                 if(account == null){
                     throw new TokenRefreshException();
