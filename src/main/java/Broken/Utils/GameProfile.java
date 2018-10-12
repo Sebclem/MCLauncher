@@ -69,6 +69,18 @@ public class GameProfile {
 
         command.add("-Xmx" + ram);
 
+        command.add("-XX:+UnlockExperimentalVMOptions");
+        command.add("-XX:+UseG1GC");
+        command.add("-XX:G1NewSizePercent=20");
+        command.add("-XX:G1ReservePercent=20");
+        command.add("-XX:MaxGCPauseMillis=50");
+        command.add("-XX:G1HeapRegionSize=32M");
+
+
+
+
+
+
         command.add("-Dlog4j.configurationFile=" + logProfile);
 
         command.add("-cp");
