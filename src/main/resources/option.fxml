@@ -29,7 +29,7 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="35.0">
                            <children>
-                              <RadioButton fx:id="radioPredef" mnemonicParsing="false" selected="true" text="Prédéfini">
+                              <RadioButton fx:id="radioPredef" mnemonicParsing="false" selected="true" text="%preset">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="ramToogle" />
                                  </toggleGroup>
@@ -39,7 +39,7 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <RadioButton fx:id="radioPerso" mnemonicParsing="false" text="Personnaliser" toggleGroup="$ramToogle" />
+                              <RadioButton fx:id="radioPerso" mnemonicParsing="false" text="%custom" toggleGroup="$ramToogle" />
                               <HBox fx:id="persoHBox" alignment="CENTER_LEFT" disable="true">
                                  <children>
                                     <Label text="Max:">
@@ -68,7 +68,7 @@
                </effect></Line>
             <HBox fx:id="authBox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="386.0">
                <children>
-                  <Label prefHeight="38.0" prefWidth="270.0" text="Authentification:" wrapText="true">
+                  <Label prefHeight="38.0" prefWidth="270.0" text="%authentication" wrapText="true">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -87,7 +87,7 @@
                         <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0">
                            <children>
                               <RadioButton fx:id="radioCrack" mnemonicParsing="false" prefHeight="17.0" prefWidth="64.0" text="Crack" toggleGroup="$authToggle" />
-                              <Button fx:id="buttonRegister" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="Inscription" />
+                              <Button fx:id="buttonRegister" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="%registration" />
                            </children>
                         </HBox>
                      </children>
@@ -106,9 +106,9 @@
                </effect></Line>
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <Button fx:id="forceDownload" mnemonicParsing="false" text="Force Download" />
-                  <Button fx:id="confirmer" mnemonicParsing="false" text="Confirmer" />
-                  <Button fx:id="annuler" mnemonicParsing="false" text="Annuler" />
+                  <Button fx:id="forceDownload" mnemonicParsing="false" text="%forceDl" />
+                  <Button fx:id="confirmer" mnemonicParsing="false" text="%confirm" />
+                  <Button fx:id="annuler" mnemonicParsing="false" text="%cancel" />
                </children>
                <padding>
                   <Insets right="10.0" />

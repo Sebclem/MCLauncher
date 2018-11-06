@@ -14,6 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class Main extends Application {
 
@@ -33,7 +35,7 @@ public class Main extends Application {
         screenCorecter = 0;
         String os = System.getProperty("os.name");
 
-        if(os.toLowerCase().contains("linux"))
+        if(OsIdentifer.isMac() || OsIdentifer.isLinux())
             screenCorecter = 10;
 
         logger.info("/*****************************************************************/");
@@ -45,6 +47,7 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/mainPage.fxml"));
+        loader.setResources(ResourceBundle.getBundle("bundles.MyBundle", Locale.getDefault()));
         Parent root = loader.load();
         controller = loader.getController();
         primaryStage.setTitle("Minecraft IMERIR Launcher");

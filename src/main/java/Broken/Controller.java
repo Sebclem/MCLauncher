@@ -11,13 +11,13 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -34,10 +34,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.ResourceBundle;
 
-public class Controller {
+public class Controller implements Initializable {
 
 
     @FXML
@@ -102,10 +104,13 @@ public class Controller {
     private boolean isLogged = false;
     private Logger logger = LogManager.getLogger();
     private SaveUtils saveUtils;
+    private ResourceBundle bundle;
 
 
-    @FXML
-    void initialize() throws MalformedURLException {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
+        bundle = resources;
         saveUtils = SaveUtils.getINSTANCE();
         SaveUtils.getINSTANCE().checkConfig();
 
@@ -118,7 +123,7 @@ public class Controller {
         }
 
 //        threadSpeed = new ThreadSpeed();
-        userText.setText(saveUtils.get("username"));
+        userText.setText(saveUtils.get("usernameor"));
         if (!userText.textProperty().isEmpty().get() && !passwordField.textProperty().isEmpty().get()) {
             playButton.setDisable(false);
         }
@@ -144,7 +149,10 @@ public class Controller {
             @Override
             public void handle(MouseEvent event) {
                 try {
-                    Parent popup = FXMLLoader.load(getClass().getResource("/option.fxml"));
+                    FXMLLoader loader = new FXMLLoader();
+                    loader.setLocation(getClass().getResource("/option.fxml"));
+                    loader.setResources(bundle);
+                    Parent popup = loader.load();
                     final Stage dialog = new Stage();
                     dialog.initModality(Modality.APPLICATION_MODAL);
                     dialog.initOwner(Main.getPrimaryStage());
@@ -174,7 +182,12 @@ public class Controller {
             // And as before now you can use URL and URLConnection
             String httpsURL ;
             httpsURL = "https://mc-heads.net/head/" + account.getUUID()+"/98.png";
-            URL myurl = new URL(httpsURL);
+            URL myurl = null;
+            try {
+                myurl = new URL(httpsURL);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
             HttpURLConnection con = null;
             try {
                 con = (HttpURLConnection)myurl.openConnection();
@@ -221,7 +234,7 @@ public class Controller {
             {
                 grid.setDisable(true);
                 disconectButton.setDisable(true);
-                labelBar.setText("Authentification...");
+                labelBar.setText(bundle.getString("auth") + "...");
                 progressBar.setProgress(-1);
             });
 
@@ -245,7 +258,7 @@ public class Controller {
                     rightLabelBar.setText("");
                     leftLabelBar.setText("");
                     dlSpeed.setText("");
-                    labelBar.setText("Checking game files...");
+                    labelBar.setText(bundle.getString("checkFiles") + "...");
 
                 });
 
@@ -265,7 +278,7 @@ public class Controller {
                     rightLabelBar.setText("");
                     leftLabelBar.setText("");
                     dlSpeed.setText("");
-                    labelBar.setText("Lancement du jeu...");
+                    labelBar.setText(bundle.getString("launch") + "...");
 
                 });
 
@@ -309,13 +322,13 @@ public class Controller {
                 logger.warn("Authentication Fail : Wrong User or Password!");
                 Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setHeaderText("Echec d'Authentification!");
-                    Label label = new Label("Echec d'Authentification : \n" + e.getMessage());
+                    alert.setHeaderText(bundle.getString("authFail") + " !");
+                    Label label = new Label(bundle.getString("authFail") + " : \n" + e.getMessage());
                     label.setWrapText(true);
                     alert.getDialogPane().setContent(label);
-                    alert.setTitle("Erreur");
+                    alert.setTitle(bundle.getString("error"));
                     progressBar.setProgress(0);
-                    labelBar.setText("Echec d'Authentification!");
+                    labelBar.setText(bundle.getString("authFail") + " !");
                     alert.showAndWait();
                     grid.setDisable(false);
                     userLabel.setVisible(true);
@@ -330,11 +343,11 @@ public class Controller {
                 logger.catching(e);
                 Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setHeaderText("Erreur !");
-                    alert.setContentText("Impossible de contacter le server! \n(" + e.getMessage() + ")");
-                    alert.setTitle("Erreur");
+                    alert.setHeaderText(bundle.getString("error") + " !");
+                    alert.setContentText(bundle.getString("servFail") + " ! \n(" + e.getMessage() + ")");
+                    alert.setTitle(bundle.getString("error"));
                     progressBar.setProgress(0);
-                    labelBar.setText("Erreur !");
+                    labelBar.setText(bundle.getString("error") + " !");
                     alert.showAndWait();
                     grid.setDisable(false);
                     userLabel.setVisible(true);
@@ -351,11 +364,11 @@ public class Controller {
                 logger.catching(e);
                 Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setHeaderText("Erreur !");
-                    alert.setContentText("Ereur : " + e.getClass().toString());
-                    alert.setTitle("Erreur");
+                    alert.setHeaderText("Error !");
+                    alert.setContentText(bundle.getString("error") + " : " + e.getClass().toString());
+                    alert.setTitle(bundle.getString("error"));
                     progressBar.setProgress(0);
-                    labelBar.setText("Erreur !");
+                    labelBar.setText(bundle.getString("error") + "!");
                     alert.showAndWait();
                     grid.setDisable(false);
                     userLabel.setVisible(true);
@@ -372,11 +385,11 @@ public class Controller {
                 logger.catching(e);
                 Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setHeaderText("Download Error!");
-                    alert.setContentText("Une erreur est survenue lors du téléchargement.");
-                    alert.setTitle("Erreur");
+                    alert.setHeaderText(bundle.getString("dlFail"));
+                    alert.setContentText(bundle.getString("dlFailLong"));
+                    alert.setTitle(bundle.getString("error"));
                     progressBar.setProgress(0);
-                    labelBar.setText("Download Error!");
+                    labelBar.setText(bundle.getString("dlFail"));
                     alert.showAndWait();
                     grid.setDisable(false);
                     userLabel.setVisible(true);
@@ -393,7 +406,7 @@ public class Controller {
                 logger.info("Refresh token fail. Please re-login.");
                 Platform.runLater(() -> {
                     progressBar.setProgress(0);
-                    labelBar.setText("Echec d'Authentification!");
+                    labelBar.setText(bundle.getString("authFail") + " !");
                     grid.setDisable(false);
                     userLabel.setVisible(true);
                     passwordLabel.setVisible(true);
@@ -485,9 +498,9 @@ public class Controller {
                     progressBar.setProgress(pour / 100);
                     leftLabelBar.setText(old / 1000 + "MB / " + installer.totalSize / 1000000 + "MB");
                     if (pour > 100)
-                        labelBar.setText("Téléchargement: 100%");
+                        labelBar.setText(bundle.getString("download") + ": 100%");
                     else
-                        labelBar.setText("Téléchargement: " + myFormatter.format(pour) + "%");
+                        labelBar.setText(bundle.getString("download") + ": " + myFormatter.format(pour) + "%");
 
                 });
             }
