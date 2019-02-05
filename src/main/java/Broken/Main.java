@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 public class Main extends Application {
 
     public static String gamePath = OsIdentifer.getInstallPath();
-    public static String version = "1.10.2";
+    public static String version = "1.12.2";
 
 
     private static SaveUtils saveUtils;
