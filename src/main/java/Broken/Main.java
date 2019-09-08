@@ -2,7 +2,8 @@ package Broken;
 
 
 
-import Broken.Utils.*;
+import Broken.Utils.OsIdentifer;
+import Broken.Utils.SaveUtils;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -13,14 +14,13 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class Main extends Application {
 
     public static String gamePath = OsIdentifer.getInstallPath();
-    public static String version = "1.10.2";
+    public static String version = "1.14.4";
 
 
     private static SaveUtils saveUtils;
