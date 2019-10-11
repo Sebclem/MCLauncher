@@ -65,7 +65,7 @@ public class SaveUtils {
             prop.setProperty("uuid", account.getUUID());
             prop.setProperty("displayName", account.getDisplayName());
             prop.setProperty("accessToken", account.getAccessToken());
-            prop.setProperty("userId", account.getUserId());
+//            prop.setProperty("userId", account.getUserId());
             prop.setProperty("usernameor", account.getUsername());
             prop.setProperty("clientToken", account.getClientToken());
 
@@ -124,7 +124,7 @@ public class SaveUtils {
                 prop.getProperty("displayName"),
                 prop.getProperty("accessToken"),
                 prop.getProperty("clientToken"),
-                prop.getProperty("userId"),
+                null,
                 prop.getProperty("usernameor")
         );
     }
