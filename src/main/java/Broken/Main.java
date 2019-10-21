@@ -2,6 +2,7 @@ package Broken;
 
 
 
+import Broken.Utils.GameProfile;
 import Broken.Utils.OsIdentifer;
 import Broken.Utils.SaveUtils;
 import javafx.application.Application;
@@ -20,7 +21,8 @@ import java.util.ResourceBundle;
 public class Main extends Application {
 
     public static String gamePath = OsIdentifer.getInstallPath();
-    public static String version = "1.14.4";
+    public static String version = "1.12.2";
+    public static GameProfile.MainClass gameType = GameProfile.MainClass.FORGE;
 
 
     private static SaveUtils saveUtils;

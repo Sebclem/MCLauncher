@@ -268,7 +268,7 @@ public class Controller implements Initializable {
                 gameInstaller.download(Main.gamePath, Main.version);
                 String cassPath = new ClassPathBuilder(Main.gamePath).build();
 
-                GameProfile gameProfile = new GameProfile(account, saveUtils.get("ramMax"), saveUtils.get("assetId"), Main.gamePath, Main.version, cassPath , GameProfile.MainClass.VANILLA, saveUtils.get("logConfigPath") );
+                GameProfile gameProfile = new GameProfile(account, saveUtils.get("ramMax"), saveUtils.get("assetId"), Main.gamePath, Main.version, cassPath , Main.gameType, saveUtils.get("logConfigPath") );
 
 
 
