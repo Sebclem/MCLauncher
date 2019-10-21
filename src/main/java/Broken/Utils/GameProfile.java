@@ -61,8 +61,8 @@ public class GameProfile {
     private List<String> buildCommand(){
         ArrayList<String> command = new ArrayList<>();
 
-
-        command.add("java");
+        String javaHome = System.getProperty("java.home");
+        command.add(javaHome + "/bin/java");
         command.add("-Djava.library.path=" +  gameDir +sysLibDir);
         command.add("-Dminecraft.client.jar=" + gameDir +"/client.jar");
         command.add("-Duser.dir="+ Main.gamePath);
