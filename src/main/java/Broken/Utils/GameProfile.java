@@ -62,7 +62,13 @@ public class GameProfile {
         ArrayList<String> command = new ArrayList<>();
 
         String javaHome = System.getProperty("java.home");
-        command.add(javaHome + "/bin/java");
+        if(OsIdentifer.isWindows()){
+            javaHome = "java";
+        }
+        else{
+            javaHome = javaHome + "/bin/java";
+        }
+        command.add(javaHome);
         command.add("-Djava.library.path=" +  gameDir +sysLibDir);
         command.add("-Dminecraft.client.jar=" + gameDir +"/client.jar");
         command.add("-Duser.dir="+ Main.gamePath);
@@ -116,11 +122,14 @@ public class GameProfile {
             command.add("Forge");
         }
 
-
+        StringBuilder builder = new StringBuilder();
         for(String elem : command){
             logger.debug(elem);
+            builder.append(elem);
+            builder.append(" ");
 
         }
+        logger.info(builder.toString());
 
         return command;
 
