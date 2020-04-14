@@ -1,7 +1,6 @@
 package Broken;
 
 
-
 import Broken.Utils.GameProfile;
 import Broken.Utils.OsIdentifer;
 import Broken.Utils.SaveUtils;
@@ -37,13 +36,13 @@ public class Main extends Application {
         screenCorecter = 0;
         String os = System.getProperty("os.name");
 
-        if(OsIdentifer.isMac() || OsIdentifer.isLinux())
+        if (OsIdentifer.isMac() || OsIdentifer.isLinux())
             screenCorecter = 10;
 
         logger.info("/*****************************************************************/");
         logger.info("/**************************Launcher Logs**************************/");
         logger.info("/*****************************************************************/");
-        logger.info("OS: "+os);
+        logger.info("OS: " + os);
         logger.info("Install path: " + gamePath);
         saveUtils = SaveUtils.getINSTANCE(gamePath + "launcher.properties");
 
@@ -54,11 +53,11 @@ public class Main extends Application {
         controller = loader.getController();
         primaryStage.setTitle("Minecraft IMERIR Launcher");
 
-        primaryStage.setScene(new Scene(root, 1014, 595+screenCorecter));
+        primaryStage.setScene(new Scene(root, 1014, 595 + screenCorecter));
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(e -> Platform.exit());
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/minecraftLogo.png")));
-        primaryStageS=primaryStage;
+        primaryStageS = primaryStage;
 
 
         primaryStage.show();

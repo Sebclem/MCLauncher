@@ -27,7 +27,7 @@ plugins {
     id 'idea'
 }
 
-def versionObj = new Version(major: 0, minor: 1, revision: 0)
+def versionObj = new Version(major: 1, minor: 0, revision: 0)
 
 archivesBaseName = "BrokenDiscordBot"
 version = "$versionObj"
@@ -80,7 +80,7 @@ class Version {
     String major, minor, revision
 
     static String getBuild() {
-        System.getenv("BUILD_NUMBER") ?: System.getProperty("BUILD_NUMBER") ?:
+        System.getenv("GITHUB_RUN_NUMBER") ?: System.getProperty("BUILD_NUMBER") ?:
                 System.getenv("GIT_COMMIT")?.substring(0, 7) ?: System.getProperty("GIT_COMMIT")?.substring(0, 7) ?:"DEV"
     }
 
