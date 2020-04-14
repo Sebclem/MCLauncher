@@ -31,4 +31,4 @@ jobs:
         # Artifact name
         name: Jar
         # Directory containing files to upload
-        path: build/libs/
+        path: build/libs/MCLauuncher-*.jar
