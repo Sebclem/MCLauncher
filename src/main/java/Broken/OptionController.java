@@ -81,6 +81,7 @@ public class OptionController {
     private static String ramMax;
     private static String ramMin;
     private static String authType;
+    private static String saveAuthType;
     private Logger logger = LogManager.getLogger();
 
     @FXML
@@ -92,27 +93,28 @@ public class OptionController {
         annuler.setOnMouseClicked(event -> Controller.dialogScene.getWindow().hide());
 
         confirmer.setOnMouseClicked(event -> {
-            if(ramToogle.getSelectedToggle().equals(radioPredef))
-                SaveUtils.getINSTANCE().save("ramType","0");
-            else SaveUtils.getINSTANCE().save("ramType","1");
+            if (ramToogle.getSelectedToggle().equals(radioPredef))
+                SaveUtils.getINSTANCE().save("ramType", "0");
+            else SaveUtils.getINSTANCE().save("ramType", "1");
 
-            SaveUtils.getINSTANCE().save("ramMax",ramMax);
+            SaveUtils.getINSTANCE().save("ramMax", ramMax);
 //                SaveUtils.getINSTANCE().save("ramMin",ramMin);
-                SaveUtils.getINSTANCE().save("authType",authType);
-                SaveUtils.getINSTANCE().save("accessToken","");
-                SaveUtils.getINSTANCE().save("clientToken","");
-                SaveUtils.getINSTANCE().save("uuid","");
+            SaveUtils.getINSTANCE().save("authType", authType);
+            SaveUtils.getINSTANCE().save("accessToken", "");
+            SaveUtils.getINSTANCE().save("clientToken", "");
+            SaveUtils.getINSTANCE().save("uuid", "");
 //                SaveUtils.getINSTANCE().save("name","");
 //                SaveUtils.getINSTANCE().save("id","");
 
             Controller.dialogScene.getWindow().hide();
-            Main.controller.disconnect();
+            if(saveAuthType != authType)
+                Main.controller.disconnect();
         });
 
 
-        predefRam.getItems().addAll("1G","2G","3G","4G","5G","6G","7G","8G");
+        predefRam.getItems().addAll("1G", "2G", "3G", "4G", "5G", "6G", "7G", "8G");
 
-        if(!new VaniaGameInstaller().checkInstall()){
+        if (!new VaniaGameInstaller().checkInstall()) {
             forceDownload.setDisable(true);
         }
 
@@ -123,14 +125,12 @@ public class OptionController {
 
 
         maxRam.textProperty().addListener((observable, oldValue, newValue) -> ramMax = newValue);
-        if (ramType.equals("0")){
+        if (ramType.equals("0")) {
             ramToogle.selectToggle(radioPredef);
             persoHBox.setDisable(true);
             predefRam.setDisable(false);
             predefRam.getSelectionModel().select(ramMax);
-        }
-        else
-        {
+        } else {
             ramToogle.selectToggle(radioPerso);
             maxRam.setText(ramMax);
             persoHBox.setDisable(false);
@@ -138,14 +138,11 @@ public class OptionController {
         }
 
         ramToogle.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.equals(radioPredef))
-            {
+            if (newValue.equals(radioPredef)) {
                 persoHBox.setDisable(true);
                 predefRam.setDisable(false);
                 predefRam.getSelectionModel().select(ramMax);
-            }
-            else
-            {
+            } else {
                 maxRam.setText(ramMax);
                 persoHBox.setDisable(false);
                 predefRam.setDisable(true);
@@ -153,30 +150,23 @@ public class OptionController {
             }
         });
         predefRam.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            ramMax=newValue;
-            ramMin="256m";
+            ramMax = newValue;
+            ramMin = "256m";
 
         });
 
 
-
-
-
-
-        if(authType.equals("0"))
+        if (authType.equals("0"))
             authToggle.selectToggle(radioMojang);
         else
             authToggle.selectToggle(radioCrack);
 
         authToggle.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.equals(radioMojang))
-                authType="0";
+            if (newValue.equals(radioMojang))
+                authType = "0";
             else
-                authType="1";
+                authType = "1";
         });
-
-
-
 
 
         buttonRegister.setOnMouseClicked(event -> {
@@ -190,30 +180,29 @@ public class OptionController {
     }
 
 
-    private static void getConfig()
-    {
+    private static void getConfig() {
         ramType = SaveUtils.getINSTANCE().get("ramType");
         ramMax = SaveUtils.getINSTANCE().get("ramMax");
         ramMin = SaveUtils.getINSTANCE().get("ramMin");
 
         authType = SaveUtils.getINSTANCE().get("authType");
+        saveAuthType = SaveUtils.getINSTANCE().get("authType");
         //Init all ram param if it don't exits
-        if(ramType ==null)
-        {
+        if (ramType == null) {
 
-            SaveUtils.getINSTANCE().save("ramType","0");
-            ramType ="0";
-            SaveUtils.getINSTANCE().save("ramMax","2G");
+            SaveUtils.getINSTANCE().save("ramType", "0");
+            ramType = "0";
+            SaveUtils.getINSTANCE().save("ramMax", "2G");
             ramMax = "2G";
-            SaveUtils.getINSTANCE().save("ramMin","256m");
+            SaveUtils.getINSTANCE().save("ramMin", "256m");
             ramMin = "256m";
 
         }
 
-        if(authType==null)
-        {
-            SaveUtils.getINSTANCE().save("authType","0");
-            authType="0";
+        if (authType == null) {
+            SaveUtils.getINSTANCE().save("authType", "0");
+            authType = "0";
+            saveAuthType = "0";
         }
     }
 }

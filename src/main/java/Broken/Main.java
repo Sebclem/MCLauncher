@@ -27,13 +27,13 @@ public class Main extends Application {
     private static SaveUtils saveUtils;
     private static Stage primaryStageS;
     public static Controller controller;
-    public static int screenCorecter = 0;
+    public static int screenCorecter;
     static Logger logger = LogManager.getLogger();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        screenCorecter = 0;
+        screenCorecter = 10;
         String os = System.getProperty("os.name");
 
         if (OsIdentifer.isMac() || OsIdentifer.isLinux())
@@ -53,7 +53,7 @@ public class Main extends Application {
         controller = loader.getController();
         primaryStage.setTitle("Minecraft IMERIR Launcher");
 
-        primaryStage.setScene(new Scene(root, 1014, 595 + screenCorecter));
+        primaryStage.setScene(new Scene(root, 1014, 605 ));
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(e -> Platform.exit());
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/minecraftLogo.png")));
