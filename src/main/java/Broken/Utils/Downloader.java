@@ -105,7 +105,7 @@ class Downloader extends Observable implements Runnable {
     public void run() {
         RandomAccessFile file = null;
         InputStream stream = null;
-
+        logger.debug("Downloading => " + this.url + "...");
         try {
             // Open connection to URL.
             HttpURLConnection connection =
