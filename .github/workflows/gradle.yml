@@ -26,9 +26,9 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Upload artifact
-      uses: actions/upload-artifact@v2-preview
+      uses: actions/upload-artifact@v2
       with:
         # Artifact name
         name: Jar
         # Directory containing files to upload
-        path: build/libs/
+        path: build/libs/*.jar
