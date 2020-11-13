@@ -140,7 +140,7 @@ public class SaveUtils {
         if(ramType ==null || ramMax == null)
         {
             save("ramType","0");
-            save("ramMax","2G");
+            save("ramMax","6G");
         }
 
         if(authType == null)
