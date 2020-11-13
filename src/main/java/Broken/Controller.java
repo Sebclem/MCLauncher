@@ -370,14 +370,6 @@ public class Controller implements Initializable {
                     progressBar.setProgress(0);
                     labelBar.setText(bundle.getString("error") + "!");
                     alert.showAndWait();
-                    grid.setDisable(false);
-                    userLabel.setVisible(true);
-                    passwordLabel.setVisible(true);
-                    userText.setVisible(true);
-                    passwordField.setVisible(true);
-                    disconectButton.setDisable(false);
-                    gridLogged.setVisible(false);
-                    disconnect();
 
                 });
                 grid.setDisable(false);
@@ -391,14 +383,6 @@ public class Controller implements Initializable {
                     progressBar.setProgress(0);
                     labelBar.setText(bundle.getString("dlFail"));
                     alert.showAndWait();
-                    grid.setDisable(false);
-                    userLabel.setVisible(true);
-                    passwordLabel.setVisible(true);
-                    userText.setVisible(true);
-                    passwordField.setVisible(true);
-                    disconectButton.setDisable(false);
-                    gridLogged.setVisible(false);
-                    disconnect();
 
                 });
                 grid.setDisable(false);
