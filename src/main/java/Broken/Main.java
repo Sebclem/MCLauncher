@@ -51,7 +51,7 @@ public class Main extends Application {
         loader.setResources(ResourceBundle.getBundle("bundles.MyBundle", Locale.getDefault()));
         Parent root = loader.load();
         controller = loader.getController();
-        primaryStage.setTitle("Minecraft IMERIR Launcher");
+        primaryStage.setTitle("BDKDM Minecraft Launcher");
 
         primaryStage.setScene(new Scene(root, 1014, 605 ));
         primaryStage.setResizable(false);
@@ -71,10 +71,8 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         System.setProperty("user.dir", gamePath);
-
         launch(args);
-
-//        System.exit(0);
+        System.exit(0);
 
 
     }
