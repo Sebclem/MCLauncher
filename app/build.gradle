@@ -10,7 +10,12 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'
+    id "org.beryx.jlink" version "2.24.1"
 }
+
+sourceCompatibility = 17
+targetCompatibility = 17
+
 javafx {
     version = "17"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
@@ -35,9 +40,26 @@ dependencies {
 application {
     // Define the main class for the application.
     mainClass = 'McLauncher.App'
+    mainModule = 'McLauncher'
 }
 
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+jlink {
+    forceMerge('log4j-api')
+    jpackage {
+        imageName = "McLauncher SC"
+        installerName = 'McLauncher SC'
+        icon = 'icon.ico'
+        if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-menu-group', '"McLauncher SC"', '--win-shortcut']
+            imageOptions += ['--win-console']
+        }
+        if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
+            installerOptions += ['--linux-shortcut', '--linux-app-category', 'Game']
+        }
+    }
 }

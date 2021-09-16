@@ -1,5 +1,6 @@
 module McLauncher {
     requires java.desktop;
+    requires jdk.crypto.ec;
     requires org.apache.logging.log4j;
     requires org.apache.commons.io;
     requires javafx.fxml;
