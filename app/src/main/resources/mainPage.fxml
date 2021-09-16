@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="606.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="McLauncher.Controller">
+   <children>
+      <VBox fx:id="vbox">
+         <children>
+            <StackPane prefHeight="576.0" prefWidth="1024.0">
+               <children>
+                  <ImageView fitHeight="576.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@launcher.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="149.0" fitWidth="383.0" pickOnBounds="true" preserveRatio="true" translateY="-230.0">
+                     <image>
+                        <Image url="@minecrafter.png" />
+                     </image>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                  </ImageView>
+                  <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="591.0" translateX="-170.0" translateY="228.0">
+                     <children>
+                        <GridPane fx:id="gridLogged" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" visible="false">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="98.0" />
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="98.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label fx:id="pseudoLabel" text="pseudo" textFill="WHITE" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font name="System Bold" size="49.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets left="40.0" right="20.0" />
+                                 </GridPane.margin>
+                                 <effect>
+                                    <DropShadow color="#6b59d0" height="25.0" radius="12.0" width="25.0" />
+                                 </effect>
+                              </Label>
+                              <ImageView fx:id="faceImg" fitHeight="128" fitWidth="128" pickOnBounds="true" preserveRatio="true">
+                                 <effect>
+                                    <DropShadow color="#6b59d0" height="35.0" radius="17.0" width="35.0" />
+                                 </effect></ImageView>
+                           </children>
+                        </GridPane>
+                     </children>
+                  </HBox>
+                  <GridPane fx:id="grid" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="584.0" translateY="228.0">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="340.0" minWidth="10.0" prefWidth="163.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="325.0" minWidth="0.0" prefWidth="248.0" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="343.0" minWidth="10.0" prefWidth="163.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="56.0" minHeight="10.0" prefHeight="43.0" valignment="CENTER" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="43.0" valignment="CENTER" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label fx:id="userLabel" alignment="CENTER" prefHeight="30.0" prefWidth="144.0" text="%username" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </Label>
+                        <Label fx:id="passwordLabel" alignment="CENTER" prefHeight="30.0" prefWidth="172.0" text="%password" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </Label>
+                        <PasswordField fx:id="passwordField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="35.0" prefWidth="250.0" promptText="%password" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </PasswordField>
+                        <Button fx:id="optionButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="%option" GridPane.columnIndex="2">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </Button>
+                        <Button fx:id="playButton" disable="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="%play" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </Button>
+                        <TextField fx:id="userText" prefHeight="35.0" prefWidth="250.0" promptText="%usernameor" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                        </TextField>
+                     </children>
+                  </GridPane>
+                  <Button fx:id="disconectButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="%disconnect" translateX="360.0" translateY="205.0" visible="false">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                  </Button>
+               </children>
+            </StackPane>
+            <StackPane prefHeight="30.0" prefWidth="1024.0">
+               <children>
+                  <ProgressBar fx:id="progressBar" prefHeight="30.0" prefWidth="1024.0" progress="0.0" />
+                  <GridPane alignment="CENTER">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label fx:id="labelBar" contentDisplay="CENTER" textAlignment="CENTER" GridPane.columnIndex="1">
+                           <font>
+                              <Font name="System Bold Italic" size="15.0" />
+                           </font>
+                           <effect>
+                              <DropShadow color="#64b2fc" height="10.0" radius="4.5" width="10.0" />
+                           </effect>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Label fx:id="leftLabelBar" contentDisplay="CENTER" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold Italic" size="15.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding>
+                                 <effect>
+                                    <DropShadow color="#64b2fc" height="10.0" radius="4.5" width="10.0" />
+                                 </effect>
+                              </Label>
+                              <Label fx:id="dlSpeed" contentDisplay="CENTER" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold Italic" size="15.0" />
+                                 </font>
+                                 <effect>
+                                    <DropShadow color="#64b2fc" height="10.0" radius="4.5" width="10.0" />
+                                 </effect>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label fx:id="rightLabelBar" contentDisplay="CENTER" textAlignment="CENTER" GridPane.columnIndex="2">
+                           <font>
+                              <Font name="System Bold Italic" size="15.0" />
+                           </font>
+                           <padding>
+                              <Insets right="10.0" />
+                           </padding>
+                           <effect>
+                              <DropShadow color="#64b2fc" height="10.0" radius="4.5" width="10.0" />
+                           </effect>
+                        </Label>
+                     </children>
+                  </GridPane>
+               </children>
+            </StackPane>
+         </children>
+      </VBox>
+   </children>
+</Pane>

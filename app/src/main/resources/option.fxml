@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="257.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="McLauncher.OptionController">
+   <children>
+      <VBox maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" prefWidth="400.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="386.0">
+               <children>
+                  <Label text="Ram:">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <VBox alignment="CENTER_LEFT" prefWidth="316.0" spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="35.0">
+                           <children>
+                              <RadioButton fx:id="radioPredef" mnemonicParsing="false" selected="true" text="%preset">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="ramToogle" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <ChoiceBox fx:id="predefRam" prefHeight="25.0" prefWidth="120.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <RadioButton fx:id="radioPerso" mnemonicParsing="false" text="%custom" toggleGroup="$ramToogle" />
+                              <HBox fx:id="persoHBox" alignment="CENTER_LEFT" disable="true">
+                                 <children>
+                                    <Label text="Max:">
+                                       <HBox.margin>
+                                          <Insets left="20.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <TextField fx:id="maxRam" prefHeight="25.0" prefWidth="60.0" promptText="MB" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="18.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="9.0" left="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <Line startX="400.0" strokeWidth="2.0">
+               <effect>
+                  <DropShadow />
+               </effect></Line>
+            <HBox fx:id="authBox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="386.0">
+               <children>
+                  <Label prefHeight="38.0" prefWidth="270.0" text="%authentication" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <VBox alignment="CENTER_LEFT" prefWidth="316.0" spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="35.0">
+                           <children>
+                              <RadioButton fx:id="radioMojang" mnemonicParsing="false" prefHeight="17.0" prefWidth="114.0" selected="true" text="Mojang">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="authToggle" />
+                                 </toggleGroup>
+                              </RadioButton>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <RadioButton fx:id="radioCrack" mnemonicParsing="false" prefHeight="17.0" prefWidth="64.0" text="Crack" toggleGroup="$authToggle" />
+                              <Button fx:id="buttonRegister" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="%registration" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="18.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="22.0" left="10.0" top="22.0" />
+               </VBox.margin>
+            </HBox>
+            <Line startX="400.0" strokeWidth="2.0">
+               <effect>
+                  <DropShadow />
+               </effect></Line>
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Button fx:id="forceDownload" mnemonicParsing="false" text="%forceDl" />
+                  <Button fx:id="confirmer" mnemonicParsing="false" text="%confirm" />
+                  <Button fx:id="annuler" mnemonicParsing="false" text="%cancel" />
+               </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets top="7.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</Pane>
