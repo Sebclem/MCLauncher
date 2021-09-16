@@ -1,5 +1,6 @@
 package McLauncher.Utils;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -90,6 +91,7 @@ public class MojanLogin {
 
 
     private HttpResponse post(String url, String json) throws IOException {
+        logger.info("ok");
         HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
 
         HttpPost request = new HttpPost(url);
@@ -107,9 +109,10 @@ public class MojanLogin {
     }
 
     private boolean validate(Account account, String url) throws IOException {
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        String json = gsonBuilder.create().toJson(new ValidatePost(account.getAccessToken(), account.getClientToken()));
+        Gson gson = new Gson();
+        ValidatePost valPost = new ValidatePost(account.getAccessToken(), account.getClientToken());
+        String json = gson.toJson(valPost);
+        logger.info("ok");
         HttpResponse response = post(url + "validate", json);
         logger.debug("Token is valid ? " + (response.getStatusLine().getStatusCode() == 204));
         return response.getStatusLine().getStatusCode() == 204;

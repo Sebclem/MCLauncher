@@ -1,24 +1,22 @@
 package McLauncher.Utils;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-// import com.google.gson.internal.LinkedTreeMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import McLauncher.App;
 import McLauncher.Json.Game;
 import McLauncher.Json.Manifest;
+import McLauncher.Utils.Event.Observable;
+import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
 public class VaniaGameInstaller extends Observable {
     private Logger logger = LogManager.getLogger();
@@ -164,7 +162,6 @@ public class VaniaGameInstaller extends Observable {
     private void assetsDownloader(String path, Game game) throws IOException, InterruptedException, DownloadFailException {
         logger.info("Downloading Assets...");
         String result = HttpsGet.get(game.assetIndex.url);
-        GsonBuilder gsonBuilder = new GsonBuilder();
         JsonObject objects = (JsonObject) JsonParser.parseString(result).getAsJsonObject().get("objects");
         logger.info("debug");
         Downloader downloader;
@@ -275,14 +272,13 @@ public class VaniaGameInstaller extends Observable {
         private int oldValue = 0;
 
         @Override
-        public void update(Observable observable, Object o) {
+        public void update(Object observable) {
             Downloader downloader = (Downloader) observable;
             if (downloader.getStatus() == Downloader.DOWNLOADING) {
                 int current = downloader.getProgress();
                 downloaded += current - oldValue;
                 oldValue = current;
-                setChanged();
-                notifyObservers();
+                change();
             }
         }
     }

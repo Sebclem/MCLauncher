@@ -8,5 +8,8 @@ public class ValidatePost {
         this.accessToken = accessToken;
         this.clientToken = clientToken;
     }
+    public ValidatePost(){
+        
+    }
 }
 

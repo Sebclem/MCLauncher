@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import McLauncher.Utils.*;
+import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
 import McLauncher.Utils.Exception.LoadingSaveException;
 import McLauncher.Utils.Exception.LoginException;
@@ -34,8 +35,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
-import java.util.Observable;
-import java.util.Observer;
+
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -466,8 +466,8 @@ public class Controller implements Initializable {
 
 
         @Override
-        public void update(Observable observable, Object o) {
-            FullGameInstaller installer = (FullGameInstaller) observable;
+        public void update(Object subObject) {
+            FullGameInstaller installer = (FullGameInstaller) subObject;
 
             DecimalFormat myFormatter = new DecimalFormat("##0.00");
 

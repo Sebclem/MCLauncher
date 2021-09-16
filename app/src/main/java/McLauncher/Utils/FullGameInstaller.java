@@ -4,11 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import McLauncher.App;
+import McLauncher.Utils.Event.Observable;
+import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
 
 import java.io.IOException;
-import java.util.Observable;
-import java.util.Observer;
+
 
 public class FullGameInstaller extends Observable {
 
@@ -69,17 +70,17 @@ public class FullGameInstaller extends Observable {
     class InstallObserver implements Observer {
         private long oldValue = 0;
         @Override
-        public void update(Observable o, Object arg) {
-            if(o instanceof  VaniaGameInstaller){
+        public void update(Object subObject) {
+            if(subObject instanceof  VaniaGameInstaller){
                 state = DOWNLADING;
-                VaniaGameInstaller gameInstaller = (VaniaGameInstaller) o;
+                VaniaGameInstaller gameInstaller = (VaniaGameInstaller) subObject;
                 long current = gameInstaller.downloaded;
                 downloaded += current - oldValue;
                 oldValue = current;
 
             }
             else{
-                CustomDownloader downloader = (CustomDownloader) o;
+                CustomDownloader downloader = (CustomDownloader) subObject;
                 if(downloader.state != ERROR && downloader.state != IDLE){
                     state = downloader.state;
                 }
@@ -91,11 +92,4 @@ public class FullGameInstaller extends Observable {
             change();
         }
     }
-
-    private void change(){
-        setChanged();
-        notifyObservers();
-    }
-
-
 }

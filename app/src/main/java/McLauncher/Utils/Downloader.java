@@ -3,9 +3,10 @@ package McLauncher.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import McLauncher.Utils.Event.Observable;
+
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 // This class downloads a file from a URL.
 class Downloader extends Observable implements Runnable {
@@ -190,7 +191,6 @@ class Downloader extends Observable implements Runnable {
 
     // Notify observers that this download's status has changed.
     private void stateChanged() {
-        setChanged();
-        notifyObservers();
+        change();
     }
 }
