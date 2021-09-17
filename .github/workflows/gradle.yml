@@ -25,33 +25,33 @@ jobs:
     - name: Verify Gradle Wrapper
       uses: gradle/wrapper-validation-action@v1
     - name: Execute build
-      run: ./gradlew --info --stacktrace -Pversion=${{ github.event.release.tag_name }} build
+      run: ./gradlew --info --stacktrace -Pversion="${{ github.event.release.tag_name }}" build
     - name: Execute jlink
-      run: ./gradlew --info --stacktrace -Pversion=${{ github.event.release.tag_name }} jlink
+      run: ./gradlew --info --stacktrace -Pversion="${{ github.event.release.tag_name }}" jlink
     - name: Execute jpackage
-      run: ./gradlew --info --stacktrace -Pversion=${{ github.event.release.tag_name }} jpackage
+      run: ./gradlew --info --stacktrace -Pversion="${{ github.event.release.tag_name }}" jpackage
     - name: Upload DMG as an artifact
       uses: actions/upload-artifact@v2
       with:
         name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-dmg
-        path: build/jpackage/*.dmg
+        path: app/build/jpackage/*.dmg
     - name: Upload EXE as an artifact
       uses: actions/upload-artifact@v2
       with:
         name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-exe
-        path: build/jpackage/*.exe
+        path: app/build/jpackage/*.exe
     - name: Upload MSI as an artifact
       uses: actions/upload-artifact@v2
       with:
         name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-msi
-        path: build/jpackage/*.msi
+        path: app/build/jpackage/*.msi
     - name: Upload DEB as an artifact
       uses: actions/upload-artifact@v2
       with:
         name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-deb
-        path: build/jpackage/*.deb
+        path: app/build/jpackage/*.deb
     - name: Upload RPM as an artifact
       uses: actions/upload-artifact@v2
       with:
         name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-rpm
-        path: build/jpackage/*.rpm
+        path: app/build/jpackage/*.rpm
