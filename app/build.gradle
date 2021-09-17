@@ -63,3 +63,11 @@ jlink {
         }
     }
 }
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'McLauncher.App'
+        )
+    }
+}

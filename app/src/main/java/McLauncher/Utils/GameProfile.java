@@ -64,7 +64,7 @@ public class GameProfile {
 
         String javaHome = System.getProperty("java.home");
         if(OsIdentifer.isWindows()){
-            javaHome = "java";
+            javaHome = javaHome + "\\bin\\java.exe";
         }
         else{
             javaHome = javaHome + "/bin/java";

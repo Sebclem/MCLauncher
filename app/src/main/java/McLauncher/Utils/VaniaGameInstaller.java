@@ -163,7 +163,6 @@ public class VaniaGameInstaller extends Observable {
         logger.info("Downloading Assets...");
         String result = HttpsGet.get(game.assetIndex.url);
         JsonObject objects = (JsonObject) JsonParser.parseString(result).getAsJsonObject().get("objects");
-        logger.info("debug");
         Downloader downloader;
         for (String key : objects.keySet()) {
             JsonObject obj = (JsonObject) objects.get(key);

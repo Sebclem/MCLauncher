@@ -116,7 +116,7 @@ public class SaveUtils {
 
     public Account getAccount() throws LoadingSaveException {
 
-        if(prop.getProperty("clientToken") == null || prop.getProperty("clientToken").equals("")){
+        if(notPresent("clientToken")){
             throw new LoadingSaveException("No logged");
         }
 
@@ -130,6 +130,21 @@ public class SaveUtils {
         );
     }
 
+    public McLauncher.Json.GameProfile getGameProfile() throws LoadingSaveException{
+        if(notPresent("packUUID") || notPresent("gameVersion") || notPresent("gameType") ){
+            throw new LoadingSaveException("No Game Profile Saved");
+        }
+        return new McLauncher.Json.GameProfile(
+            prop.getProperty("packUUID"),
+            prop.getProperty("gameVersion"),
+            prop.getProperty("gameType")
+        );
+    }
+
+
+    private boolean notPresent(String key){
+        return prop.getProperty(key) == null || prop.getProperty(key).equals("");
+    }
 
 
     public void checkConfig(){

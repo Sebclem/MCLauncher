@@ -1,5 +1,11 @@
 package McLauncher.Utils;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,13 +14,12 @@ import McLauncher.Utils.Event.Observable;
 import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
 
-import java.io.IOException;
-
 
 public class FullGameInstaller extends Observable {
 
 
     private Logger logger = LogManager.getLogger();
+
 
     public long totalSize = 0;
     public long downloaded = 0;
@@ -32,11 +37,11 @@ public class FullGameInstaller extends Observable {
 
 
 
-    public void init(String installPath) throws IOException{
+    public void init(String installPath, String gameVersion) throws IOException{
         VaniaGameInstaller vaniaGameInstaller = new VaniaGameInstaller();
         if( !vaniaGameInstaller.checkInstall()){
             logger.info("Vania Game install needed!");
-            totalSize = vaniaGameInstaller.getTotalSize(App.version);
+            totalSize = vaniaGameInstaller.getTotalSize(gameVersion);
             needVania = true;
         }
 
@@ -44,9 +49,6 @@ public class FullGameInstaller extends Observable {
         customDownloader.check(installPath);
 
         totalSize += customDownloader.totalSize;
-
-
-
     }
 
 
@@ -62,6 +64,24 @@ public class FullGameInstaller extends Observable {
             customDownloader.addObserver(new InstallObserver());
             customDownloader.install(App.gamePath);
         }
+    }
+
+    public void wipper(String installPath, GameProfileLoader gameProfileLoader){
+        File filePath = new File(installPath);
+        if (!filePath.exists())
+            return;
+        Collection<File> files = FileUtils.listFilesAndDirs(filePath, TrueFileFilter.TRUE, TrueFileFilter.TRUE);
+        for (File file : files) {
+            if(!file.getName().equals("launcher.properties") && !filePath.getPath().equals(file.getPath())){
+                logger.info("Delleting " + file.getName() + "...");
+                file.delete();
+            }
+        }
+        SaveUtils.getINSTANCE().save("packUUID", gameProfileLoader.getPackUUID());
+        SaveUtils.getINSTANCE().save("gameVersion", gameProfileLoader.getVersion());
+        SaveUtils.getINSTANCE().save("gameType", gameProfileLoader.getRawGameType());
+        SaveUtils.getINSTANCE().save("install", "false");
+
     }
 
 

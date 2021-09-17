@@ -20,8 +20,6 @@ import java.util.ResourceBundle;
 public class App extends Application {
 
     public static String gamePath = OsIdentifer.getInstallPath();
-    public static String version = "1.12.2";
-    public static GameProfile.MainClass gameType = GameProfile.MainClass.FORGE;
 
 
     private static SaveUtils saveUtils;
@@ -44,6 +42,8 @@ public class App extends Application {
         logger.info("/*****************************************************************/");
         logger.info("OS: " + os);
         logger.info("Install path: " + gamePath);
+        logger.info("Java Home: " + System.getProperty("java.home"));
+        logger.info("Java Version: " + System.getProperty("java.version"));
         saveUtils = SaveUtils.getINSTANCE(gamePath + "launcher.properties");
 
         FXMLLoader loader = new FXMLLoader();
