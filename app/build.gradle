@@ -55,8 +55,7 @@ jlink {
         installerName = 'McLauncher SC'
         icon = 'icon.ico'
         if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-menu-group', '"McLauncher SC"', '--win-shortcut']
-            imageOptions += ['--win-console']
+            installerOptions += ['--win-dir-chooser', '--win-menu', '--win-menu-group', '"McLauncher SC"', '--win-shortcut']
         }
         if (org.gradle.internal.os.OperatingSystem.current().isLinux()) {
             installerOptions += ['--linux-shortcut', '--linux-app-category', 'Game']
