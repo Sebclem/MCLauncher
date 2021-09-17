@@ -1,34 +1,57 @@
-# This workflow will build a Java project with Gradle
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+name: Gradle Build
 
-name: Java CI with Gradle
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: 
+  release:
+    types: [ published ]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+        java: [ '16.0.2' ]
+      fail-fast: false
+    name: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+    - name: Git checkout
+      uses: actions/checkout@v2
+    - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
-        java-package: jdk+fx
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
-    - name: Upload artifact
+        java-version: ${{ matrix.java }}
+    - name: Echo JAVA_HOME
+      run: echo $JAVA_HOME
+    - name: Verify Gradle Wrapper
+      uses: gradle/wrapper-validation-action@v1
+    - name: Execute build
+      run: ./gradlew --info --stacktrace -Pversion=${{GITHUB_REF/refs\/tags\//}} build
+    - name: Execute jlink
+      run: ./gradlew --info --stacktrace -Pversion=${{GITHUB_REF/refs\/tags\//}} jlink
+    - name: Execute jpackage
+      run: ./gradlew --info --stacktrace -Pversion=${{GITHUB_REF/refs\/tags\//}} jpackage
+    - name: Upload DMG as an artifact
       uses: actions/upload-artifact@v2
       with:
-        # Artifact name
-        name: Jar
-        # Directory containing files to upload
-        path: build/libs/*.jar
+        name: McLauncher-${{GITHUB_REF/refs\/tags\//}}-${{ matrix.os }}-dmg
+        path: build/jpackage/*.dmg
+    - name: Upload EXE as an artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: McLauncher-${{GITHUB_REF/refs\/tags\//}}-${{ matrix.os }}-exe
+        path: build/jpackage/*.exe
+    - name: Upload MSI as an artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: McLauncher-${{GITHUB_REF/refs\/tags\//}}-${{ matrix.os }}-msi
+        path: build/jpackage/*.msi
+    - name: Upload DEB as an artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: McLauncher-${{GITHUB_REF/refs\/tags\//}}-${{ matrix.os }}-deb
+        path: build/jpackage/*.deb
+    - name: Upload RPM as an artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: McLauncher-${{GITHUB_REF/refs\/tags\//}}-${{ matrix.os }}-rpm
+        path: build/jpackage/*.rpm
