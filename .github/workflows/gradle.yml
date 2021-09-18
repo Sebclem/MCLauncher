@@ -26,25 +26,29 @@ jobs:
 
       - name: Echo JAVA_HOME
         run: echo $JAVA_HOME
+      
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
 
       - name: Verify Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
         
       - name: Execute jpackage
-        run: ./gradlew --info --stacktrace -Pversion="${{ GITHUB_REF#refs/tags/ }}" jpackage
+        run: ./gradlew --info --stacktrace -Pversion="${{ steps.tag.outputs.tag }}" jpackage
 
       - name: Upload Mac artifact
         if: matrix.os == 'macOS-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: McLauncher-${{ GITHUB_REF#refs/tags/ }}-mac
+          name: McLauncher-${{ steps.tag.outputs.tag }}-mac
           path: app/build/jpackage/*.dmg
 
       - name: Upload Windows artifact
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: McLauncher-${{ GITHUB_REF#refs/tags/ }}-windows
+          name: McLauncher-${{ steps.tag.outputs.tag }}-windows
           path: |
             app/build/jpackage/*.msi
             app/build/jpackage/*.exe
@@ -53,7 +57,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: McLauncher-${{ GITHUB_REF#refs/tags/ }}-linux
+          name: McLauncher-${{ steps.tag.outputs.tag }}-linux
           path: |
             app/build/jpackage/*.deb
             app/build/jpackage/*.rpm
@@ -69,8 +73,10 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v1
         with:
           commitMode: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
       
       - uses: actions/download-artifact@v2
         name: Donwload Builds
@@ -80,14 +86,14 @@ jobs:
       - name: Create Release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ GITHUB_REF#refs/tags/ }}
-          release_name: ${{ GITHUB_REF#refs/tags/ }}
+          tag_name: ${{ steps.tag.outputs.tag }}
+          release_name: ${{ steps.tag.outputs.tag }}
           body: ${{steps.github_release.outputs.changelog}}
           files: |
-            artifacts/McLauncher-${{ GITHUB_REF#refs/tags/ }}-windows/McLauncher SC-${{ GITHUB_REF#refs/tags/ }}.msi
-            artifacts/McLauncher-${{ GITHUB_REF#refs/tags/ }}-linux/McLauncher SC-${{ GITHUB_REF#refs/tags/ }}.deb
-            artifacts/McLauncher-${{ GITHUB_REF#refs/tags/ }}-mac/McLauncher SC-${{ GITHUB_REF#refs/tags/ }}.dmg
-            artifacts/McLauncher-${{ GITHUB_REF#refs/tags/ }}-linux/McLauncher SC-${{ GITHUB_REF#refs/tags/ }}.rpm
-            artifacts/McLauncher-${{ GITHUB_REF#refs/tags/ }}-windows/McLauncher SC-${{ GITHUB_REF#refs/tags/ }}.exe
+            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-windows/McLauncher SC-${{ steps.tag.outputs.tag }}.msi
+            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-linux/McLauncher SC-${{ steps.tag.outputs.tag }}.deb
+            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-mac/McLauncher SC-${{ steps.tag.outputs.tag }}.dmg
+            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-linux/McLauncher SC-${{ steps.tag.outputs.tag }}.rpm
+            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-windows/McLauncher SC-${{ steps.tag.outputs.tag }}.exe
 
           
