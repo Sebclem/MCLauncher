@@ -1,0 +1,13 @@
+{
+    "categories": [],
+    "sort": "ASC",
+    "template": "${{CHANGELOG}}\n${{UNCATEGORIZED}}",
+    "empty_template": "- No Changes",
+    "label_extractor": [
+        {
+            "pattern": ".*",
+            "target": "Changes",
+            "flags": "gu"
+        }
+    ]
+}
