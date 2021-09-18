@@ -73,6 +73,7 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v1
         with:
           commitMode: true
+          configuration: .github/config/changelog.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -89,13 +90,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
-          release_name: ${{ steps.tag.outputs.tag }}
           body: ${{steps.github_release.outputs.changelog}}
+          draft: true
           files: |
-            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-windows/McLauncher SC-${{ steps.tag.outputs.tag }}.msi
-            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-linux/McLauncher SC-${{ steps.tag.outputs.tag }}.deb
-            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-mac/McLauncher SC-${{ steps.tag.outputs.tag }}.dmg
-            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-linux/McLauncher SC-${{ steps.tag.outputs.tag }}.rpm
-            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-windows/McLauncher SC-${{ steps.tag.outputs.tag }}.exe
+            artifacts/McLauncher-${{ steps.tag.outputs.tag }}-*/*
+
 
           
