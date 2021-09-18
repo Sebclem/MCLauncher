@@ -1,8 +1,9 @@
 name: Gradle Build
 
-on: 
-  release:
-    types: [ published ]
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -14,40 +15,73 @@ jobs:
       fail-fast: false
     name: ${{ matrix.os }}
     steps:
-    - name: Git checkout
-      uses: actions/checkout@v2
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-    - name: Echo JAVA_HOME
-      run: echo $JAVA_HOME
-    - name: Verify Gradle Wrapper
-      uses: gradle/wrapper-validation-action@v1
-    - name: Execute jpackage
-      run: ./gradlew --info --stacktrace -Pversion="${{ github.event.release.tag_name }}" jpackage
-    - name: Upload DMG as an artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-dmg
-        path: app/build/jpackage/*.dmg
-    - name: Upload EXE as an artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-exe
-        path: app/build/jpackage/*.exe
-    - name: Upload MSI as an artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-msi
-        path: app/build/jpackage/*.msi
-    - name: Upload DEB as an artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-deb
-        path: app/build/jpackage/*.deb
-    - name: Upload RPM as an artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: McLauncher-${{ github.event.release.tag_name }}-${{ matrix.os }}-rpm
-        path: app/build/jpackage/*.rpm
+
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: Echo JAVA_HOME
+        run: echo $JAVA_HOME
+
+      - name: Verify Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+        
+      - name: Execute jpackage
+        run: ./gradlew --info --stacktrace -Pversion="${{ github.ref }}" jpackage
+
+      - name: Upload DMG as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-dmg
+          path: app/build/jpackage/*.dmg
+        
+      - name: Upload EXE as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-exe
+          path: app/build/jpackage/*.exe
+
+      - name: Upload MSI as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-msi
+          path: app/build/jpackage/*.msi
+
+      - name: Upload DEB as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-deb
+          path: app/build/jpackage/*.deb
+
+      - name: Upload RPM as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-rpm
+          path: app/build/jpackage/*.rpm
+
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v1
+        with:
+          commitMode: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: ${{steps.github_release.outputs.changelog}}
+          files: |
+            McLauncher SC-${{ github.ref }}.msi
+            McLauncher SC-${{ github.ref }}.deb
+            McLauncher SC-${{ github.ref }}.dmg
+            McLauncher SC-${{ github.ref }}.rpm
+            McLauncher SC-${{ github.ref }}.exe
+
+          
