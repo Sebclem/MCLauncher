@@ -13,7 +13,7 @@ jobs:
         os: [ubuntu-latest, macOS-latest, windows-latest]
         java: [ '16.0.2' ]
       fail-fast: false
-    name: ${{ matrix.os }}
+    name: Build - ${{ matrix.os }}
     steps:
 
       - name: Git checkout
@@ -33,35 +33,36 @@ jobs:
       - name: Execute jpackage
         run: ./gradlew --info --stacktrace -Pversion="${{ github.ref }}" jpackage
 
-      - name: Upload DMG as an artifact
+      - name: Upload Mac artifact
+        if: matrix.os == 'macOS-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-dmg
+          name: McLauncher-${{ github.ref }}-mac
           path: app/build/jpackage/*.dmg
-        
-      - name: Upload EXE as an artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-exe
-          path: app/build/jpackage/*.exe
 
-      - name: Upload MSI as an artifact
+      - name: Upload Windows artifact
+        if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-msi
-          path: app/build/jpackage/*.msi
+          name: McLauncher-${{ github.ref }}-windows
+          path: |
+            app/build/jpackage/*.msi
+            app/build/jpackage/*.exe
 
-      - name: Upload DEB as an artifact
+      - name: Upload Linux artifact
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2
         with:
-          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-deb
-          path: app/build/jpackage/*.deb
-
-      - name: Upload RPM as an artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: McLauncher-${{ github.ref }}-${{ matrix.os }}-rpm
-          path: app/build/jpackage/*.rpm
+          name: McLauncher-${{ github.ref }}-linux
+          path: |
+            app/build/jpackage/*.deb
+            app/build/jpackage/*.rpm
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
 
       - name: Build Changelog
         id: github_release
@@ -70,6 +71,11 @@ jobs:
           commitMode: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - uses: actions/download-artifact@v2
+        name: Donwload Builds
+        with:
+          path: artifacts
 
       - name: Create Release
         uses: actions/create-release@v1
@@ -78,10 +84,10 @@ jobs:
           release_name: ${{ github.ref }}
           body: ${{steps.github_release.outputs.changelog}}
           files: |
-            McLauncher SC-${{ github.ref }}.msi
-            McLauncher SC-${{ github.ref }}.deb
-            McLauncher SC-${{ github.ref }}.dmg
-            McLauncher SC-${{ github.ref }}.rpm
-            McLauncher SC-${{ github.ref }}.exe
+            artifacts/McLauncher-${{ github.ref }}-windows/McLauncher SC-${{ github.ref }}.msi
+            artifacts/McLauncher-${{ github.ref }}-linux/McLauncher SC-${{ github.ref }}.deb
+            artifacts/McLauncher-${{ github.ref }}-mac/McLauncher SC-${{ github.ref }}.dmg
+            artifacts/McLauncher-${{ github.ref }}-linux/McLauncher SC-${{ github.ref }}.rpm
+            artifacts/McLauncher-${{ github.ref }}-windows/McLauncher SC-${{ github.ref }}.exe
 
           
