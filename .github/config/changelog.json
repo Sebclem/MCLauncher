@@ -2,6 +2,7 @@
     "categories": [],
     "sort": "ASC",
     "template": "${{CHANGELOG}}\n${{UNCATEGORIZED}}",
+    "pr_template": "- ${{TITLE}}",
     "empty_template": "- No Changes",
     "label_extractor": [
         {
