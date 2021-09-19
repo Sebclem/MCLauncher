@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import McLauncher.Utils.GameProfile;
+import McLauncher.Utils.LauncherUpdateChecker;
 import McLauncher.Utils.OsIdentifer;
 import McLauncher.Utils.SaveUtils;
 
@@ -44,15 +44,16 @@ public class App extends Application {
         logger.info("Install path: " + gamePath);
         logger.info("Java Home: " + System.getProperty("java.home"));
         logger.info("Java Version: " + System.getProperty("java.version"));
+        logger.info("Launcher Version: " + LauncherUpdateChecker.getVersion());
         saveUtils = SaveUtils.getINSTANCE(gamePath + "launcher.properties");
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/mainPage.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.MyBundle", Locale.getDefault()));
         Parent root = loader.load();
-        controller = loader.getController();
-        primaryStage.setTitle("BDKDM Minecraft Launcher");
 
+        controller = loader.getController();
+        primaryStage.setTitle("Mc Launcher SC");
         primaryStage.setScene(new Scene(root, 1014, 605 ));
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(e -> Platform.exit());

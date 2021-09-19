@@ -18,7 +18,9 @@ module McLauncher {
     requires javafx.fxml;
     requires transitive javafx.controls;
     requires com.google.gson;
+    requires org.controlsfx.controls;
     exports McLauncher;
     exports McLauncher.Json to com.google.gson;
     opens McLauncher to javafx.fxml;
+
 }

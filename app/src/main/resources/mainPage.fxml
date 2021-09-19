@@ -7,6 +7,8 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.effect.Blend?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.effect.Shadow?>
 <?import javafx.scene.image.Image?>
@@ -147,6 +149,39 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
+                  <TitledPane fx:id="updateNotification" animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" opacity="0.0" prefHeight="120.0" prefWidth="250.0" stylesheets="@titled-pane.css" text="%launcherUpdate" textAlignment="CENTER" textFill="WHITE" visible="false" StackPane.alignment="TOP_RIGHT">
+                     <StackPane.margin>
+                        <Insets right="20.0" top="20.0" />
+                     </StackPane.margin>
+                     <content>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label fx:id="oldVersion" text="Current version: 1.0.0" textFill="#cfd2d6" />
+                              <Label fx:id="newVersion" text="New version: 1.0.0" textFill="#cfd2d6" />
+                              <Button fx:id="updateBtn" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: #0d6efd;" text="%downloadUp" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <effect>
+                                    <DropShadow />
+                                 </effect>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" top="10.0" />
+                                 </VBox.margin>
+                                 <padding>
+                                    <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
+                                 </padding>
+                              </Button>
+                           </children>
+                        </VBox>
+                     </content>
+                     <effect>
+                        <Blend />
+                     </effect>
+                  </TitledPane>
                </children>
             </StackPane>
             <StackPane prefHeight="30.0" prefWidth="1024.0">

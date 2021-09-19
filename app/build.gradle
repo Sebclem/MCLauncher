@@ -32,7 +32,7 @@ dependencies {
 
     // This dependency is used by the application.
     implementation  'com.google.code.gson:gson:2.8.6'
-    implementation  group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
 }
@@ -51,8 +51,8 @@ tasks.named('test') {
 jlink {
     forceMerge('log4j-api')
     jpackage {
-        imageName = "McLauncher SC"
-        installerName = 'McLauncher SC'
+        imageName = "McLauncher-SC"
+        installerName = 'McLauncher-SC'
         icon = 'icon.ico'
         if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             installerOptions += ['--win-dir-chooser', '--win-menu', '--win-menu-group', '"McLauncher SC"', '--win-shortcut']
@@ -61,6 +61,20 @@ jlink {
             installerOptions += ['--linux-shortcut', '--linux-app-category', 'Game']
         }
     }
+}
+
+task createProperties(dependsOn: processResources) {
+  doLast {
+    new File("$buildDir/resources/main/version.properties").withWriter { w ->
+        Properties p = new Properties()
+        p['version'] = project.version.toString()
+        p.store w, null
+    }
+  }
+}
+
+classes {
+    dependsOn createProperties
 }
 
 jar {

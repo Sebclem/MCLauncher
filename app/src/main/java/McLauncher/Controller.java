@@ -1,10 +1,13 @@
 
 package McLauncher;
 
+import java.awt.Desktop;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
@@ -17,11 +20,13 @@ import java.util.concurrent.FutureTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import McLauncher.Json.LauncherUpdateResponse;
 import McLauncher.Utils.Account;
 import McLauncher.Utils.ClassPathBuilder;
 import McLauncher.Utils.FullGameInstaller;
 import McLauncher.Utils.GameProfile;
 import McLauncher.Utils.GameProfileLoader;
+import McLauncher.Utils.LauncherUpdateChecker;
 import McLauncher.Utils.MojanLogin;
 import McLauncher.Utils.SaveUtils;
 import McLauncher.Utils.Event.Observer;
@@ -29,6 +34,7 @@ import McLauncher.Utils.Exception.DownloadFailException;
 import McLauncher.Utils.Exception.LoginException;
 import McLauncher.Utils.Exception.RefreshProfileFailException;
 import McLauncher.Utils.Exception.TokenRefreshException;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -44,6 +50,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -53,62 +60,75 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Controller implements Initializable {
-
-    @FXML
-    private Label userLabel;
-
-    @FXML
-    private VBox vbox;
-
-    @FXML
-    private Button optionButton;
-
-    @FXML
-    private TextField userText;
-
-    @FXML
-    private GridPane gridLogged;
-
-    @FXML
-    private ImageView faceImg;
-
-    @FXML
-    private Label leftLabelBar;
-
-    @FXML
-    private Label labelBar;
 
     @FXML
     private Pane body;
 
     @FXML
-    private Button playButton;
+    private VBox vbox;
 
     @FXML
-    private Label passwordLabel;
-
-    @FXML
-    private GridPane grid;
-
-    @FXML
-    private ProgressBar progressBar;
-
-    @FXML
-    private Label rightLabelBar;
-
-    @FXML
-    private PasswordField passwordField;
+    private GridPane gridLogged;
 
     @FXML
     private Label pseudoLabel;
 
     @FXML
-    private Label dlSpeed;
+    private ImageView faceImg;
+
+    @FXML
+    private GridPane grid;
+
+    @FXML
+    private Label userLabel;
+
+    @FXML
+    private Label passwordLabel;
+
+    @FXML
+    private PasswordField passwordField;
+
+    @FXML
+    private Button optionButton;
+
+    @FXML
+    private Button playButton;
+
+    @FXML
+    private TextField userText;
 
     @FXML
     private Button disconectButton;
+
+    @FXML
+    private TitledPane updateNotification;
+
+    @FXML
+    private Label oldVersion;
+
+    @FXML
+    private Label newVersion;
+
+    @FXML
+    private Button updateBtn;
+
+    @FXML
+    private ProgressBar progressBar;
+
+    @FXML
+    private Label labelBar;
+
+    @FXML
+    private Label leftLabelBar;
+
+    @FXML
+    private Label dlSpeed;
+
+    @FXML
+    private Label rightLabelBar;
 
     boolean firstTime = true;
     public static Scene dialogScene;
@@ -204,6 +224,19 @@ public class Controller implements Initializable {
         }
 
         disconectButton.setOnMouseClicked(event -> disconnect());
+        new Thread(()->{
+            String currentVersion = LauncherUpdateChecker.getVersion();
+            try {
+                LauncherUpdateResponse lastVersion = LauncherUpdateChecker.getLastVersion();
+                if(!currentVersion.equals(lastVersion.tag_name)){
+                    showUpdateNotification(currentVersion, lastVersion.tag_name, lastVersion.html_url);
+                }
+            } catch (IOException e) {
+                logger.warn("Fail to check for launcher update !");
+                logger.catching(e);
+            }
+        }).start();
+        
 
     }
 
@@ -499,6 +532,27 @@ public class Controller implements Initializable {
             logger.catching(e);
         }
         Platform.runLater(() -> labelBar.getScene().getWindow().hide());
+    }
+
+    private void showUpdateNotification(String currentVersion, String newVersionStr, String url){
+        Platform.runLater(() -> {
+            oldVersion.setText("Current Version: " + currentVersion);
+            newVersion.setText("New Version: " + newVersionStr);
+        });
+       
+        updateBtn.setOnMouseClicked((event)->{
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                logger.catching(e);
+            }
+        });
+        FadeTransition ft = new FadeTransition(Duration.millis(500), updateNotification);
+        ft.setFromValue(0);
+        ft.setToValue(1.0);
+        updateNotification.setVisible(true);
+        ft.play();
+
     }
 
     class DlListenner implements Observer {
