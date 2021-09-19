@@ -1,0 +1,18 @@
+
+.progress-bar .bar {
+    -fx-background-color: rgb(45,137,239);
+    -fx-background-insets: 0,0,0;
+    -fx-background-radius: 0;
+    -fx-effect: innershadow(three-pass-box, black, 3, 0.1, 0, 0);
+    /* -fx-padding: 1em; */
+}
+.progress-bar:indeterminate .bar {  
+	-fx-background-color: rgb(45,137,239);
+    -fx-border-style:none;
+}
+.progress-bar .track {
+    /* -fx-backgroud-color: white */
+    -fx-background-color:   #2d2d2d; 
+    -fx-effect: innershadow(three-pass-box, black, 10, 0.2, 0, 0);
+    -fx-background-radius: 0;
+}

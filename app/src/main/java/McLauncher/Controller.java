@@ -272,6 +272,7 @@ public class Controller implements Initializable {
                         @Override
                         public Object call() {
                             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, bundle.getString("needWipe"));
+                            alert.getDialogPane().getStylesheets().add("style.css");
                             Optional<ButtonType> result = alert.showAndWait();
                             return result.get() == ButtonType.OK;
                         }
@@ -311,6 +312,7 @@ public class Controller implements Initializable {
                     label.setWrapText(true);
                     alert.getDialogPane().setContent(label);
                     alert.setTitle(bundle.getString("error"));
+                    alert.getDialogPane().getStylesheets().add("style.css");
                     progressBar.setProgress(0);
                     labelBar.setText(bundle.getString("authFail") + " !");
                     alert.showAndWait();
@@ -330,6 +332,7 @@ public class Controller implements Initializable {
                     alert.setHeaderText(bundle.getString("error") + " !");
                     alert.setContentText(bundle.getString("servFail") + " ! \n(" + e.getMessage() + ")");
                     alert.setTitle(bundle.getString("error"));
+                    alert.getDialogPane().getStylesheets().add("style.css");
                     progressBar.setProgress(0);
                     labelBar.setText(bundle.getString("error") + " !");
                     alert.showAndWait();
@@ -351,6 +354,7 @@ public class Controller implements Initializable {
                     alert.setHeaderText("Error !");
                     alert.setContentText(bundle.getString("error") + " : " + e.getClass().toString());
                     alert.setTitle(bundle.getString("error"));
+                    alert.getDialogPane().getStylesheets().add("style.css");
                     progressBar.setProgress(0);
                     labelBar.setText(bundle.getString("error") + "!");
                     alert.showAndWait();
@@ -364,6 +368,7 @@ public class Controller implements Initializable {
                     alert.setHeaderText(bundle.getString("dlFail"));
                     alert.setContentText(bundle.getString("dlFailLong"));
                     alert.setTitle(bundle.getString("error"));
+                    alert.getDialogPane().getStylesheets().add("style.css");
                     progressBar.setProgress(0);
                     labelBar.setText(bundle.getString("dlFail"));
                     alert.showAndWait();
@@ -401,6 +406,7 @@ public class Controller implements Initializable {
                         }
 
                         alert.setTitle(bundle.getString("error"));
+                        alert.getDialogPane().getStylesheets().add("style.css");
                         Optional<ButtonType> result = alert.showAndWait();
                         return result.get() == okBtn;
                     }
@@ -437,6 +443,7 @@ public class Controller implements Initializable {
                     alert.setHeaderText("Error !");
                     alert.setContentText(bundle.getString("error") + " : " + e.getClass().toString());
                     alert.setTitle(bundle.getString("error"));
+                    alert.getDialogPane().getStylesheets().add("style.css");
                     progressBar.setProgress(0);
                     labelBar.setText(bundle.getString("error") + "!");
                     alert.showAndWait();
@@ -475,6 +482,7 @@ public class Controller implements Initializable {
                     alert.setHeaderText("Echec de lancement!");
                     alert.setContentText("Echec lors du lancement du jeu:\n" + e.getMessage());
                     alert.setTitle("Erreur");
+                    alert.getDialogPane().getStylesheets().add("style.css");
                     progressBar.setProgress(0);
                     labelBar.setText("Echec de lancement du jeu!");
                     alert.showAndWait();

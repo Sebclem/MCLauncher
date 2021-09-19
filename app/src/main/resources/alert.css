@@ -1,0 +1,22 @@
+.dialog-pane{
+    -fx-background-color: #2d2d2d;
+}
+.dialog-pane > *.button-bar > *.container{
+    -fx-background-color: #2d2d2d;
+    /* -fx-border-style: solid;
+    -fx-border-width: 1 0 0 0;
+    -fx-border-color: #cfd2d6; */
+}
+.dialog-pane > *.label.content{
+    -fx-text-fill: #cfd2d6;
+    -fx-pading: 0, 0, 50, 0; 
+}
+.dialog-pane:header *.header-panel{
+    -fx-background-color: #2d2d2d;
+    -fx-border-style: solid;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #cfd2d6
+}
+.dialog-pane:header *.header-panel *.label{
+    -fx-text-fill: #cfd2d6
+}

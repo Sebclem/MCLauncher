@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
@@ -14,13 +15,13 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="257.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="McLauncher.OptionController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="257.0" prefWidth="400.0" style="-fx-background-color: #2d2d2d;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="McLauncher.OptionController">
    <children>
       <VBox maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="110.0" prefWidth="400.0">
          <children>
             <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="386.0">
                <children>
-                  <Label text="Ram:">
+                  <Label text="Ram:" textFill="#cfd2d6">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -29,25 +30,37 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="35.0">
                            <children>
-                              <RadioButton fx:id="radioPredef" mnemonicParsing="false" selected="true" text="%preset">
+                              <RadioButton fx:id="radioPredef" mnemonicParsing="false" selected="true" text="%preset" textFill="#cfd2d6">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="ramToogle" />
                                  </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </RadioButton>
-                              <ChoiceBox fx:id="predefRam" prefHeight="25.0" prefWidth="120.0" />
+                              <ChoiceBox fx:id="predefRam" prefHeight="25.0" prefWidth="120.0" style="-fx-background-color: #cfd2d6;">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ChoiceBox>
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <RadioButton fx:id="radioPerso" mnemonicParsing="false" text="%custom" toggleGroup="$ramToogle" />
+                              <RadioButton fx:id="radioPerso" mnemonicParsing="false" text="%custom" textFill="#cfd2d6" toggleGroup="$ramToogle">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
                               <HBox fx:id="persoHBox" alignment="CENTER_LEFT" disable="true">
                                  <children>
-                                    <Label text="Max:">
+                                    <Label text="Max:" textFill="#cfd2d6">
                                        <HBox.margin>
                                           <Insets left="20.0" right="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField fx:id="maxRam" prefHeight="25.0" prefWidth="60.0" promptText="MB" />
+                                    <TextField fx:id="maxRam" prefHeight="25.0" prefWidth="60.0" promptText="MB" style="-fx-background-color: #cfd2d6;">
+                                       <cursor>
+                                          <Cursor fx:constant="TEXT" />
+                                       </cursor></TextField>
                                  </children>
                               </HBox>
                            </children>
@@ -68,7 +81,7 @@
                </effect></Line>
             <HBox fx:id="authBox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="386.0">
                <children>
-                  <Label prefHeight="38.0" prefWidth="270.0" text="%authentication" wrapText="true">
+                  <Label prefHeight="38.0" prefWidth="270.0" text="%authentication" textFill="#cfd2d6" wrapText="true">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -77,18 +90,27 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="35.0">
                            <children>
-                              <RadioButton fx:id="radioMojang" mnemonicParsing="false" prefHeight="17.0" prefWidth="114.0" selected="true" text="Mojang">
+                              <RadioButton fx:id="radioMojang" mnemonicParsing="false" prefHeight="17.0" prefWidth="114.0" selected="true" text="Mojang" textFill="#cfd2d6">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="authToggle" />
                                  </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
                               </RadioButton>
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <RadioButton fx:id="radioCrack" mnemonicParsing="false" prefHeight="17.0" prefWidth="64.0" text="Crack" toggleGroup="$authToggle" />
-                              <Button fx:id="buttonRegister" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" text="%registration" />
+                              <RadioButton fx:id="radioCrack" mnemonicParsing="false" prefHeight="17.0" prefWidth="64.0" text="Crack" textFill="#cfd2d6" toggleGroup="$authToggle" />
+                              <Button fx:id="buttonRegister" mnemonicParsing="false" prefHeight="25.0" prefWidth="113.0" style="-fx-background-color: #0d6efd;" text="%registration" textFill="WHITE">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></Button>
                            </children>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </HBox>
                      </children>
                      <HBox.margin>
@@ -106,9 +128,18 @@
                </effect></Line>
             <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <Button fx:id="forceDownload" mnemonicParsing="false" text="%forceDl" />
-                  <Button fx:id="confirmer" mnemonicParsing="false" text="%confirm" />
-                  <Button fx:id="annuler" mnemonicParsing="false" text="%cancel" />
+                  <Button fx:id="forceDownload" mnemonicParsing="false" style="-fx-background-color: #0d6efd;" text="%forceDl" textFill="WHITE">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button fx:id="annuler" mnemonicParsing="false" style="-fx-background-color: #dc3545;" text="%cancel" textFill="WHITE">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
+                  <Button fx:id="confirmer" mnemonicParsing="false" style="-fx-background-color: #198754;" text="%confirm" textFill="WHITE">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></Button>
                </children>
                <padding>
                   <Insets right="10.0" />
