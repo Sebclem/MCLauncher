@@ -1,34 +1,11 @@
-
 package McLauncher;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.text.DecimalFormat;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import McLauncher.Auth.AbstractLogin;
+import McLauncher.Auth.Account;
+import McLauncher.Auth.MojanLogin;
+import McLauncher.Auth.MsaLogin;
 import McLauncher.Json.LauncherUpdateResponse;
-import McLauncher.Utils.Account;
-import McLauncher.Utils.ClassPathBuilder;
-import McLauncher.Utils.FullGameInstaller;
-import McLauncher.Utils.GameProfile;
-import McLauncher.Utils.GameProfileLoader;
-import McLauncher.Utils.LauncherUpdateChecker;
-import McLauncher.Utils.MojanLogin;
-import McLauncher.Utils.SaveUtils;
+import McLauncher.Utils.*;
 import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
 import McLauncher.Utils.Exception.LoginException;
@@ -42,15 +19,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -61,23 +33,29 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.*;
+import java.text.DecimalFormat;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class Controller implements Initializable {
 
+    public static Scene dialogScene;
+    boolean firstTime = true;
     @FXML
     private Pane body;
 
     @FXML
     private VBox vbox;
-
-    @FXML
-    private GridPane gridLogged;
-
-    @FXML
-    private Label pseudoLabel;
-
-    @FXML
-    private ImageView faceImg;
 
     @FXML
     private GridPane grid;
@@ -101,7 +79,19 @@ public class Controller implements Initializable {
     private TextField userText;
 
     @FXML
+    private Button logMsaBtn;
+
+    @FXML
     private Button disconectButton;
+
+    @FXML
+    private GridPane gridLogged;
+
+    @FXML
+    private Label pseudoLabel;
+
+    @FXML
+    private ImageView faceImg;
 
     @FXML
     private TitledPane updateNotification;
@@ -130,12 +120,11 @@ public class Controller implements Initializable {
     @FXML
     private Label rightLabelBar;
 
-    boolean firstTime = true;
-    public static Scene dialogScene;
     private GameProfileLoader gameProfileLoader;
     private Logger logger = LogManager.getLogger();
     private SaveUtils saveUtils;
     private ResourceBundle bundle;
+    private AbstractLogin logManager;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -145,7 +134,7 @@ public class Controller implements Initializable {
         SaveUtils.getINSTANCE().checkConfig();
         gameProfileLoader = new GameProfileLoader();
 
-        userText.setText(saveUtils.get("usernameor"));
+        userText.setText(saveUtils.get("username"));
         if (!userText.textProperty().isEmpty().get() && !passwordField.textProperty().isEmpty().get()) {
             playButton.setDisable(false);
         }
@@ -163,7 +152,9 @@ public class Controller implements Initializable {
             }
         });
 
-        playButton.setOnMouseClicked(event -> new LaunchThread().start());
+        playButton.setOnMouseClicked(event -> {
+            new LaunchThread().start();
+        });
 
         optionButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -187,30 +178,93 @@ public class Controller implements Initializable {
                 }
             }
         });
+        disconectButton.setOnMouseClicked(event -> disconnect());
+        logMsaBtn.setOnMouseClicked(event -> {
+            progressBar.setProgress(-1);
+            labelBar.setText(bundle.getString("auth"));
+            logManager.login(null, null);
+        });
+        new Thread(() -> {
+            String currentVersion = LauncherUpdateChecker.getVersion();
+            try {
+                LauncherUpdateResponse lastVersion = LauncherUpdateChecker.getLastVersion();
+                if (!currentVersion.equals(lastVersion.tag_name)) {
+                    showUpdateNotification(currentVersion, lastVersion.tag_name, lastVersion.html_url);
+                }
+            } catch (IOException e) {
+                logger.warn("Fail to check for launcher update !");
+                logger.catching(e);
+            }
+        }).start();
 
-        if (gameProfileLoader.isLogged()) {
-            userText.setVisible(false);
+        updateVisibility();
+        updateLogManger();
+
+
+    }
+
+    protected void disconnect() {
+        Platform.runLater(() -> {
+
+            saveUtils.save(new Account("", "", "", "", null, "", ""));
+            gameProfileLoader.setLogged(false);
+            updateVisibility();
+        });
+    }
+
+    protected void settingsChanged(){
+        Platform.runLater(this::updateVisibility);
+    }
+    private void updateLogManger(){
+        if (SaveUtils.getINSTANCE().get("authType").equals("1"))
+            logManager = new MsaLogin();
+        else
+            // TODO old Mojang login
+            logManager = new MsaLogin();
+        setupLoginEventListeners();
+    }
+
+    private void logStateChanged(){
+        Platform.runLater(this::updateVisibility);
+        updateLogManger();
+    }
+    void updateVisibility(){
+        if(!gameProfileLoader.isLogged()){
+            if (SaveUtils.getINSTANCE().get("authType").equals("1")) {
+                passwordField.setVisible(false);
+                passwordLabel.setVisible(false);
+                userText.setVisible(false);
+                userLabel.setVisible(false);
+                logMsaBtn.setVisible(true);
+            }
+            else{
+                passwordField.setVisible(true);
+                passwordLabel.setVisible(true);
+                userText.setVisible(true);
+                userLabel.setVisible(true);
+                logMsaBtn.setVisible(false);
+                playButton.setDisable(passwordField.textProperty().isEmpty().get());
+
+            }
+            playButton.setDisable(true);
+            disconectButton.setVisible(false);
+            gridLogged.setVisible(false);
+        }else{
             passwordField.setVisible(false);
-            playButton.setDisable(false);
+            passwordLabel.setVisible(false);
+            userText.setVisible(false);
             userLabel.setVisible(false);
+            logMsaBtn.setVisible(false);
+            playButton.setDisable(false);
+            disconectButton.setVisible(true);
             passwordLabel.setVisible(false);
             gridLogged.setVisible(true);
             pseudoLabel.setText(gameProfileLoader.getAccount().getDisplayName());
-            disconectButton.setVisible(true);
-            disconectButton.setDisable(false);
-
-            // And as before now you can use URL and URLConnection
-            String httpsURL;
-            httpsURL = "https://mc-heads.net/head/" + gameProfileLoader.getAccount().getUUID() + "/98.png";
-            URL myurl = null;
             try {
-                myurl = new URL(httpsURL);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            HttpURLConnection con = null;
-            try {
-                con = (HttpURLConnection) myurl.openConnection();
+                String httpsURL;
+                httpsURL = "https://mc-heads.net/head/" + gameProfileLoader.getAccount().getUUID() + "/98.png";
+                URL myurl = new URL(httpsURL);
+                HttpURLConnection con = (HttpURLConnection) myurl.openConnection();
                 con.setRequestProperty("User-Agent",
                         "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                 InputStream ins = con.getInputStream();
@@ -220,43 +274,129 @@ public class Controller implements Initializable {
             } catch (IOException e) {
                 logger.catching(e);
             }
-
         }
-
-        disconectButton.setOnMouseClicked(event -> disconnect());
-        new Thread(()->{
-            String currentVersion = LauncherUpdateChecker.getVersion();
-            try {
-                LauncherUpdateResponse lastVersion = LauncherUpdateChecker.getLastVersion();
-                if(!currentVersion.equals(lastVersion.tag_name)){
-                    showUpdateNotification(currentVersion, lastVersion.tag_name, lastVersion.html_url);
-                }
-            } catch (IOException e) {
-                logger.warn("Fail to check for launcher update !");
-                logger.catching(e);
-            }
-        }).start();
-        
-
     }
 
-    protected void disconnect() {
-        Platform.runLater(() -> {
-            passwordField.setDisable(false);
-            userText.setVisible(true);
-            passwordField.setVisible(true);
-            if (passwordField.textProperty().isEmpty().get())
-                playButton.setDisable(true);
-            else
-                playButton.setDisable(false);
-            userLabel.setVisible(true);
-            passwordLabel.setVisible(true);
-            gridLogged.setVisible(false);
-            disconectButton.setVisible(false);
-            saveUtils.save(new Account("", "", "", "", "", ""));
-            gameProfileLoader.setLogged(false);
+    private void setupLoginEventListeners(){
+        logManager.setOnLoginCancel(loginProscesor -> {
+            Platform.runLater(() -> {
+                progressBar.setProgress(0);
+                labelBar.setText("");
+                logMsaBtn.setDisable(false);
+            });
+        });
+        logManager.setOnBadCredentials(loginProscesor -> {
+            logger.warn("Authentication Fail : Wrong User or Password!");
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setHeaderText(bundle.getString("authFail") + " !");
+                Label label = new Label(bundle.getString("authFail") + " : \n" + loginProscesor.getException().getMessage());
+                label.setWrapText(true);
+                alert.getDialogPane().setContent(label);
+                alert.setTitle(bundle.getString("error"));
+                alert.getDialogPane().getStylesheets().add("style.css");
+                progressBar.setProgress(0);
+                labelBar.setText(bundle.getString("authFail") + " !");
+                logMsaBtn.setDisable(false);
+                alert.showAndWait();
+                disconnect();
+            });
+        });
+        logManager.setOnConnectionError(loginProscesor -> {
+            logger.catching(loginProscesor.getException());
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setHeaderText(loginProscesor.getException().getClass().toString());
+                alert.setContentText(bundle.getString("error") + " : " + loginProscesor.getException().getMessage());
+                alert.setTitle(bundle.getString("error"));
+                alert.getDialogPane().getStylesheets().add("style.css");
+                progressBar.setProgress(0);
+                logMsaBtn.setDisable(false);
+                labelBar.setText(bundle.getString("error") + "!");
+                alert.showAndWait();
+            });
+        });
+        logManager.setOnLoginSuccess(loginProscesor -> {
+            gameProfileLoader.setAccount(loginProscesor.getAccount());
+            gameProfileLoader.setLogged(true);
+            Platform.runLater(()->{
+                progressBar.setProgress(0);
+                labelBar.setText("");
+                logMsaBtn.setDisable(false);
+            });
+            logStateChanged();
         });
     }
+
+    private void launchGame() {
+
+        String cassPath = new ClassPathBuilder(App.gamePath).build();
+
+        GameProfile gameProfile = new GameProfile(gameProfileLoader.getAccount(), saveUtils.get("ramMax"),
+                saveUtils.get("assetId"), App.gamePath, gameProfileLoader.getVersion(), cassPath,
+                gameProfileLoader.getMainClass(), saveUtils.get("logConfigPath"));
+
+        Platform.runLater(() -> {
+            progressBar.setProgress(-1);
+            leftLabelBar.setText("");
+            rightLabelBar.setText("");
+            leftLabelBar.setText("");
+            dlSpeed.setText("");
+            labelBar.setText(bundle.getString("launch") + "...");
+
+        });
+
+        Thread threadLaunch = new Thread(() -> {
+            try {
+                gameProfile.launch();
+            } catch (IOException | InterruptedException e) {
+                logger.error(e.getMessage());
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setHeaderText("Echec de lancement!");
+                    alert.setContentText("Echec lors du lancement du jeu:\n" + e.getMessage());
+                    alert.setTitle("Erreur");
+                    alert.getDialogPane().getStylesheets().add("style.css");
+                    progressBar.setProgress(0);
+                    labelBar.setText("Echec de lancement du jeu!");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                });
+            }
+        });
+        threadLaunch.start();
+
+        try {
+            Thread.sleep(10000);
+
+        } catch (InterruptedException e) {
+            logger.catching(e);
+        }
+        Platform.runLater(() -> labelBar.getScene().getWindow().hide());
+    }
+
+    private void showUpdateNotification(String currentVersion, String newVersionStr, String url) {
+        Platform.runLater(() -> {
+            oldVersion.setText("Current Version: " + currentVersion);
+            newVersion.setText("New Version: " + newVersionStr);
+        });
+
+        updateBtn.setOnMouseClicked((event) -> {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (IOException | URISyntaxException e) {
+                logger.catching(e);
+            }
+        });
+        FadeTransition ft = new FadeTransition(Duration.millis(500), updateNotification);
+        ft.setFromValue(0);
+        ft.setToValue(1.0);
+        updateNotification.setVisible(true);
+        ft.play();
+
+    }
+
+
 
     class LaunchThread extends Thread {
         @Override
@@ -278,16 +418,17 @@ public class Controller implements Initializable {
                     progressBar.setProgress(-1);
                 });
                 boolean official = SaveUtils.getINSTANCE().get("authType").equals("0");
-                MojanLogin mojanLogin = new MojanLogin();
-                if (!gameProfileLoader.isLogged())
-                    gameProfileLoader
-                            .setAccount(mojanLogin.login(userText.getText(), passwordField.getText(), official));
-                else {
-                    gameProfileLoader.setAccount(mojanLogin.refreshAccount(gameProfileLoader.getAccount(), official));
-                }
-                if (gameProfileLoader.getAccount() == null) {
-                    throw new TokenRefreshException();
-                }
+                //TODO Refresh Account ?
+//                MojanLogin mojanLogin = new MojanLogin();
+//                if (!gameProfileLoader.isLogged())
+//                    gameProfileLoader
+//                            .setAccount(mojanLogin.login(userText.getText(), passwordField.getText(), official));
+//                else {
+//                    gameProfileLoader.setAccount(mojanLogin.refreshAccount(gameProfileLoader.getAccount(), official));
+//                }
+//                if (gameProfileLoader.getAccount() == null) {
+//                    throw new TokenRefreshException();
+//                }
 
                 Platform.runLater(() -> {
                     progressBar.setProgress(-1);
@@ -335,29 +476,6 @@ public class Controller implements Initializable {
                 gameInstaller.download(App.gamePath, gameProfileLoader.getVersion());
                 launchGame();
 
-            } catch (LoginException e) {
-
-                logger.warn("Authentication Fail : Wrong User or Password!");
-                Platform.runLater(() -> {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setHeaderText(bundle.getString("authFail") + " !");
-                    Label label = new Label(bundle.getString("authFail") + " : \n" + e.getMessage());
-                    label.setWrapText(true);
-                    alert.getDialogPane().setContent(label);
-                    alert.setTitle(bundle.getString("error"));
-                    alert.getDialogPane().getStylesheets().add("style.css");
-                    progressBar.setProgress(0);
-                    labelBar.setText(bundle.getString("authFail") + " !");
-                    alert.showAndWait();
-                    grid.setDisable(false);
-                    userLabel.setVisible(true);
-                    passwordLabel.setVisible(true);
-                    userText.setVisible(true);
-                    passwordField.setVisible(true);
-                    disconectButton.setDisable(false);
-                    gridLogged.setVisible(false);
-                    disconnect();
-                });
             } catch (UnknownHostException e) {
                 logger.catching(e);
                 Platform.runLater(() -> {
@@ -369,13 +487,6 @@ public class Controller implements Initializable {
                     progressBar.setProgress(0);
                     labelBar.setText(bundle.getString("error") + " !");
                     alert.showAndWait();
-                    grid.setDisable(false);
-                    userLabel.setVisible(true);
-                    passwordLabel.setVisible(true);
-                    userText.setVisible(true);
-                    passwordField.setVisible(true);
-                    disconectButton.setDisable(false);
-                    gridLogged.setVisible(false);
                     disconnect();
 
                 });
@@ -408,20 +519,20 @@ public class Controller implements Initializable {
 
                 });
                 grid.setDisable(false);
-            } catch (TokenRefreshException e) {
-                logger.info("Refresh token fail. Please re-login.");
-                Platform.runLater(() -> {
-                    progressBar.setProgress(0);
-                    labelBar.setText(bundle.getString("authFail") + " !");
-                    grid.setDisable(false);
-                    userLabel.setVisible(true);
-                    passwordLabel.setVisible(true);
-                    userText.setVisible(true);
-                    passwordField.setVisible(true);
-                    disconectButton.setDisable(false);
-                    gridLogged.setVisible(false);
-                    disconnect();
-                });
+//            } catch (TokenRefreshException e) {
+//                logger.info("Refresh token fail. Please re-login.");
+//                Platform.runLater(() -> {
+//                    progressBar.setProgress(0);
+//                    labelBar.setText(bundle.getString("authFail") + " !");
+//                    grid.setDisable(false);
+//                    userLabel.setVisible(true);
+//                    passwordLabel.setVisible(true);
+//                    userText.setVisible(true);
+//                    passwordField.setVisible(true);
+//                    disconectButton.setDisable(false);
+//                    gridLogged.setVisible(false);
+//                    disconnect();
+//                });
             } catch (RefreshProfileFailException e) {
                 logger.catching(e);
                 final FutureTask offlineQuestion = new FutureTask(new Callable() {
@@ -485,74 +596,6 @@ public class Controller implements Initializable {
             }
 
         }
-    }
-
-    private void launchGame() {
-
-        String cassPath = new ClassPathBuilder(App.gamePath).build();
-
-        GameProfile gameProfile = new GameProfile(gameProfileLoader.getAccount(), saveUtils.get("ramMax"),
-                saveUtils.get("assetId"), App.gamePath, gameProfileLoader.getVersion(), cassPath,
-                gameProfileLoader.getMainClass(), saveUtils.get("logConfigPath"));
-
-        Platform.runLater(() -> {
-            progressBar.setProgress(-1);
-            leftLabelBar.setText("");
-            rightLabelBar.setText("");
-            leftLabelBar.setText("");
-            dlSpeed.setText("");
-            labelBar.setText(bundle.getString("launch") + "...");
-
-        });
-
-        Thread threadLaunch = new Thread(() -> {
-            try {
-                gameProfile.launch();
-            } catch (IOException | InterruptedException e) {
-                logger.error(e.getMessage());
-                Platform.runLater(() -> {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setHeaderText("Echec de lancement!");
-                    alert.setContentText("Echec lors du lancement du jeu:\n" + e.getMessage());
-                    alert.setTitle("Erreur");
-                    alert.getDialogPane().getStylesheets().add("style.css");
-                    progressBar.setProgress(0);
-                    labelBar.setText("Echec de lancement du jeu!");
-                    alert.showAndWait();
-                    grid.setDisable(false);
-                });
-            }
-        });
-        threadLaunch.start();
-
-        try {
-            Thread.sleep(10000);
-
-        } catch (InterruptedException e) {
-            logger.catching(e);
-        }
-        Platform.runLater(() -> labelBar.getScene().getWindow().hide());
-    }
-
-    private void showUpdateNotification(String currentVersion, String newVersionStr, String url){
-        Platform.runLater(() -> {
-            oldVersion.setText("Current Version: " + currentVersion);
-            newVersion.setText("New Version: " + newVersionStr);
-        });
-       
-        updateBtn.setOnMouseClicked((event)->{
-            try {
-                Desktop.getDesktop().browse(new URI(url));
-            } catch (IOException | URISyntaxException e) {
-                logger.catching(e);
-            }
-        });
-        FadeTransition ft = new FadeTransition(Duration.millis(500), updateNotification);
-        ft.setFromValue(0);
-        ft.setToValue(1.0);
-        updateNotification.setVisible(true);
-        ft.play();
-
     }
 
     class DlListenner implements Observer {

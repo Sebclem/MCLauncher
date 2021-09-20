@@ -103,8 +103,9 @@ public class OptionController {
 //                SaveUtils.getINSTANCE().save("id","");
 
             Controller.dialogScene.getWindow().hide();
-            if(saveAuthType != authType)
+            if(!saveAuthType.equals(authType))
                 App.controller.disconnect();
+            App.controller.settingsChanged();
         });
 
 
@@ -196,9 +197,9 @@ public class OptionController {
         }
 
         if (authType == null) {
-            SaveUtils.getINSTANCE().save("authType", "0");
-            authType = "0";
-            saveAuthType = "0";
+            SaveUtils.getINSTANCE().save("authType", "1");
+            authType = "1";
+            saveAuthType = "1";
         }
     }
 }

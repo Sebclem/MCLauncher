@@ -2,6 +2,7 @@ package McLauncher.Utils;
 
 import java.io.IOException;
 
+import McLauncher.Auth.Account;
 import com.google.gson.Gson;
 
 import org.apache.logging.log4j.LogManager;

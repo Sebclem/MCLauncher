@@ -41,45 +41,15 @@
                         <DropShadow />
                      </effect>
                   </ImageView>
-                  <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="591.0" translateX="-170.0" translateY="228.0">
-                     <children>
-                        <GridPane fx:id="gridLogged" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" visible="false">
-                          <columnConstraints>
-                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="98.0" />
-                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="98.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label fx:id="pseudoLabel" text="pseudo" textFill="WHITE" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font name="System Bold" size="49.0" />
-                                 </font>
-                                 <GridPane.margin>
-                                    <Insets left="40.0" right="20.0" />
-                                 </GridPane.margin>
-                                 <effect>
-                                    <DropShadow color="#6b59d0" height="25.0" radius="12.0" width="25.0" />
-                                 </effect>
-                              </Label>
-                              <ImageView fx:id="faceImg" fitHeight="128" fitWidth="128" pickOnBounds="true" preserveRatio="true">
-                                 <effect>
-                                    <DropShadow color="#6b59d0" height="35.0" radius="17.0" width="35.0" />
-                                 </effect></ImageView>
-                           </children>
-                        </GridPane>
-                     </children>
-                  </HBox>
-                  <GridPane fx:id="grid" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="584.0" translateY="228.0">
+                  <GridPane fx:id="grid" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="108.0" prefWidth="584.0" style="-fx-background-color: #2d2d2d; -fx-background-radius: 10;" translateY="200.0">
                     <columnConstraints>
-                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="340.0" minWidth="10.0" prefWidth="163.0" />
-                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="325.0" minWidth="0.0" prefWidth="248.0" />
-                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="343.0" minWidth="10.0" prefWidth="163.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="163.0" minWidth="10.0" prefWidth="163.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="0.0" prefWidth="258.0" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="163.0" minWidth="10.0" prefWidth="163.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints maxHeight="56.0" minHeight="10.0" prefHeight="43.0" valignment="CENTER" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="43.0" valignment="CENTER" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="54.0" valignment="CENTER" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="54.0" valignment="CENTER" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label fx:id="userLabel" alignment="CENTER" prefHeight="30.0" prefWidth="144.0" text="%username" textAlignment="CENTER" textFill="WHITE">
@@ -105,6 +75,9 @@
                            <effect>
                               <DropShadow />
                            </effect>
+                           <cursor>
+                              <Cursor fx:constant="TEXT" />
+                           </cursor>
                         </PasswordField>
                         <Button fx:id="optionButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #0d6efd;" text="%option" textFill="WHITE" GridPane.columnIndex="2">
                            <font>
@@ -128,27 +101,67 @@
                               <DropShadow />
                            </effect>
                         </Button>
-                        <TextField fx:id="userText" prefHeight="35.0" prefWidth="250.0" promptText="%usernameor" GridPane.columnIndex="1">
+                        <TextField fx:id="userText" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="35.0" prefWidth="250.0" promptText="%usernameor" GridPane.columnIndex="1">
                            <font>
                               <Font size="17.0" />
                            </font>
                            <effect>
                               <DropShadow />
                            </effect>
+                           <cursor>
+                              <Cursor fx:constant="TEXT" />
+                           </cursor>
                         </TextField>
+                        <Button fx:id="logMsaBtn" mnemonicParsing="false" style="-fx-background-color: #198754;" text="%msaLogin" textFill="WHITE" visible="false" GridPane.columnSpan="2" GridPane.rowSpan="2">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                           <padding>
+                              <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                           </padding>
+                           <effect>
+                              <DropShadow />
+                           </effect>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
                      </children>
-                  </GridPane>
-                  <Button fx:id="disconectButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #dc3545;" text="%disconnect" textFill="WHITE" translateX="360.0" translateY="204.0" visible="false">
-                     <font>
-                        <Font size="15.0" />
-                     </font>
                      <effect>
                         <DropShadow />
                      </effect>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
+                  </GridPane>
+                  <GridPane fx:id="gridLogged" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="108.0" prefWidth="584.0" translateY="200.0" visible="false">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="163.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="258.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="163.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="98.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label fx:id="pseudoLabel" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font name="System Bold" size="30.0" />
+                           </font>
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                           <effect>
+                              <DropShadow height="25.0" radius="12.0" width="25.0" />
+                           </effect>
+                        </Label>
+                        <ImageView fx:id="faceImg" fitHeight="90.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
+                           <effect>
+                              <DropShadow color="#6b59d0" height="35.0" radius="17.0" width="35.0" />
+                           </effect>
+                        </ImageView>
+                     </children>
+                  </GridPane>
                   <TitledPane fx:id="updateNotification" animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" opacity="0.0" prefHeight="120.0" prefWidth="250.0" stylesheets="@titled-pane.css" text="%launcherUpdate" textAlignment="CENTER" textFill="WHITE" visible="false" StackPane.alignment="TOP_RIGHT">
                      <StackPane.margin>
                         <Insets right="20.0" top="20.0" />
@@ -182,6 +195,17 @@
                         <Blend />
                      </effect>
                   </TitledPane>
+                  <Button fx:id="disconectButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #dc3545;" text="%disconnect" textFill="WHITE" translateX="400.0" translateY="173.0" visible="false">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
                </children>
             </StackPane>
             <StackPane prefHeight="30.0" prefWidth="1024.0">

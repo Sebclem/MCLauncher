@@ -1,4 +1,4 @@
-package McLauncher.Utils;
+package McLauncher.Auth;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import McLauncher.Json.LoginPost;
 import McLauncher.Json.LoginResponse;
 import McLauncher.Json.ValidatePost;
+import McLauncher.Utils.SaveUtils;
 import McLauncher.Utils.Exception.LoginException;
 
 import java.io.BufferedReader;
@@ -35,7 +36,7 @@ public class MojanLogin {
         LoginResponse response = postLogin(json, official);
         if(response != null){
 
-            Account account = new Account(response.selectedProfile.id,response.selectedProfile.name, response.accessToken, response.clientToken, response.selectedProfile.userId, username);
+            Account account = new Account(response.selectedProfile.id,response.selectedProfile.name, response.accessToken, response.clientToken, null, null, username);
             SaveUtils.getINSTANCE().save(account);
             return account;
         }

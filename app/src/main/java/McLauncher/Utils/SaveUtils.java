@@ -1,11 +1,13 @@
 package McLauncher.Utils;
 
+import McLauncher.Auth.Account;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import McLauncher.Utils.Exception.LoadingSaveException;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.Properties;
 
 public class SaveUtils {
@@ -66,10 +68,10 @@ public class SaveUtils {
             prop.setProperty("uuid", account.getUUID());
             prop.setProperty("displayName", account.getDisplayName());
             prop.setProperty("accessToken", account.getAccessToken());
-//            prop.setProperty("userId", account.getUserId());
-            prop.setProperty("usernameor", account.getUsername());
             prop.setProperty("clientToken", account.getClientToken());
-
+            prop.setProperty("tokenExpireDate", account.getTokenExpireDate() != null ? account.getTokenExpireDate().toString() : "");
+            prop.setProperty("refreshToken", account.getRefreshToken());
+            prop.setProperty("username", account.getUsername() != null ? account.getUsername() : "");
             prop.store(output, null);
 
 
@@ -117,16 +119,21 @@ public class SaveUtils {
     public Account getAccount() throws LoadingSaveException {
 
         if(notPresent("clientToken")){
-            throw new LoadingSaveException("No logged");
+            throw new LoadingSaveException("Not logged");
         }
+        LocalDateTime tokenExpireDate = null;
+        try{
+            tokenExpireDate = LocalDateTime.parse(prop.getProperty("tokenExpireDate"));
+        }catch (Exception ignored){}
 
         return new Account(
                 prop.getProperty("uuid"),
                 prop.getProperty("displayName"),
                 prop.getProperty("accessToken"),
                 prop.getProperty("clientToken"),
-                null,
-                prop.getProperty("usernameor")
+                tokenExpireDate,
+                prop.getProperty("refreshToken"),
+                prop.getProperty("username")
         );
     }
 
@@ -161,7 +168,7 @@ public class SaveUtils {
 
         if(authType == null)
         {
-            save("authType","0");
+            save("authType","1");
         }
     }
 }
