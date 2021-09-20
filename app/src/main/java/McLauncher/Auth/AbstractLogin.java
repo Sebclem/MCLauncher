@@ -3,20 +3,27 @@ package McLauncher.Auth;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+
 public abstract class AbstractLogin {
-    protected  Account account;
-    protected  Exception exception;
-    protected  LoginEventListener onLoginSuccess;
-    protected  LoginEventListener onBadCredentials;
-    protected  LoginEventListener onConnectionError;
-    protected  LoginEventListener onLoginCancel;
+    protected Account account;
+    protected Exception exception;
+    protected String username, password;
+    protected LoginEventListener onLoginSuccess;
+    protected LoginEventListener onBadCredentials;
+    protected LoginEventListener onConnectionError;
+    protected LoginEventListener onLoginCancel;
     protected Logger logger = LogManager.getLogger();
 
     public void login(String username, String password) {
+        this.username = username;
+        this.password = password;
         new Thread(this::loginThreadMethod).start();
-    };
+    }
 
-    public abstract Account refreshToken(Account account);
+    ;
+
+    public abstract Account refreshToken(Account account) throws IOException;
 
     /**
      * This method is the actual job for login !
@@ -39,7 +46,7 @@ public abstract class AbstractLogin {
         onConnectionError.eventReceived(this);
     }
 
-    protected void loginCancel(){
+    protected void loginCancel() {
         onLoginCancel.eventReceived(this);
     }
 

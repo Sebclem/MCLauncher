@@ -8,7 +8,6 @@ import McLauncher.Json.LauncherUpdateResponse;
 import McLauncher.Utils.*;
 import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
-import McLauncher.Utils.Exception.LoginException;
 import McLauncher.Utils.Exception.RefreshProfileFailException;
 import McLauncher.Utils.Exception.TokenRefreshException;
 import javafx.animation.FadeTransition;
@@ -153,7 +152,17 @@ public class Controller implements Initializable {
         });
 
         playButton.setOnMouseClicked(event -> {
-            new LaunchThread().start();
+            if(gameProfileLoader.isLogged())
+                new LaunchThread().start();
+            else{
+                Platform.runLater(() -> {
+                    grid.setDisable(true);
+                    disconectButton.setDisable(true);
+                    labelBar.setText(bundle.getString("auth") + "...");
+                    progressBar.setProgress(-1);
+                });
+                logManager.login(userText.getText(), passwordField.getText());
+            }
         });
 
         optionButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -219,8 +228,7 @@ public class Controller implements Initializable {
         if (SaveUtils.getINSTANCE().get("authType").equals("1"))
             logManager = new MsaLogin();
         else
-            // TODO old Mojang login
-            logManager = new MsaLogin();
+            logManager = new MojanLogin();
         setupLoginEventListeners();
     }
 
@@ -319,12 +327,14 @@ public class Controller implements Initializable {
         logManager.setOnLoginSuccess(loginProscesor -> {
             gameProfileLoader.setAccount(loginProscesor.getAccount());
             gameProfileLoader.setLogged(true);
+            gameProfileLoader.updateCanOffline();
             Platform.runLater(()->{
                 progressBar.setProgress(0);
                 labelBar.setText("");
                 logMsaBtn.setDisable(false);
             });
             logStateChanged();
+            new LaunchThread().start();
         });
     }
 
@@ -414,21 +424,14 @@ public class Controller implements Initializable {
                 Platform.runLater(() -> {
                     grid.setDisable(true);
                     disconectButton.setDisable(true);
-                    labelBar.setText(bundle.getString("auth") + "...");
+                    labelBar.setText(bundle.getString("refreshToken") + "...");
                     progressBar.setProgress(-1);
                 });
                 boolean official = SaveUtils.getINSTANCE().get("authType").equals("0");
-                //TODO Refresh Account ?
-//                MojanLogin mojanLogin = new MojanLogin();
-//                if (!gameProfileLoader.isLogged())
-//                    gameProfileLoader
-//                            .setAccount(mojanLogin.login(userText.getText(), passwordField.getText(), official));
-//                else {
-//                    gameProfileLoader.setAccount(mojanLogin.refreshAccount(gameProfileLoader.getAccount(), official));
-//                }
-//                if (gameProfileLoader.getAccount() == null) {
-//                    throw new TokenRefreshException();
-//                }
+                gameProfileLoader.setAccount(logManager.refreshToken(gameProfileLoader.getAccount()));
+                if (gameProfileLoader.getAccount() == null) {
+                    throw new TokenRefreshException();
+                }
 
                 Platform.runLater(() -> {
                     progressBar.setProgress(-1);
@@ -519,20 +522,20 @@ public class Controller implements Initializable {
 
                 });
                 grid.setDisable(false);
-//            } catch (TokenRefreshException e) {
-//                logger.info("Refresh token fail. Please re-login.");
-//                Platform.runLater(() -> {
-//                    progressBar.setProgress(0);
-//                    labelBar.setText(bundle.getString("authFail") + " !");
-//                    grid.setDisable(false);
-//                    userLabel.setVisible(true);
-//                    passwordLabel.setVisible(true);
-//                    userText.setVisible(true);
-//                    passwordField.setVisible(true);
-//                    disconectButton.setDisable(false);
-//                    gridLogged.setVisible(false);
-//                    disconnect();
-//                });
+            } catch (TokenRefreshException e) {
+                logger.info("Refresh token fail. Please re-login.");
+                Platform.runLater(() -> {
+                    progressBar.setProgress(0);
+                    labelBar.setText(bundle.getString("authFail") + " !");
+                    grid.setDisable(false);
+                    userLabel.setVisible(true);
+                    passwordLabel.setVisible(true);
+                    userText.setVisible(true);
+                    passwordField.setVisible(true);
+                    disconectButton.setDisable(false);
+                    gridLogged.setVisible(false);
+                    disconnect();
+                });
             } catch (RefreshProfileFailException e) {
                 logger.catching(e);
                 final FutureTask offlineQuestion = new FutureTask(new Callable() {

@@ -60,7 +60,6 @@ public class GameProfileLoader {
             this.packUUID = profile.packUUID;
             this.mainClass = profile.gameType.equals("FORGE") ? GameProfile.MainClass.FORGE : GameProfile.MainClass.VANILLA;
             this.version = profile.gameVersion;
-            this.packUUID = profile.packUUID;
             this.rawGameType = profile.gameType;
         } catch (IOException e) {
             logger.catching(e);
@@ -102,6 +101,10 @@ public class GameProfileLoader {
 
     public boolean needWipe(){
         return needWipe;
+    }
+
+    public void updateCanOffline(){
+        canOffline =  account != null && packUUID != null && mainClass != null && version != null;
     }
 
     public void resetPackUUID(){
