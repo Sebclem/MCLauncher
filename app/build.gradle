@@ -53,7 +53,6 @@ jlink {
     jpackage {
         imageName = "McLauncher-SC"
         installerName = 'McLauncher-SC'
-        installerType = "deb"
         if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
             installerOptions += ['--win-dir-chooser', '--win-menu', '--win-menu-group', '"McLauncher SC"', '--win-shortcut']
             icon = 'src/main/resources/icon.ico'
@@ -63,7 +62,7 @@ jlink {
             icon = 'src/main/resources/icon.png'
         }
         else{
-
+            icon = 'src/main/resources/icon.png'
         }
     }
 }
