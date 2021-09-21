@@ -6,9 +6,12 @@ import java.util.ResourceBundle;
 import McLauncher.Controller;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+
 public class MsaController {
 
     @FXML
@@ -29,12 +32,14 @@ public class MsaController {
 
     void setMsaLogin(MsaLogin msaLogin){
         this.msaLogin = msaLogin;
-        webView.getEngine().load(msaLogin.loginUrl);
+
         webView.getEngine().setJavaScriptEnabled(true);
+        webView.getEngine().load(msaLogin.loginUrl);
 
         webView.getEngine().getHistory().getEntries().addListener((ListChangeListener<WebHistory.Entry>) c -> {
             if (c.next() && c.wasAdded()) {
                 for (WebHistory.Entry entry : c.getAddedSubList()) {
+                    LogManager.getLogger().debug(entry.getUrl());
                     if (entry.getUrl().startsWith(msaLogin.redirectUrlSuffix)) {
                         String authCode = entry.getUrl().substring(entry.getUrl().indexOf("=") + 1, entry.getUrl().indexOf("&"));
                         // once we got the auth code, we can turn it into a oauth token
