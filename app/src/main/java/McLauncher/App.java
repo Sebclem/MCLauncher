@@ -57,7 +57,7 @@ public class App extends Application {
         primaryStage.setScene(new Scene(root, 1014, 605 ));
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(e -> Platform.exit());
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/minecraftLogo.png")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
         primaryStageS = primaryStage;
 
 

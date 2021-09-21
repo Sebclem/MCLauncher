@@ -55,9 +55,6 @@ public class OptionController {
     private RadioButton radioCrack;
 
     @FXML
-    private Button buttonRegister;
-
-    @FXML
     private HBox persoHBox;
 
     @FXML
@@ -163,15 +160,6 @@ public class OptionController {
                 authType = "0";
             else
                 authType = "1";
-        });
-
-
-        buttonRegister.setOnMouseClicked(event -> {
-            try {
-                Desktop.getDesktop().browse(new URI("https://auth.minecraft.seb6596.ovh/register"));
-            } catch (IOException | URISyntaxException e1) {
-                logger.catching(e1);
-            }
         });
 
     }

@@ -115,7 +115,7 @@ public class MsaLogin extends AbstractLogin {
                 dialog.initModality(Modality.APPLICATION_MODAL);
                 dialog.initOwner(App.getPrimaryStage());
                 dialog.setTitle("Microsoft Login");
-                dialog.getIcons().add(new Image(getClass().getResourceAsStream("/minecraftLogo.png")));
+                dialog.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
                 Scene dialogScene = new Scene(popup, 460, 600);
 
                 dialog.setScene(dialogScene);
