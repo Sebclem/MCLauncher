@@ -1,5 +1,6 @@
 package McLauncher.Auth;
 
+import McLauncher.Utils.Exception.TokenRefreshException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,7 +24,7 @@ public abstract class AbstractLogin {
 
     ;
 
-    public abstract Account refreshToken(Account account) throws IOException;
+    public abstract Account refreshToken(Account account) throws IOException, TokenRefreshException;
 
     /**
      * This method is the actual job for login !

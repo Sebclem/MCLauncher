@@ -4,6 +4,7 @@ import McLauncher.Json.LoginPost;
 import McLauncher.Json.LoginResponse;
 import McLauncher.Json.ValidatePost;
 import McLauncher.Utils.Exception.LoginException;
+import McLauncher.Utils.Exception.TokenRefreshException;
 import McLauncher.Utils.SaveUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -71,7 +72,10 @@ public class MojanLogin extends AbstractLogin {
     }
 
     @Override
-    public Account refreshToken(Account account) throws IOException {
+    public Account refreshToken(Account account) throws IOException, TokenRefreshException {
+        if(validate(account, mojangAuthServer))
+            return account;
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         String json = gsonBuilder.create().toJson(new ValidatePost(account.getAccessToken(), account.getClientToken()));
         HttpResponse response = post(mojangAuthServer + "refresh", json);
@@ -89,7 +93,7 @@ public class MojanLogin extends AbstractLogin {
             return account;
 
         }
-        return null;
+        throw new TokenRefreshException();
     }
 
     @Override
