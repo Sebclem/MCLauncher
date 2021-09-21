@@ -1,8 +1,7 @@
 package McLauncher.Utils;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import com.google.gson.GsonBuilder;
@@ -17,17 +16,16 @@ public class LauncherUpdateChecker {
     private static final Logger logger = LogManager.getLogger();
 
     public static String getVersion(){
-        File file = new File(versionFile);
-        if(!file.exists())
-            return "DEV";
-
         try {
+            InputStream resource = LauncherUpdateChecker.class.getClassLoader().getResourceAsStream(versionFile);
+            if(resource == null){
+                return "DEV";
+            }
             Properties prop = new Properties();
-            FileInputStream input = new FileInputStream(versionFile);
-            prop.load(input);
+            prop.load(resource);
             String version = prop.getProperty("version");
-            return version == "unspecified" ? "DEV" : version;
-        } catch (IOException e) {
+            return version.equals("unspecified") ? "DEV" : version;
+        } catch (IOException | NullPointerException e) {
             logger.catching(e);
             return "ERROR";
         }
