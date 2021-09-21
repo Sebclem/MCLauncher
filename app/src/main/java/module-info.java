@@ -21,6 +21,7 @@ module McLauncher {
     requires javafx.web;
     requires transitive javafx.controls;
     requires com.google.gson;
+    requires org.apache.logging.log4j.core;
     exports McLauncher;
     exports McLauncher.Json to com.google.gson;
     exports McLauncher.Json.Auth.Msa to com.google.gson;

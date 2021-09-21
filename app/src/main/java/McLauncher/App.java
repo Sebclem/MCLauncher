@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import McLauncher.Utils.LauncherUpdateChecker;
 import McLauncher.Utils.OsIdentifer;
 import McLauncher.Utils.SaveUtils;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.appender.RollingFileAppender;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -45,6 +47,9 @@ public class App extends Application {
         logger.info("Java Home: " + System.getProperty("java.home"));
         logger.info("Java Version: " + System.getProperty("java.version"));
         logger.info("Launcher Version: " + LauncherUpdateChecker.getVersion());
+        org.apache.logging.log4j.core.Logger loggerImpl = (org.apache.logging.log4j.core.Logger) logger;
+        RollingFileAppender appender = (RollingFileAppender) loggerImpl.getAppenders().get("RollingFile");
+        logger.info("Log File: " + appender.getFileName());
         saveUtils = SaveUtils.getINSTANCE(gamePath + "launcher.properties");
 
         FXMLLoader loader = new FXMLLoader();
