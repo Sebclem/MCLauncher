@@ -27,8 +27,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -49,78 +47,51 @@ import java.util.concurrent.FutureTask;
 public class Controller implements Initializable {
 
     public static Scene dialogScene;
-    boolean firstTime = true;
-    @FXML
-    private Pane body;
-
-    @FXML
-    private VBox vbox;
-
     @FXML
     private GridPane grid;
-
     @FXML
     private Label userLabel;
-
     @FXML
     private Label passwordLabel;
-
     @FXML
     private PasswordField passwordField;
-
     @FXML
     private Button optionButton;
-
     @FXML
     private Button playButton;
-
     @FXML
     private TextField userText;
-
     @FXML
     private Button logMsaBtn;
-
     @FXML
     private Button disconectButton;
-
     @FXML
     private GridPane gridLogged;
-
     @FXML
     private Label pseudoLabel;
-
     @FXML
     private ImageView faceImg;
-
     @FXML
     private TitledPane updateNotification;
-
     @FXML
     private Label oldVersion;
-
     @FXML
     private Label newVersion;
-
     @FXML
     private Button updateBtn;
-
     @FXML
     private ProgressBar progressBar;
-
     @FXML
     private Label labelBar;
-
     @FXML
     private Label leftLabelBar;
-
     @FXML
     private Label dlSpeed;
-
     @FXML
     private Label rightLabelBar;
 
     private GameProfileLoader gameProfileLoader;
-    private Logger logger = LogManager.getLogger();
+    private final Logger logger = LogManager.getLogger();
     private SaveUtils saveUtils;
     private ResourceBundle bundle;
     private AbstractLogin logManager;
@@ -137,14 +108,8 @@ public class Controller implements Initializable {
         if (!userText.textProperty().isEmpty().get() && !passwordField.textProperty().isEmpty().get()) {
             playButton.setDisable(false);
         }
-        userText.textProperty().addListener((observable, oldValue, newValue) -> {
-            playButton.setDisable(newValue.trim().isEmpty() || passwordField.textProperty().isEmpty().get());
-
-        });
-        passwordField.textProperty().addListener((observable, oldValue, newValue) -> {
-            playButton.setDisable(newValue.trim().isEmpty() || userText.textProperty().isEmpty().get());
-
-        });
+        userText.textProperty().addListener((observable, oldValue, newValue) -> playButton.setDisable(newValue.trim().isEmpty() || passwordField.textProperty().isEmpty().get()));
+        passwordField.textProperty().addListener((observable, oldValue, newValue) -> playButton.setDisable(newValue.trim().isEmpty() || userText.textProperty().isEmpty().get()));
         passwordField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 new LaunchThread().start();
@@ -165,7 +130,7 @@ public class Controller implements Initializable {
             }
         });
 
-        optionButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        optionButton.setOnMouseClicked(new EventHandler<>() {
             @Override
             public void handle(MouseEvent event) {
                 try {
@@ -286,13 +251,11 @@ public class Controller implements Initializable {
     }
 
     private void setupLoginEventListeners(){
-        logManager.setOnLoginCancel(loginProscesor -> {
-            Platform.runLater(() -> {
-                progressBar.setProgress(0);
-                labelBar.setText("");
-                logMsaBtn.setDisable(false);
-            });
-        });
+        logManager.setOnLoginCancel(loginProscesor -> Platform.runLater(() -> {
+            progressBar.setProgress(0);
+            labelBar.setText("");
+            logMsaBtn.setDisable(false);
+        }));
         logManager.setOnBadCredentials(loginProscesor -> {
             logger.warn("Authentication Fail : Wrong User or Password!");
             Platform.runLater(() -> {
@@ -427,7 +390,6 @@ public class Controller implements Initializable {
                     labelBar.setText(bundle.getString("tokenRefresh") + "...");
                     progressBar.setProgress(-1);
                 });
-                boolean official = SaveUtils.getINSTANCE().get("authType").equals("0");
                 gameProfileLoader.setAccount(logManager.refreshToken(gameProfileLoader.getAccount()));
                 if (gameProfileLoader.getAccount() == null) {
                     throw new TokenRefreshException();
@@ -445,21 +407,16 @@ public class Controller implements Initializable {
 
                 FullGameInstaller gameInstaller = new FullGameInstaller();
                 if (gameProfileLoader.needWipe()) {
-                    final FutureTask wipeQuestion = new FutureTask(new Callable() {
-                        @Override
-                        public Object call() {
-                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, bundle.getString("needWipe"));
-                            alert.getDialogPane().getStylesheets().add("alert.css");
-                            Optional<ButtonType> result = alert.showAndWait();
-                            return result.get() == ButtonType.OK;
-                        }
+                    final FutureTask<Boolean> wipeQuestion = new FutureTask<>(() -> {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, bundle.getString("needWipe"));
+                        alert.getDialogPane().getStylesheets().add("alert.css");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        return result.filter(buttonType -> buttonType == ButtonType.OK).isPresent();
                     });
                     Platform.runLater(wipeQuestion);
-                    Boolean result = (Boolean) wipeQuestion.get();
+                    Boolean result = wipeQuestion.get();
                     if (result) {
-                        Platform.runLater(() -> {
-                            labelBar.setText(bundle.getString("wipe") + "...");
-                        });
+                        Platform.runLater(() -> labelBar.setText(bundle.getString("wipe") + "..."));
                         gameInstaller.wipper(App.gamePath, gameProfileLoader);
                     } else {
                         Platform.runLater(() -> {
@@ -538,30 +495,27 @@ public class Controller implements Initializable {
                 });
             } catch (RefreshProfileFailException e) {
                 logger.catching(e);
-                final FutureTask offlineQuestion = new FutureTask(new Callable() {
-                    @Override
-                    public Object call() {
-                        ButtonType okBtn = new ButtonType("Ok", ButtonBar.ButtonData.CANCEL_CLOSE);
-                        ButtonType offlineBtn = new ButtonType("Play Offline", ButtonBar.ButtonData.OK_DONE);
-                        Alert alert = new Alert(Alert.AlertType.ERROR, "", offlineBtn, okBtn);
-                        alert.setHeaderText(bundle.getString("dlFail"));
-                        if (gameProfileLoader.canOffline())
-                            alert.setContentText(bundle.getString("profileErrorOffline"));
-                        else {
-                            alert.setContentText(bundle.getString("profileErrorLong"));
-                            alert.getDialogPane().lookupButton(offlineBtn).setDisable(true);
-                        }
-
-                        alert.setTitle(bundle.getString("error"));
-                        alert.getDialogPane().getStylesheets().add("alert.css");
-                        Optional<ButtonType> result = alert.showAndWait();
-                        return result.get() == okBtn;
+                final FutureTask<Boolean> offlineQuestion = new FutureTask<>(() -> {
+                    ButtonType okBtn = new ButtonType("Ok", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    ButtonType offlineBtn = new ButtonType("Play Offline", ButtonBar.ButtonData.OK_DONE);
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "", offlineBtn, okBtn);
+                    alert.setHeaderText(bundle.getString("dlFail"));
+                    if (gameProfileLoader.canOffline())
+                        alert.setContentText(bundle.getString("profileErrorOffline"));
+                    else {
+                        alert.setContentText(bundle.getString("profileErrorLong"));
+                        alert.getDialogPane().lookupButton(offlineBtn).setDisable(true);
                     }
+
+                    alert.setTitle(bundle.getString("error"));
+                    alert.getDialogPane().getStylesheets().add("alert.css");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    return result.filter(buttonType -> buttonType == okBtn).isPresent();
                 });
                 Platform.runLater(offlineQuestion);
-                Boolean result;
+                boolean result;
                 try {
-                    result = (Boolean) offlineQuestion.get();
+                    result = offlineQuestion.get();
                     if (result) {
                         Platform.runLater(() -> {
                             progressBar.setProgress(0);
