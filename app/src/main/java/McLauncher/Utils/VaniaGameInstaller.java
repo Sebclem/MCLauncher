@@ -1,17 +1,16 @@
 package McLauncher.Utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import McLauncher.App;
 import McLauncher.Json.Game;
 import McLauncher.Json.Manifest;
 import McLauncher.Utils.Event.Observable;
 import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -19,19 +18,16 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class VaniaGameInstaller extends Observable {
-    private Logger logger = LogManager.getLogger();
-    private String manifestUrl = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
-    private String resourcesURL = "http://resources.download.minecraft.net/";
     public static String libSubFolder = "libraries/";
     public static String sysLibSubFolder = "sysLib/";
-
     public long totalSize = 0;
     public long downloaded = 0;
-
+    private final Logger logger = LogManager.getLogger();
+    private final String manifestUrl = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
+    private final String resourcesURL = "http://resources.download.minecraft.net/";
 
     private Manifest getManifest() throws IOException {
         String result = HttpsGet.get(manifestUrl);
-
         Gson gson = new Gson();
         return gson.fromJson(result, Manifest.class);
 
@@ -57,27 +53,30 @@ public class VaniaGameInstaller extends Observable {
         } else {
             logger.error("Game Not Found");
         }
-
-
-
         return null;
-
     }
 
     private void downloadGame(String path, Game game) throws DownloadFailException, InterruptedException, MalformedURLException {
         logger.info("Downloading Main...");
         int size = game.downloads.client.size;
+        //Getting download size
         for (Game.Libraries lib : game.libraries) {
-            if (lib.downloads.classifiers == null) {
-                size += lib.downloads.artifact.size;
-            } else {
-                if (lib.downloads.classifiers.linux != null) {
-                    size += lib.downloads.classifiers.linux.size;
-
+            if(needToDownloadThis(lib)){
+                //Download only classifiers if we have it
+                if (lib.downloads.classifiers == null) {
+                    size += lib.downloads.artifact.size;
+                } else {
+                    if (OsIdentifer.isLinux() && lib.downloads.classifiers.linux != null) {
+                        size += lib.downloads.classifiers.linux.size;
+                    } else if (OsIdentifer.isMac() && lib.downloads.classifiers.osx != null) {
+                        size += lib.downloads.classifiers.osx.size;
+                    } else if (OsIdentifer.isWindows() && lib.downloads.classifiers.windows != null) {
+                        size += lib.downloads.classifiers.windows.size;
+                    }
                 }
             }
-        }
 
+        }
 
         logger.debug("Downloading : client:" + game.id);
         Downloader downloader = new Downloader(new URL(game.downloads.client.url), path + "client.jar");
@@ -88,56 +87,80 @@ public class VaniaGameInstaller extends Observable {
         if (downloader.getStatus() != Downloader.COMPLETE)
             throw new DownloadFailException();
         for (Game.Libraries lib : game.libraries) {
-            logger.debug("Downloading : " + lib.name);
-            if (lib.downloads.classifiers == null) {
-                downloader = new Downloader(new URL(lib.downloads.artifact.url), path + libSubFolder + lib.downloads.artifact.path);
-                downloader.addObserver(new DownloadObserver());
-
-                while (downloader.getStatus() == Downloader.DOWNLOADING) {
-                    Thread.sleep(100);
-                }
-                if (downloader.getStatus() != Downloader.COMPLETE)
-                    throw new DownloadFailException();
-            } else {
-                String url = null;
-                if (OsIdentifer.isLinux() && lib.downloads.classifiers.linux != null) {
-                    url = lib.downloads.classifiers.linux.url;
-                } else if (OsIdentifer.isMac() && lib.downloads.classifiers.osx != null) {
-                    url = lib.downloads.classifiers.osx.url;
-
-                } else if (OsIdentifer.isWindows()) {
-                    if (lib.downloads.classifiers.windows != null)
-                        url = lib.downloads.classifiers.windows.url;
-                    if (lib.downloads.classifiers.windows32 != null)
-                        url = lib.downloads.classifiers.windows32.url;
-                    if (lib.downloads.classifiers.windows64 != null)
-                        url = lib.downloads.classifiers.windows64.url;
-                }
-                if (url != null) {
-                    downloader = new Downloader(new URL(url), path + libSubFolder + lib.downloads.classifiers.linux.path);
+            if (needToDownloadThis(lib)){
+                logger.debug("Downloading : " + lib.name);
+                if (lib.downloads.classifiers == null) {
+                    downloader = new Downloader(new URL(lib.downloads.artifact.url), path + libSubFolder + lib.downloads.artifact.path);
                     downloader.addObserver(new DownloadObserver());
-
                     while (downloader.getStatus() == Downloader.DOWNLOADING) {
                         Thread.sleep(100);
                     }
-
                     if (downloader.getStatus() != Downloader.COMPLETE)
                         throw new DownloadFailException();
+                } else {
+                    String url = null;
+                    String libPath = null;
+                    if (OsIdentifer.isLinux() && lib.downloads.classifiers.linux != null) {
+                        url = lib.downloads.classifiers.linux.url;
+                        libPath = lib.downloads.classifiers.linux.path;
+                    } else if (OsIdentifer.isMac() && lib.downloads.classifiers.osx != null) {
+                        url = lib.downloads.classifiers.osx.url;
+                        libPath = lib.downloads.classifiers.osx.path;
 
-                    Thread thread = new Thread(() -> {
-                        try {
-                            new Extractor().extrac(path + sysLibSubFolder, path + libSubFolder + lib.downloads.classifiers.linux.path);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    } else if (OsIdentifer.isWindows() && lib.downloads.classifiers.windows != null) {
+                        url = lib.downloads.classifiers.windows.url;
+                        libPath = lib.downloads.classifiers.windows.path;
+                    }
+                    if (url != null) {
+                        downloader = new Downloader(new URL(url), path + libSubFolder + libPath);
+                        downloader.addObserver(new DownloadObserver());
+
+                        while (downloader.getStatus() == Downloader.DOWNLOADING) {
+                            Thread.sleep(100);
                         }
-                    });
-                    thread.start();
 
+                        if (downloader.getStatus() != Downloader.COMPLETE)
+                            throw new DownloadFailException();
 
+                        Thread thread = new Thread(() -> {
+                            try {
+                                new Extractor().extrac(path + sysLibSubFolder, path + libSubFolder + lib.downloads.classifiers.linux.path);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        thread.start();
+                    }
                 }
-
             }
         }
+    }
+
+    /**
+     * Check if we need to download this library via os rules check
+     * @param lib The lib to check
+     * @return True if we need to download this lib
+     */
+    private boolean needToDownloadThis(Game.Libraries lib){
+        // if we don't have any rules we download it anyway, by default, if rules !empty, we don't need to dl this lib
+        boolean needDownload = lib.rules.isEmpty();
+        for(Game.Rules rule : lib.rules){
+            // if os is null this is the default value
+            if(rule.os == null){
+                needDownload = rule.action.equals("allow");
+            }
+            else{
+                if (OsIdentifer.isLinux() && rule.os.name.equals("linux")) {
+                    needDownload = rule.action.equals("allow");
+                } else if (OsIdentifer.isMac() && rule.os.name.equals("osx")) {
+                    needDownload = rule.action.equals("allow");
+                } else if (OsIdentifer.isWindows() && rule.os.name.equals("windows")) {
+                    needDownload = rule.action.equals("allow");
+                }
+            }
+        }
+        logger.debug("Need to download " + lib.name + "? " + needDownload);
+        return needDownload;
     }
 
 
@@ -241,30 +264,28 @@ public class VaniaGameInstaller extends Observable {
     }
 
 
-    public void editLogs(String path){
-        try
-        {
+    public void editLogs(String path) {
+        try {
             File file = new File(path);
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line;
             StringBuilder oldtext = new StringBuilder();
-            while((line = reader.readLine()) != null)
-            {
+            while ((line = reader.readLine()) != null) {
                 oldtext.append(line).append("\r\n");
             }
             reader.close();
             // replace a word in a file
-            String newText = oldtext.toString().replaceAll("logs/", App.gamePath.replaceAll( "\\\\", "/") + "log/");
+            String newText = oldtext.toString().replaceAll("logs/", App.gamePath.replaceAll("\\\\", "/") + "log/");
 
 
             FileWriter writer = new FileWriter(path);
-            writer.write(newText);writer.close();
-        }
-        catch (IOException ioe)
-        {
+            writer.write(newText);
+            writer.close();
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }
+    
 
 
     class DownloadObserver implements Observer {

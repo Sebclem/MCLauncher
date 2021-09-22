@@ -3,6 +3,7 @@ package McLauncher.Json;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Game {
     public String id;
@@ -17,8 +18,7 @@ public class Game {
 
     public Logging logging;
 
-
-    public class Download{
+    public static class Download{
         public Libraries.Downloads.Artifact client;
     }
 
@@ -27,27 +27,24 @@ public class Game {
 
 
 
-    public class Libraries{
+    public static class Libraries{
         public String name;
         public Downloads downloads;
+        public List<Rules> rules = new ArrayList<>();
 
 
-
-        public class Downloads{
+        public static class Downloads{
             public Artifact artifact;
-
             public Classifiers classifiers;
 
-
-
-            public class Artifact{
+            public static class Artifact{
                 public String path;
                 public String sha1;
                 public int size;
                 public String url;
             }
 
-            public class Classifiers{
+            public static class Classifiers{
                 @SerializedName("natives-windows-32")
                 public Artifact windows32;
 
@@ -68,23 +65,32 @@ public class Game {
         }
     }
 
-    public class Assets{
+    public static class Assets{
         public int totalSize;
         public String url;
         public String id;
     }
 
-    public class Logging{
+    public static class Logging{
         public Client client;
 
-        public class Client{
+        public static class Client{
             public LogFile file;
         }
 
-        public class LogFile{
+        public static class LogFile{
             public String id;
             public String url;
         }
     }
 
+    public static class Rules{
+        public String action;
+        public Os os;
+
+        public static class Os{
+            public String name;
+            public String version;
+        }
+    }
 }

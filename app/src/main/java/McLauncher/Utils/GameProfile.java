@@ -71,6 +71,7 @@ public class GameProfile {
             javaHome = javaHome + "/bin/java";
         }
         command.add(javaHome);
+
         command.add("-Djava.library.path=" +  gameDir +sysLibDir);
         command.add("-Dminecraft.client.jar=" + gameDir +"/client.jar");
         command.add("-Duser.dir="+ App.gamePath);
@@ -83,6 +84,9 @@ public class GameProfile {
         command.add("-XX:G1ReservePercent=20");
         command.add("-XX:MaxGCPauseMillis=50");
         command.add("-XX:G1HeapRegionSize=32M");
+
+        command.add("--add-opens=com.google.gson/com.google.gson.stream=ALL-UNNAMED");
+
 
 
 
@@ -105,7 +109,7 @@ public class GameProfile {
         command.add("--gameDir");
         command.add(gameDir);
 
-        command.add("--assetDir");
+        command.add("--assetsDir");
         command.add(gameDir + assetDir);
 
         command.add("--assetIndex");
@@ -116,6 +120,7 @@ public class GameProfile {
 
         command.add("--accessToken");
         command.add(account.getAccessToken());
+
 
         if(mainClass == MainClass.FORGE){
             command.add("--tweakClass");
