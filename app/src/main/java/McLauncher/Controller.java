@@ -593,6 +593,8 @@ public class Controller implements Initializable {
                     alert.getDialogPane().getStylesheets().add("alert.css");
                     progressBar.setProgress(0);
                     labelBar.setText(bundle.getString("error") + "!");
+                    disconectButton.setDisable(false);
+                    grid.setDisable(false);
                     alert.showAndWait();
 
                 });
