@@ -1,20 +1,27 @@
 package McLauncher.Utils;
 
 import McLauncher.Auth.Account;
+import javafx.application.Platform;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import McLauncher.App;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameProfile {
 
+    private final String logProfile;
     private Account account;
     private String ram;
     private String assetDir = "assets/";
@@ -24,8 +31,8 @@ public class GameProfile {
     private String sysLibDir = "sysLib/";
     private String classPath;
     private MainClass mainClass;
-    private String logProfile;
-
+    private List<String> logLines = new ArrayList<>();
+    private int logCounter = 0;
 
     private BufferedReader error;
     private BufferedReader input;
@@ -153,7 +160,7 @@ public class GameProfile {
         String line;
 
         while ((line = this.input.readLine()) != null) {
-            System.out.println(line);
+            processLogs(line);
         }
         this.input.close();
 
@@ -161,7 +168,43 @@ public class GameProfile {
         if (this.exitVal != 0) {
             throw new IOException("Failed to execute Minecraft:\n " +getExecutionLog());
         }
+        logger.info("Minecraft is now closed, bye bye !");
+        Thread.sleep(2000);
+        Platform.runLater(() -> App.getLogStage().close());
 
+
+    }
+
+    private void processLogs(String line){
+        line = line.trim();
+        if(line.startsWith("<")){
+            if(line.startsWith("<log4j:Event")){
+                logLines.add(0, line);
+            }
+            if(line.startsWith("<log4j:Message>")){
+                logLines.add(1, line);
+            }
+            if(line.startsWith("</log4j:Event>")){
+                logLines.add(2, line);
+                String lines = logLines.get(0) + logLines.get(1) + logLines.get(2);
+                try{
+                    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+                    InputSource is = new InputSource(new StringReader(lines));
+                    Document document = documentBuilder.parse(is);
+                    Node event = document.getFirstChild();
+                    String logger = event.getAttributes().getNamedItem("logger").getNodeValue();
+                    String level = event.getAttributes().getNamedItem("level").getNodeValue();
+                    String message = event.getFirstChild().getFirstChild().getNodeValue();
+                    LogManager.getLogger(logger).log(Level.getLevel(level), message);
+                } catch (ParserConfigurationException | IOException | SAXException e) {
+                    logger.catching(e);
+                }
+            }
+        }
+        else{
+            LogManager.getLogger("APP_STDOUT").info(line);
+        }
     }
 
     public String getExecutionLog() {

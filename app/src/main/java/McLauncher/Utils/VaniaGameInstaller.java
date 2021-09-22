@@ -128,9 +128,10 @@ public class VaniaGameInstaller extends Observable {
                         if (downloader.getStatus() != Downloader.COMPLETE)
                             throw new DownloadFailException();
 
+                        String finalLibPath = libPath;
                         Thread thread = new Thread(() -> {
                             try {
-                                new Extractor().extrac(path + sysLibSubFolder, path + libSubFolder + lib.downloads.classifiers.linux.path);
+                                new Extractor().extrac(path + sysLibSubFolder, path + libSubFolder + finalLibPath);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
