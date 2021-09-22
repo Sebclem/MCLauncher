@@ -87,12 +87,6 @@ public class GameProfile {
 
         command.add("--add-opens=com.google.gson/com.google.gson.stream=ALL-UNNAMED");
 
-
-
-
-
-
-
         command.add("-Dlog4j.configurationFile=" + logProfile);
 
         command.add("-cp");

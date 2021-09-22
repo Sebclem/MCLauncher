@@ -7,6 +7,7 @@ import McLauncher.Utils.Event.Observable;
 import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
@@ -16,15 +17,16 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class VaniaGameInstaller extends Observable {
     public static String libSubFolder = "libraries/";
     public static String sysLibSubFolder = "sysLib/";
-    public long totalSize = 0;
-    public long downloaded = 0;
     private final Logger logger = LogManager.getLogger();
     private final String manifestUrl = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
     private final String resourcesURL = "http://resources.download.minecraft.net/";
+    public long totalSize = 0;
+    public long downloaded = 0;
 
     private Manifest getManifest() throws IOException {
         String result = HttpsGet.get(manifestUrl);
@@ -49,7 +51,11 @@ public class VaniaGameInstaller extends Observable {
         if (found != null) {
             logger.debug("Game found, JSON: " + found.url);
             String gameString = HttpsGet.get(found.url);
-            return new Gson().fromJson(gameString, Game.class);
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(Game.ArgValue.class, new Game.ArgValueDeserialize());
+            Gson gson = gsonBuilder.create();
+            Game game = gson.fromJson(gameString, Game.class);
+            return game;
         } else {
             logger.error("Game Not Found");
         }
@@ -61,7 +67,7 @@ public class VaniaGameInstaller extends Observable {
         int size = game.downloads.client.size;
         //Getting download size
         for (Game.Libraries lib : game.libraries) {
-            if(needToDownloadThis(lib)){
+            if (needToDownloadThis(lib)) {
                 //Download only classifiers if we have it
                 if (lib.downloads.classifiers == null) {
                     size += lib.downloads.artifact.size;
@@ -87,7 +93,7 @@ public class VaniaGameInstaller extends Observable {
         if (downloader.getStatus() != Downloader.COMPLETE)
             throw new DownloadFailException();
         for (Game.Libraries lib : game.libraries) {
-            if (needToDownloadThis(lib)){
+            if (needToDownloadThis(lib)) {
                 logger.debug("Downloading : " + lib.name);
                 if (lib.downloads.classifiers == null) {
                     downloader = new Downloader(new URL(lib.downloads.artifact.url), path + libSubFolder + lib.downloads.artifact.path);
@@ -138,31 +144,37 @@ public class VaniaGameInstaller extends Observable {
 
     /**
      * Check if we need to download this library via os rules check
+     *
      * @param lib The lib to check
      * @return True if we need to download this lib
      */
-    private boolean needToDownloadThis(Game.Libraries lib){
+    private boolean needToDownloadThis(Game.Libraries lib) {
         // if we don't have any rules we download it anyway, by default, if rules !empty, we don't need to dl this lib
-        boolean needDownload = lib.rules.isEmpty();
-        for(Game.Rules rule : lib.rules){
-            // if os is null this is the default value
-            if(rule.os == null){
-                needDownload = rule.action.equals("allow");
-            }
-            else{
-                if (OsIdentifer.isLinux() && rule.os.name.equals("linux")) {
-                    needDownload = rule.action.equals("allow");
-                } else if (OsIdentifer.isMac() && rule.os.name.equals("osx")) {
-                    needDownload = rule.action.equals("allow");
-                } else if (OsIdentifer.isWindows() && rule.os.name.equals("windows")) {
-                    needDownload = rule.action.equals("allow");
-                }
-            }
-        }
+        boolean needDownload = resolveRule(lib.rules);
         logger.debug("Need to download " + lib.name + "? " + needDownload);
         return needDownload;
     }
 
+
+    private boolean resolveRule(List<Game.Rules> rules) {
+        if (rules.isEmpty())
+            return true;
+        for (Game.Rules rule : rules) {
+            // if os is null this is the default value
+            if (rule.os == null) {
+                return rule.action.equals("allow");
+            } else {
+                if (OsIdentifer.isLinux() && rule.os.name.equals("linux")) {
+                    return rule.action.equals("allow");
+                } else if (OsIdentifer.isMac() && rule.os.name.equals("osx")) {
+                    return rule.action.equals("allow");
+                } else if (OsIdentifer.isWindows() && rule.os.name.equals("windows")) {
+                    return rule.action.equals("allow");
+                }
+            }
+        }
+        return false;
+    }
 
     public void installGame(String installPath, String version) throws IOException, InterruptedException, DownloadFailException {
 
@@ -173,12 +185,18 @@ public class VaniaGameInstaller extends Observable {
         downloadGame(installPath, game);
         assetsDownloader(installPath + "assets/", game);
 
-        SaveUtils.getINSTANCE().save("assetId", game.assetIndex.id);
-        SaveUtils.getINSTANCE().save("mainClass", game.mainClass);
-        SaveUtils.getINSTANCE().save("install", "true");
-        SaveUtils.getINSTANCE().save("logConfigPath", installPath + "assets/log_configs/" + game.logging.client.file.id);
-
-
+        SaveUtils saveUtils = SaveUtils.getINSTANCE();
+        if(game.arguments != null){
+            saveUtils.save("defaultGameArgs", getArgsAsString(game.arguments.game));
+            saveUtils.save("defaultJvmArgs", getArgsAsString(game.arguments.jvm));
+        }else{
+            saveUtils.save("defaultGameArgs", "");
+            saveUtils.save("defaultJvmArgs", "");
+        }
+        saveUtils.save("assetId", game.assetIndex.id);
+        saveUtils.save("mainClass", game.mainClass);
+        saveUtils.save("install", "true");
+        saveUtils.save("logConfigPath", installPath + "assets/log_configs/" + game.logging.client.file.id);
     }
 
 
@@ -285,7 +303,18 @@ public class VaniaGameInstaller extends Observable {
             ioe.printStackTrace();
         }
     }
-    
+
+    private String getArgsAsString(List<Game.ArgValue> args) {
+        StringBuilder toReturn = new StringBuilder();
+        for (Game.ArgValue argValue : args) {
+            if (argValue != null && resolveRule(argValue.rules)) {
+                for (String value : argValue.values)
+                    toReturn.append(value).append(";");
+            }
+
+        }
+        return toReturn.toString();
+    }
 
 
     class DownloadObserver implements Observer {
