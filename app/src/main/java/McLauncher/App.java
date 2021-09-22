@@ -57,7 +57,9 @@ public class App extends Application {
             screenCorecter = 10;
         saveUtils = SaveUtils.getINSTANCE(gamePath + "launcher.properties");
 
-        openLogs();
+        if(saveUtils.get("logViewer") != null && saveUtils.get("logViewer").equals("true"))
+            openLogs();
+
         logger.info("/*****************************************************************/");
         logger.info("/**************************Launcher Logs**************************/");
         logger.info("/*****************************************************************/");
@@ -81,7 +83,8 @@ public class App extends Application {
         primaryStage.setScene(new Scene(root, 1014, 605 ));
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(e -> {
-            logStage.close();
+            if(logStage != null)
+                logStage.close();
             Platform.exit();
         });
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
@@ -101,6 +104,10 @@ public class App extends Application {
         return logStage;
     }
 
+    public static void setLogStage(Stage logStage){
+        App.logStage = logStage;
+    }
+
     public static void main(String[] args) {
         System.setProperty("user.dir", gamePath);
         launch(args);
@@ -111,13 +118,16 @@ public class App extends Application {
         loader.setLocation(App.class.getResource("/LogViewer.fxml"));
         Parent popup = loader.load();
         logStage = new Stage();
-        logStage.initModality(Modality.APPLICATION_MODAL);
+        logStage.initModality(Modality.NONE);
         logStage.initOwner(App.getPrimaryStage());
         logStage.setTitle("Logs");
         logStage.getIcons().add(new Image(App.class.getResourceAsStream("/icon.png")));
         Scene logScene = new Scene(popup, 1090, 600);
         logStage.setScene(logScene);
         logStage.setResizable(true);
+        logStage.setOnCloseRequest(event -> {
+            logStage = null;
+        });
         logStage.show();
     }
 }

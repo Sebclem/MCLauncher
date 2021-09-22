@@ -143,7 +143,7 @@ public class Controller implements Initializable {
                     dialog.initOwner(App.getPrimaryStage());
                     dialog.setTitle("Option");
                     dialog.getIcons().add(new Image(getClass().getResourceAsStream("/settingsIcon.png")));
-                    dialogScene = new Scene(popup, 400, 257);
+                    dialogScene = new Scene(popup, 400, 335);
                     dialog.setScene(dialogScene);
                     dialog.setResizable(false);
                     dialog.show();
