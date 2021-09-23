@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-
-<GridPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="McLauncher.LogViewerController">
+<GridPane xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="McLauncher.LogViewerController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" />
+    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
   </columnConstraints>
   <rowConstraints>
+      <RowConstraints fillHeight="false" minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
     <RowConstraints vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <TableView fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1090.0">
+      <TableView fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1090.0" stylesheets="@table.css" GridPane.rowIndex="1">
         <columns>
-            <TableColumn fx:id="time" editable="false" maxWidth="500.0" minWidth="150.0" prefWidth="150.0" sortType="DESCENDING" sortable="false" text="Time" />
+            <TableColumn fx:id="time" editable="false" maxWidth="500.0" minWidth="160.0" prefWidth="160.0" sortType="DESCENDING" sortable="false" text="Time" />
           <TableColumn fx:id="level" editable="false" prefWidth="75.0" sortable="false" text="Level" />
             <TableColumn fx:id="classCol" editable="false" maxWidth="500.0" minWidth="250.0" prefWidth="250.0" sortable="false" text="Class" />
-            <TableColumn fx:id="message" editable="false" minWidth="614.0" prefWidth="614.0" sortable="false" text="Message" />
+            <TableColumn fx:id="message" editable="false" minWidth="604.0" prefWidth="604.0" sortable="false" text="Message" />
         </columns>
       </TableView>
+      <ChoiceBox fx:id="levelSelector" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="28.0" prefWidth="150.0">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+      </ChoiceBox>
    </children>
 </GridPane>

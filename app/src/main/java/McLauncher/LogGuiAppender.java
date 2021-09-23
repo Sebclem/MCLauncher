@@ -1,17 +1,15 @@
 package McLauncher;
 
 
-import javafx.application.Platform;
-import javafx.scene.control.TextArea;
 import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
-import org.apache.logging.log4j.core.layout.PatternLayout;
 
-import java.io.Serializable;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -23,7 +21,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
         name = "LogGuiAppender",
         category = Core.CATEGORY_NAME,
         elementType = Appender.ELEMENT_TYPE,
-        printObject = false
+        printObject = true
 )
 public final class LogGuiAppender extends AbstractAppender {
 
@@ -58,7 +56,16 @@ public final class LogGuiAppender extends AbstractAppender {
         readLock.lock();
         // append log text to TextArea
         try {
-            MyLogEvent newEvent = new MyLogEvent(event.getInstant().getEpochMillisecond(), event.getLevel().name(), event.getLoggerName(), event.getMessage().getFormattedMessage());
+            String message;
+            if(event.getThrown() == null)
+                message = event.getMessage().getFormattedMessage();
+            else{
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                event.getThrown().printStackTrace(pw);
+                message = sw.toString();
+            }
+            MyLogEvent newEvent = new MyLogEvent(event.getInstant().getEpochMillisecond(), event.getLevel().name(), event.getLoggerName(), message);
             try {
                 if (controller != null) {
                     controller.addData(newEvent);

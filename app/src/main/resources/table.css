@@ -1,0 +1,16 @@
+.table-row-cell:filled:debug .table-cell{
+    -fx-text-fill: #6e6d6d
+}
+
+.table-row-cell:filled:info .table-cell{
+    -fx-text-fill: #0d00ff
+}
+
+.table-row-cell:filled:warn .table-cell{
+    -fx-text-fill: #9dbd00
+}
+
+.table-row-cell:filled:error .table-cell{
+    -fx-text-fill: #db0000
+}
+

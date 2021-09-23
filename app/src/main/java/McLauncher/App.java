@@ -118,11 +118,9 @@ public class App extends Application {
         loader.setLocation(App.class.getResource("/LogViewer.fxml"));
         Parent popup = loader.load();
         logStage = new Stage();
-        logStage.initModality(Modality.NONE);
-        logStage.initOwner(App.getPrimaryStage());
         logStage.setTitle("Logs");
         logStage.getIcons().add(new Image(App.class.getResourceAsStream("/icon.png")));
-        Scene logScene = new Scene(popup, 1090, 600);
+        Scene logScene = new Scene(popup, 1090, 630);
         logStage.setScene(logScene);
         logStage.setResizable(true);
         logStage.setOnCloseRequest(event -> {
