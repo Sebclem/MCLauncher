@@ -1,10 +1,9 @@
 package McLauncher.Utils;
 
 import McLauncher.Auth.Account;
+import McLauncher.Utils.Exception.LoadingSaveException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import McLauncher.Utils.Exception.LoadingSaveException;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -12,7 +11,7 @@ import java.util.Properties;
 
 public class SaveUtils {
 
-    static private SaveUtils INSTANCE ;
+    static private SaveUtils INSTANCE;
 
     private String path;
 
@@ -23,27 +22,7 @@ public class SaveUtils {
     private Logger logger = LogManager.getLogger();
 
 
-    public static SaveUtils getINSTANCE(String savePath){
-        File file = new File(savePath);
-        if(!file.exists()){
-            new File(savePath.substring(0,savePath.lastIndexOf("/"))).mkdirs();
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        if(INSTANCE == null){
-            INSTANCE = new SaveUtils(savePath);
-        }
-        return INSTANCE;
-    }
-
-    public static SaveUtils getINSTANCE(){
-        return INSTANCE;
-    }
-
-    private SaveUtils(String savePath){
+    private SaveUtils(String savePath) {
         this.path = savePath;
 
         try {
@@ -51,8 +30,8 @@ public class SaveUtils {
             prop.load(input);
         } catch (IOException e) {
             logger.catching(e);
-        }finally {
-            if(input != null) {
+        } finally {
+            if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
@@ -62,7 +41,27 @@ public class SaveUtils {
         }
     }
 
-    public void save(Account account){
+    public static SaveUtils getINSTANCE(String savePath) {
+        File file = new File(savePath);
+        if (!file.exists()) {
+            new File(savePath.substring(0, savePath.lastIndexOf("/"))).mkdirs();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (INSTANCE == null) {
+            INSTANCE = new SaveUtils(savePath);
+        }
+        return INSTANCE;
+    }
+
+    public static SaveUtils getINSTANCE() {
+        return INSTANCE;
+    }
+
+    public void save(Account account) {
         try {
             output = new FileOutputStream(path);
             prop.setProperty("uuid", account.getUUID());
@@ -90,7 +89,7 @@ public class SaveUtils {
 
     }
 
-    public  void save(String id, String value){
+    public void save(String id, String value) {
         try {
             output = new FileOutputStream(path);
             prop.setProperty(id, value);
@@ -112,19 +111,20 @@ public class SaveUtils {
     }
 
 
-    public String get(String id){
+    public String get(String id) {
         return prop.getProperty(id);
     }
 
     public Account getAccount() throws LoadingSaveException {
 
-        if(notPresent("clientToken")){
+        if (notPresent("clientToken")) {
             throw new LoadingSaveException("Not logged");
         }
         LocalDateTime tokenExpireDate = null;
-        try{
+        try {
             tokenExpireDate = LocalDateTime.parse(prop.getProperty("tokenExpireDate"));
-        }catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
 
         return new Account(
                 prop.getProperty("uuid"),
@@ -137,38 +137,38 @@ public class SaveUtils {
         );
     }
 
-    public McLauncher.Json.GameProfile getGameProfile() throws LoadingSaveException{
-        if(notPresent("packUUID") || notPresent("gameVersion") || notPresent("gameType") ){
+    public McLauncher.Json.GameProfile getGameProfile() throws LoadingSaveException {
+        if (notPresent("packUUID") || notPresent("gameVersion") || notPresent("gameType") || notPresent("mainClass")) {
             throw new LoadingSaveException("No Game Profile Saved");
         }
         return new McLauncher.Json.GameProfile(
-            prop.getProperty("packUUID"),
-            prop.getProperty("gameVersion"),
-            prop.getProperty("gameType")
-        );
+                prop.getProperty("packUUID"),
+                prop.getProperty("gameVersion"),
+                prop.getProperty("gameType"),
+                prop.getProperty("forgeVersion"),
+                prop.getProperty("mainClass")
+                );
     }
 
 
-    private boolean notPresent(String key){
+    private boolean notPresent(String key) {
         return prop.getProperty(key) == null || prop.getProperty(key).equals("");
     }
 
 
-    public void checkConfig(){
+    public void checkConfig() {
         String ramType = get("ramType");
         String ramMax = get("ramMax");
 
         String authType = get("authType");
         //Init all ram param if it don't exits
-        if(ramType ==null || ramMax == null)
-        {
-            save("ramType","0");
-            save("ramMax","6G");
+        if (ramType == null || ramMax == null) {
+            save("ramType", "0");
+            save("ramMax", "6G");
         }
 
-        if(authType == null)
-        {
-            save("authType","1");
+        if (authType == null) {
+            save("authType", "1");
         }
     }
 }

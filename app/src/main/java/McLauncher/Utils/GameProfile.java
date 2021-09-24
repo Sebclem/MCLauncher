@@ -1,6 +1,5 @@
 package McLauncher.Utils;
 
-import McLauncher.Auth.Account;
 import javafx.application.Platform;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -17,20 +16,20 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GameProfile {
 
     private final String logProfile;
-    private Account account;
+    private GameProfileLoader gameProfileLoader;
     private String ram;
     private String assetDir = "assets/";
     private String assetIndex;
     private String gameDir;
-    private String version;
     private String sysLibDir = "sysLib/";
     private String classPath;
-    private MainClass mainClass;
     private List<String> logLines = new ArrayList<>();
     private int logCounter = 0;
 
@@ -38,37 +37,20 @@ public class GameProfile {
     private BufferedReader input;
     private int exitVal;
 
-    public enum MainClass{
-        VANILLA("net.minecraft.client.main.Main"),
-        FORGE("net.minecraft.launchwrapper.Launch");
-
-        private String val;
-
-        MainClass(String val) {
-            this.val = val;
-        }
-
-        @Override
-        public String toString() {
-            return val;
-        }
-    }
-
     private Logger logger = LogManager.getLogger();
 
-    public GameProfile(Account account, String ram, String assetIndex, String gameDir, String version, String classPath, MainClass mainClass, String logProfile) {
-        this.account = account;
+    public GameProfile(GameProfileLoader gameProfileLoader, String ram, String assetIndex, String gameDir, String classPath, String logProfile) {
+        this.gameProfileLoader = gameProfileLoader;
         this.ram = ram;
         this.assetIndex = assetIndex;
         this.gameDir = gameDir;
-        this.version = version;
         this.classPath = classPath;
-        this.mainClass = mainClass;
         this.logProfile = logProfile;
     }
 
     private List<String> buildCommand(){
         ArrayList<String> command = new ArrayList<>();
+
 
         String javaHome = System.getProperty("java.home");
         if(OsIdentifer.isWindows()){
@@ -78,57 +60,23 @@ public class GameProfile {
             javaHome = javaHome + "/bin/java";
         }
         command.add(javaHome);
-
-        command.add("-Djava.library.path=" +  gameDir +sysLibDir);
-        command.add("-Dminecraft.client.jar=" + gameDir +"/client.jar");
         command.add("-Duser.dir="+ App.gamePath);
-
         command.add("-Xmx" + ram);
-
         command.add("-XX:+UnlockExperimentalVMOptions");
         command.add("-XX:+UseG1GC");
         command.add("-XX:G1NewSizePercent=20");
         command.add("-XX:G1ReservePercent=20");
         command.add("-XX:MaxGCPauseMillis=50");
         command.add("-XX:G1HeapRegionSize=32M");
-
         command.add("--add-opens=com.google.gson/com.google.gson.stream=ALL-UNNAMED");
-
         command.add("-Dlog4j.configurationFile=" + logProfile);
+        List<String> jvmArgs = getJvmArgs();
+        command.addAll(jvmArgs);
 
-        command.add("-cp");
-        command.add(classPath);
+        command.add(gameProfileLoader.getMainClass());
 
-        command.add(mainClass.toString());
-
-        command.add("--username");
-        command.add(account.getDisplayName());
-
-        command.add("--version");
-        command.add(version);
-
-        command.add("--gameDir");
-        command.add(gameDir);
-
-        command.add("--assetsDir");
-        command.add(gameDir + assetDir);
-
-        command.add("--assetIndex");
-        command.add(assetIndex);
-
-        command.add("--uuid");
-        command.add(account.getUUID());
-
-        command.add("--accessToken");
-        command.add(account.getAccessToken());
-
-
-        if(mainClass == MainClass.FORGE){
-            command.add("--tweakClass");
-            command.add("net.minecraftforge.fml.common.launcher.FMLTweaker");
-            command.add("--versionType");
-            command.add("Forge");
-        }
+        List<String> gameArgs = getGameArgs();
+        command.addAll(gameArgs);
 
         StringBuilder builder = new StringBuilder();
         for(String elem : command){
@@ -138,12 +86,7 @@ public class GameProfile {
 
         }
         logger.info(builder.toString());
-
         return command;
-
-
-
-
     }
 
     public void launch() throws IOException, InterruptedException {
@@ -229,6 +172,57 @@ public class GameProfile {
         } catch (final IOException e) {
         }
         return "exitVal: " + this.exitVal + ", error: " + error + ", output: " + output;
+    }
+
+    private List<String> getJvmArgs(){
+        String rawArgs = SaveUtils.getINSTANCE().get("defaultJvmArgs");
+        rawArgs = replaceAllValues(rawArgs);
+        List<String> list = new ArrayList<>(List.of(rawArgs.split("\\|")));
+        if(gameProfileLoader.getRawGameType().equals("FORGE")){
+            String rawForgeArgs = SaveUtils.getINSTANCE().get("forgeJvmArgs");
+            rawForgeArgs = replaceAllValues(rawForgeArgs);
+            list.addAll(0, List.of(rawForgeArgs.split("\\|")));
+        }
+        return list;
+    }
+
+    private List<String> getGameArgs(){
+        String rawArgs = SaveUtils.getINSTANCE().get("defaultGameArgs");
+        rawArgs = replaceAllValues(rawArgs);
+        List<String> list = new ArrayList<>(List.of(rawArgs.split("\\|")));
+        if(gameProfileLoader.getRawGameType().equals("FORGE")){
+            String rawForgeArgs = SaveUtils.getINSTANCE().get("forgeGameArgs");
+            rawForgeArgs = replaceAllValues(rawForgeArgs);
+            list.addAll(0, List.of(rawForgeArgs.split("\\|")));
+        }
+        return list;
+    }
+
+    private Map<String, String> getArgValueMapper(){
+        Map<String, String> mapper = new HashMap<>();
+        mapper.put("natives_directory", (gameDir + sysLibDir).replaceAll("\\\\", "\\\\\\\\"));
+        mapper.put("launcher_name", "McLauncher SC");
+        mapper.put("launcher_version", "McLauncher SC");
+        mapper.put("classpath", (classPath).replaceAll("\\\\", "\\\\\\\\"));
+        mapper.put("auth_player_name", gameProfileLoader.getAccount().getDisplayName());
+        mapper.put("version_name", gameProfileLoader.getVersion());
+        mapper.put("game_directory", gameDir.replaceAll("\\\\", "\\\\\\\\"));
+        mapper.put("assets_root", (gameDir + assetDir).replaceAll("\\\\", "\\\\\\\\"));
+        mapper.put("assets_index_name", assetIndex);
+        mapper.put("auth_uuid", gameProfileLoader.getAccount().getUUID());
+        mapper.put("auth_access_token", gameProfileLoader.getAccount().getAccessToken());
+        mapper.put("user_type","mojang");
+        mapper.put("version_type", "release");
+        return mapper;
+    }
+
+    private String replaceAllValues(String rawArgs){
+        for(Map.Entry<String, String> entry : getArgValueMapper().entrySet()){
+            String key = entry.getKey();
+            String value = entry.getValue();
+            rawArgs = rawArgs.replaceAll("\\$\\{" + key + "}", value);
+        }
+        return rawArgs;
     }
 }
 

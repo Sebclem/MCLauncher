@@ -1,9 +1,11 @@
-package McLauncher.Utils;
+package McLauncher.Utils.Installer;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import McLauncher.Utils.GameProfileLoader;
+import McLauncher.Utils.SaveUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.logging.log4j.LogManager;
@@ -37,12 +39,15 @@ public class FullGameInstaller extends Observable {
 
 
 
-    public void init(String installPath, String gameVersion) throws IOException{
+    public void init(String installPath, GameProfileLoader gameProfileLoader) throws IOException{
         VaniaGameInstaller vaniaGameInstaller = new VaniaGameInstaller();
         if( !vaniaGameInstaller.checkInstall()){
             logger.info("Vania Game install needed!");
-            totalSize = vaniaGameInstaller.getTotalSize(gameVersion);
+            totalSize = vaniaGameInstaller.getTotalSize(gameProfileLoader.getVersion());
             needVania = true;
+            if(gameProfileLoader.getRawGameType().equals("FORGE")){
+
+            }
         }
 
         CustomDownloader customDownloader = CustomDownloader.getINSTANCE();

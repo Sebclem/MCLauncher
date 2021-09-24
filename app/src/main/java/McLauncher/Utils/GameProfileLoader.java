@@ -12,7 +12,7 @@ import McLauncher.Utils.Exception.LoadingSaveException;
 import McLauncher.Utils.Exception.RefreshProfileFailException;
 
 public class GameProfileLoader {
-    private GameProfile.MainClass mainClass;
+    private String mainClass;
     private String version;
     private Account account;
     private boolean logged;
@@ -40,7 +40,7 @@ public class GameProfileLoader {
 
         try {
             McLauncher.Json.GameProfile profile = saveUtils.getGameProfile();
-            this.mainClass = profile.gameType.equals("FORGE") ? GameProfile.MainClass.FORGE : GameProfile.MainClass.VANILLA;
+            this.mainClass = profile.mainClass;
             this.version = profile.gameVersion;
             this.packUUID = profile.packUUID;
             this.rawGameType = profile.gameType;
@@ -58,7 +58,6 @@ public class GameProfileLoader {
             McLauncher.Json.GameProfile profile = new Gson().fromJson(rawProfile, McLauncher.Json.GameProfile.class);
             this.needWipe = ! profile.packUUID.equals(this.packUUID);
             this.packUUID = profile.packUUID;
-            this.mainClass = profile.gameType.equals("FORGE") ? GameProfile.MainClass.FORGE : GameProfile.MainClass.VANILLA;
             this.version = profile.gameVersion;
             this.rawGameType = profile.gameType;
         } catch (IOException e) {
@@ -67,7 +66,7 @@ public class GameProfileLoader {
         }
     } 
 
-    public GameProfile.MainClass getMainClass() {
+    public String getMainClass() {
         return mainClass;
     }
 

@@ -1,5 +1,6 @@
-package McLauncher.Utils;
+package McLauncher.Utils.Installer;
 
+import McLauncher.Utils.HttpsGet;
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -22,12 +23,12 @@ public class CustomDownloader extends Observable{
     public long totalSize = 0;
     public long downloaded = 0;
 
-    public int IDLE = 0;
-    public int DOWNLADING = 1;
-    public int FINISH = 2;
-    public int ERROR = 3;
+    public final int IDLE = 0;
+    public final int DOWNLADING = 1;
+    public final int FINISH = 2;
+    public final int ERROR = 3;
 
-    private static CustomDownloader INSTANCE = new CustomDownloader();
+    private static final CustomDownloader INSTANCE = new CustomDownloader();
 
     public static CustomDownloader getINSTANCE() {
         return INSTANCE;

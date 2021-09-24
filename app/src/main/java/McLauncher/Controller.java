@@ -10,6 +10,7 @@ import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
 import McLauncher.Utils.Exception.RefreshProfileFailException;
 import McLauncher.Utils.Exception.TokenRefreshException;
+import McLauncher.Utils.Installer.FullGameInstaller;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -40,13 +41,13 @@ import java.net.*;
 import java.text.DecimalFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 public class Controller implements Initializable {
 
     public static Scene dialogScene;
+    private final Logger logger = LogManager.getLogger();
     @FXML
     private GridPane grid;
     @FXML
@@ -89,9 +90,7 @@ public class Controller implements Initializable {
     private Label dlSpeed;
     @FXML
     private Label rightLabelBar;
-
     private GameProfileLoader gameProfileLoader;
-    private final Logger logger = LogManager.getLogger();
     private SaveUtils saveUtils;
     private ResourceBundle bundle;
     private AbstractLogin logManager;
@@ -117,9 +116,9 @@ public class Controller implements Initializable {
         });
 
         playButton.setOnMouseClicked(event -> {
-            if(gameProfileLoader.isLogged())
+            if (gameProfileLoader.isLogged())
                 new LaunchThread().start();
-            else{
+            else {
                 Platform.runLater(() -> {
                     grid.setDisable(true);
                     disconectButton.setDisable(true);
@@ -186,10 +185,11 @@ public class Controller implements Initializable {
         });
     }
 
-    protected void settingsChanged(){
+    protected void settingsChanged() {
         Platform.runLater(this::updateVisibility);
     }
-    private void updateLogManger(){
+
+    private void updateLogManger() {
         if (SaveUtils.getINSTANCE().get("authType").equals("1"))
             logManager = new MsaLogin();
         else
@@ -197,20 +197,20 @@ public class Controller implements Initializable {
         setupLoginEventListeners();
     }
 
-    private void logStateChanged(){
+    private void logStateChanged() {
         Platform.runLater(this::updateVisibility);
         updateLogManger();
     }
-    void updateVisibility(){
-        if(!gameProfileLoader.isLogged()){
+
+    void updateVisibility() {
+        if (!gameProfileLoader.isLogged()) {
             if (SaveUtils.getINSTANCE().get("authType").equals("1")) {
                 passwordField.setVisible(false);
                 passwordLabel.setVisible(false);
                 userText.setVisible(false);
                 userLabel.setVisible(false);
                 logMsaBtn.setVisible(true);
-            }
-            else{
+            } else {
                 passwordField.setVisible(true);
                 passwordLabel.setVisible(true);
                 userText.setVisible(true);
@@ -222,7 +222,7 @@ public class Controller implements Initializable {
             playButton.setDisable(true);
             disconectButton.setVisible(false);
             gridLogged.setVisible(false);
-        }else{
+        } else {
             passwordField.setVisible(false);
             passwordLabel.setVisible(false);
             userText.setVisible(false);
@@ -250,7 +250,7 @@ public class Controller implements Initializable {
         }
     }
 
-    private void setupLoginEventListeners(){
+    private void setupLoginEventListeners() {
         logManager.setOnLoginCancel(loginProscesor -> Platform.runLater(() -> {
             progressBar.setProgress(0);
             labelBar.setText("");
@@ -291,7 +291,7 @@ public class Controller implements Initializable {
             gameProfileLoader.setAccount(loginProscesor.getAccount());
             gameProfileLoader.setLogged(true);
             gameProfileLoader.updateCanOffline();
-            Platform.runLater(()->{
+            Platform.runLater(() -> {
                 progressBar.setProgress(0);
                 labelBar.setText("");
                 logMsaBtn.setDisable(false);
@@ -304,10 +304,10 @@ public class Controller implements Initializable {
     private void launchGame() {
 
         String cassPath = new ClassPathBuilder(App.gamePath).build();
+        gameProfileLoader = new GameProfileLoader();
 
-        GameProfile gameProfile = new GameProfile(gameProfileLoader.getAccount(), saveUtils.get("ramMax"),
-                saveUtils.get("assetId"), App.gamePath, gameProfileLoader.getVersion(), cassPath,
-                gameProfileLoader.getMainClass(), saveUtils.get("logConfigPath"));
+        GameProfile gameProfile = new GameProfile(gameProfileLoader, saveUtils.get("ramMax"),
+                saveUtils.get("assetId"), App.gamePath, cassPath, saveUtils.get("logConfigPath"));
 
         Platform.runLater(() -> {
             progressBar.setProgress(-1);
@@ -370,7 +370,6 @@ public class Controller implements Initializable {
     }
 
 
-
     class LaunchThread extends Thread {
         @Override
         public void run() {
@@ -431,7 +430,7 @@ public class Controller implements Initializable {
                     }
 
                 }
-                gameInstaller.init(App.gamePath, gameProfileLoader.getVersion());
+                gameInstaller.init(App.gamePath, gameProfileLoader);
                 gameInstaller.addObserver(new DlListenner());
                 gameInstaller.download(App.gamePath, gameProfileLoader.getVersion());
                 launchGame();

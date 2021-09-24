@@ -1,4 +1,4 @@
-package McLauncher.Utils;
+package McLauncher.Utils.Installer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

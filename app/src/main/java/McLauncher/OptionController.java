@@ -2,8 +2,7 @@ package McLauncher;
 
 
 import McLauncher.Utils.SaveUtils;
-import McLauncher.Utils.VaniaGameInstaller;
-import javafx.application.Platform;
+import McLauncher.Utils.Installer.VaniaGameInstaller;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;

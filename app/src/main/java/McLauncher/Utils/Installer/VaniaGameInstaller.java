@@ -1,8 +1,9 @@
-package McLauncher.Utils;
+package McLauncher.Utils.Installer;
 
 import McLauncher.App;
 import McLauncher.Json.Game;
 import McLauncher.Json.Manifest;
+import McLauncher.Utils.*;
 import McLauncher.Utils.Event.Observable;
 import McLauncher.Utils.Event.Observer;
 import McLauncher.Utils.Exception.DownloadFailException;
@@ -310,7 +311,7 @@ public class VaniaGameInstaller extends Observable {
         for (Game.ArgValue argValue : args) {
             if (argValue != null && resolveRule(argValue.rules)) {
                 for (String value : argValue.values)
-                    toReturn.append(value).append(";");
+                    toReturn.append(value).append("|");
             }
 
         }
