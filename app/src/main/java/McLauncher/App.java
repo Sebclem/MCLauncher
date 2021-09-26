@@ -80,7 +80,7 @@ public class App extends Application {
 
         controller = logLoader.getController();
         primaryStage.setTitle("Mc Launcher SC");
-        primaryStage.setScene(new Scene(root, 1014, 605 ));
+        primaryStage.setScene(new Scene(root, 1024, 606 ));
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(e -> {
             if(logStage != null)

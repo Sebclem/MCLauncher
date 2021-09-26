@@ -1,9 +1,9 @@
 package McLauncher.Utils.Installer;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-
+import McLauncher.App;
+import McLauncher.Utils.Event.Observable;
+import McLauncher.Utils.Event.Observer;
+import McLauncher.Utils.Exception.DownloadFailException;
 import McLauncher.Utils.GameProfileLoader;
 import McLauncher.Utils.SaveUtils;
 import org.apache.commons.io.FileUtils;
@@ -11,73 +11,78 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import McLauncher.App;
-import McLauncher.Utils.Event.Observable;
-import McLauncher.Utils.Event.Observer;
-import McLauncher.Utils.Exception.DownloadFailException;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Objects;
 
 
 public class FullGameInstaller extends Observable {
 
 
-    private Logger logger = LogManager.getLogger();
-
-
     public long totalSize = 0;
     public long downloaded = 0;
-
-    private long vanillaSize = 0;
-
-    private boolean needVania = false;
-
     public int state = 0;
-
+    public String stage = "";
     public int IDLE = 0;
     public int DOWNLADING = 1;
     public int FINISH = 2;
     public int ERROR = 3;
+    private Logger logger = LogManager.getLogger();
+    private long vanillaSize = 0;
+    private long forgeSize = 0;
+    private boolean needVania = false;
 
-
-
-    public void init(String installPath, GameProfileLoader gameProfileLoader) throws IOException{
+    public void init(String installPath, GameProfileLoader gameProfileLoader) throws IOException, InterruptedException {
         VaniaGameInstaller vaniaGameInstaller = new VaniaGameInstaller();
-        if( !vaniaGameInstaller.checkInstall()){
+        if (!vaniaGameInstaller.checkInstall()) {
             logger.info("Vania Game install needed!");
-            totalSize = vaniaGameInstaller.getTotalSize(gameProfileLoader.getVersion());
+            vanillaSize = vaniaGameInstaller.getTotalSize(gameProfileLoader.getVersion());
             needVania = true;
-            if(gameProfileLoader.getRawGameType().equals("FORGE")){
 
+            if (gameProfileLoader.getRawGameType().equals("FORGE")) {
+                ForgeInstaller forgeInstaller = new ForgeInstaller();
+                forgeSize = forgeInstaller.getTotalSize(gameProfileLoader.getForgeVersion());
             }
         }
 
         CustomDownloader customDownloader = CustomDownloader.getINSTANCE();
         customDownloader.check(installPath);
 
-        totalSize += customDownloader.totalSize;
+        totalSize = customDownloader.totalSize + vanillaSize + forgeSize;
     }
 
 
-    public void download(String installPath, String version) throws InterruptedException, IOException, DownloadFailException {
+    public void download(String installPath, GameProfileLoader gameProfileLoader) throws InterruptedException, IOException, DownloadFailException {
         state = DOWNLADING;
-        if(needVania){
+        if (needVania) {
+            stage = "VANILLA";
             VaniaGameInstaller vaniaGameInstaller = new VaniaGameInstaller();
             vaniaGameInstaller.addObserver(new InstallObserver());
-            vaniaGameInstaller.installGame(installPath, version);
+            vaniaGameInstaller.installGame(installPath, gameProfileLoader.getVersion());
+            if (Objects.equals(gameProfileLoader.getRawGameType(), "FORGE")) {
+                stage = "FORGE";
+                ForgeInstaller forgeInstaller = new ForgeInstaller();
+                forgeInstaller.addObserver(new InstallObserver());
+                forgeInstaller.install(gameProfileLoader.getForgeVersion());
+            }
+
         }
         CustomDownloader customDownloader = CustomDownloader.getINSTANCE();
-        if(customDownloader.totalSize != 0){
+        if (customDownloader.totalSize != 0) {
+            stage = "MODS";
             customDownloader.addObserver(new InstallObserver());
             customDownloader.install(App.gamePath);
         }
     }
 
-    public void wipper(String installPath, GameProfileLoader gameProfileLoader){
+    public void wipper(String installPath, GameProfileLoader gameProfileLoader) {
         File filePath = new File(installPath);
         if (!filePath.exists())
             return;
         Collection<File> files = FileUtils.listFilesAndDirs(filePath, TrueFileFilter.TRUE, TrueFileFilter.TRUE);
         for (File file : files) {
-            if(!file.getName().equals("launcher.properties") && !filePath.getPath().equals(file.getPath())){
+            if (!file.getName().equals("launcher.properties") && !filePath.getPath().equals(file.getPath())) {
                 logger.info("Delleting " + file.getName() + "...");
                 file.delete();
             }
@@ -90,29 +95,31 @@ public class FullGameInstaller extends Observable {
     }
 
 
-
-
     class InstallObserver implements Observer {
         private long oldValue = 0;
+        private long oldForge = 0;
+        private long oldCustom = 0;
+        private boolean forgeFirst = true;
+
         @Override
         public void update(Object subObject) {
-            if(subObject instanceof  VaniaGameInstaller){
+            if (subObject instanceof VaniaGameInstaller gameInstaller) {
                 state = DOWNLADING;
-                VaniaGameInstaller gameInstaller = (VaniaGameInstaller) subObject;
                 long current = gameInstaller.downloaded;
                 downloaded += current - oldValue;
                 oldValue = current;
 
-            }
-            else{
-                CustomDownloader downloader = (CustomDownloader) subObject;
-                if(downloader.state != ERROR && downloader.state != IDLE){
-                    state = downloader.state;
+            } else if (subObject instanceof ForgeInstaller forgeInstaller) {
+                long current = forgeInstaller.downloaded;
+                downloaded += current - oldForge;
+                oldForge = current;
+            } else if (subObject instanceof CustomDownloader customDownloader) {
+                if (customDownloader.state != ERROR && customDownloader.state != IDLE) {
+                    state = customDownloader.state;
                 }
-                long current = downloader.downloaded + vanillaSize;
-                downloaded += current - oldValue;
-                oldValue = current;
-
+                long current = customDownloader.downloaded;
+                downloaded += current - oldCustom;
+                oldCustom = current;
             }
             change();
         }

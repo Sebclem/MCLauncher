@@ -116,7 +116,7 @@ public class MsaLogin extends AbstractLogin {
                 dialog.initOwner(App.getPrimaryStage());
                 dialog.setTitle("Microsoft Login");
                 dialog.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
-                Scene dialogScene = new Scene(popup, 460, 600);
+                Scene dialogScene = new Scene(popup, 900, 600);
 
                 dialog.setScene(dialogScene);
                 dialog.setResizable(false);

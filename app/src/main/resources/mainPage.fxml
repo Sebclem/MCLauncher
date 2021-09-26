@@ -178,7 +178,7 @@
                         </VBox>
                      </content>
                      <effect>
-                        <Blend />
+                        <DropShadow />
                      </effect>
                   </TitledPane>
                   <Button fx:id="disconectButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" style="-fx-background-color: #dc3545;" text="%disconnect" textFill="WHITE" translateX="400.0" translateY="173.0" visible="false">
@@ -229,16 +229,13 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label fx:id="rightLabelBar" contentDisplay="CENTER" textAlignment="CENTER" textFill="WHITE" GridPane.columnIndex="2">
+                        <Label fx:id="rightLabelBar" contentDisplay="CENTER" textAlignment="RIGHT" textFill="WHITE" GridPane.columnIndex="2">
                            <font>
                               <Font name="System Bold Italic" size="15.0" />
                            </font>
-                           <padding>
+                           <GridPane.margin>
                               <Insets right="10.0" />
-                           </padding>
-                           <effect>
-                              <DropShadow color="#64b2fc" height="10.0" radius="4.5" width="10.0" />
-                           </effect>
+                           </GridPane.margin>
                         </Label>
                      </children>
                   </GridPane>

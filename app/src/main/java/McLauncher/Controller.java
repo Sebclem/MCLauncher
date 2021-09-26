@@ -432,7 +432,7 @@ public class Controller implements Initializable {
                 }
                 gameInstaller.init(App.gamePath, gameProfileLoader);
                 gameInstaller.addObserver(new DlListenner());
-                gameInstaller.download(App.gamePath, gameProfileLoader.getVersion());
+                gameInstaller.download(App.gamePath, gameProfileLoader);
                 launchGame();
 
             } catch (UnknownHostException e) {
@@ -579,6 +579,10 @@ public class Controller implements Initializable {
                         labelBar.setText(bundle.getString("download") + ": 100%");
                     else
                         labelBar.setText(bundle.getString("download") + ": " + myFormatter.format(pour) + "%");
+
+                    if(!installer.stage.equals(rightLabelBar.getText())){
+                        rightLabelBar.setText(installer.stage);
+                    }
 
                 });
             }

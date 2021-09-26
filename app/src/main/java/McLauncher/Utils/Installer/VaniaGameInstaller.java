@@ -158,7 +158,7 @@ public class VaniaGameInstaller extends Observable {
     }
 
 
-    private boolean resolveRule(List<Game.Rules> rules) {
+    private static boolean resolveRule(List<Game.Rules> rules) {
         if (rules.isEmpty())
             return true;
         for (Game.Rules rule : rules) {
@@ -306,7 +306,7 @@ public class VaniaGameInstaller extends Observable {
         }
     }
 
-    private String getArgsAsString(List<Game.ArgValue> args) {
+    public static String getArgsAsString(List<Game.ArgValue> args) {
         StringBuilder toReturn = new StringBuilder();
         for (Game.ArgValue argValue : args) {
             if (argValue != null && resolveRule(argValue.rules)) {
