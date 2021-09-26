@@ -22,7 +22,7 @@ import java.net.http.HttpResponse;
 
 public class ForgeInstaller extends Observable {
     public static String libSubFolder = "libraries/";
-    private final String serverUrl = "http://localhost:3000/";
+    private final String serverUrl = "https://mcupdater.seb6596.ovh/";
     private final String manifestUrl = "getForgeManifest/";
     private final Logger logger = LogManager.getLogger();
     public long downloaded;
