@@ -6,17 +6,6 @@ module McLauncher {
 
     requires java.base;
     requires java.desktop;
-    requires java.management;
-    requires java.naming;
-    requires java.xml;
-    requires java.compiler;
-    requires java.rmi;
-    requires java.scripting;
-    requires java.sql;
-    requires jdk.sctp;
-    requires jdk.unsupported;
-    requires jdk.zipfs;
-
 
     requires org.apache.logging.log4j;
     requires org.apache.commons.io;
@@ -28,6 +17,7 @@ module McLauncher {
     requires transitive javafx.controls;
     requires com.google.gson;
     requires org.apache.logging.log4j.core;
+    requires org.apache.commons.compress;
     exports McLauncher;
     exports McLauncher.Json to com.google.gson;
     exports McLauncher.Json.Auth.Msa to com.google.gson;

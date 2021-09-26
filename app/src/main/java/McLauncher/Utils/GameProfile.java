@@ -52,7 +52,7 @@ public class GameProfile {
         ArrayList<String> command = new ArrayList<>();
 
 
-        String javaHome = System.getProperty("java.home");
+        String javaHome = getJrePath(gameDir);
         if(OsIdentifer.isWindows()){
             javaHome = javaHome + "\\bin\\java.exe";
         }
@@ -223,6 +223,11 @@ public class GameProfile {
             rawArgs = rawArgs.replaceAll("\\$\\{" + key + "}", value);
         }
         return rawArgs;
+    }
+
+    private String getJrePath(String gameDir){
+        File file = new File(gameDir + "/jre");
+        return gameDir + "/jre/" + file.list()[0];
     }
 }
 

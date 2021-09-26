@@ -564,21 +564,32 @@ public class Controller implements Initializable {
             FullGameInstaller installer = (FullGameInstaller) subObject;
 
             DecimalFormat myFormatter = new DecimalFormat("##0.00");
+            if(installer.state == installer.DOWNLADING){
+                if (old != installer.downloaded / 1000) {
+                    old = installer.downloaded / 1000;
 
-            if (old != installer.downloaded / 1000) {
-                old = installer.downloaded / 1000;
+                    double pour = ((old * 1.0) / (installer.totalSize / 1000.0)) * 100;
 
-                double pour = ((old * 1.0) / (installer.totalSize / 1000.0)) * 100;
+                    // logger.debug(old /1000+ "M/" + installer.totalSize / 1000000.0 + "M -> " +
+                    // myFormatter.format(pour));
+                    Platform.runLater(() -> {
+                        progressBar.setProgress(pour / 100);
+                        leftLabelBar.setText(old / 1000 + "MB / " + installer.totalSize / 1000000 + "MB");
+                        if (pour > 100)
+                            labelBar.setText(bundle.getString("download") + ": 100%");
+                        else
+                            labelBar.setText(bundle.getString("download") + ": " + myFormatter.format(pour) + "%");
 
-                // logger.debug(old /1000+ "M/" + installer.totalSize / 1000000.0 + "M -> " +
-                // myFormatter.format(pour));
+                        if(!installer.stage.equals(rightLabelBar.getText())){
+                            rightLabelBar.setText(installer.stage);
+                        }
+
+                    });
+                }
+            }else if (installer.state == installer.EXTRACTING){
                 Platform.runLater(() -> {
-                    progressBar.setProgress(pour / 100);
-                    leftLabelBar.setText(old / 1000 + "MB / " + installer.totalSize / 1000000 + "MB");
-                    if (pour > 100)
-                        labelBar.setText(bundle.getString("download") + ": 100%");
-                    else
-                        labelBar.setText(bundle.getString("download") + ": " + myFormatter.format(pour) + "%");
+                    progressBar.setProgress(-1);
+                    labelBar.setText(bundle.getString("extracting"));
 
                     if(!installer.stage.equals(rightLabelBar.getText())){
                         rightLabelBar.setText(installer.stage);
@@ -586,6 +597,8 @@ public class Controller implements Initializable {
 
                 });
             }
+
+
 
         }
     }

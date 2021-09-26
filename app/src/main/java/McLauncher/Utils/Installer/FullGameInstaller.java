@@ -28,18 +28,22 @@ public class FullGameInstaller extends Observable {
     public int DOWNLADING = 1;
     public int FINISH = 2;
     public int ERROR = 3;
+    public int EXTRACTING = 4;
     private Logger logger = LogManager.getLogger();
     private long vanillaSize = 0;
+    private long jreSize = 0;
     private long forgeSize = 0;
     private boolean needVania = false;
 
     public void init(String installPath, GameProfileLoader gameProfileLoader) throws IOException, InterruptedException {
         VaniaGameInstaller vaniaGameInstaller = new VaniaGameInstaller();
+
         if (!vaniaGameInstaller.checkInstall()) {
             logger.info("Vania Game install needed!");
             vanillaSize = vaniaGameInstaller.getTotalSize(gameProfileLoader.getVersion());
             needVania = true;
-
+            JreInstaller jreInstaller = new JreInstaller();
+            jreSize = jreInstaller.getTotalSize(vaniaGameInstaller.getGame(gameProfileLoader.getVersion()).javaVersion.majorVersion);
             if (gameProfileLoader.getRawGameType().equals("FORGE")) {
                 ForgeInstaller forgeInstaller = new ForgeInstaller();
                 forgeSize = forgeInstaller.getTotalSize(gameProfileLoader.getForgeVersion());
@@ -49,17 +53,28 @@ public class FullGameInstaller extends Observable {
         CustomDownloader customDownloader = CustomDownloader.getINSTANCE();
         customDownloader.check(installPath);
 
-        totalSize = customDownloader.totalSize + vanillaSize + forgeSize;
+        totalSize = customDownloader.totalSize + vanillaSize + forgeSize + jreSize;
     }
 
 
     public void download(String installPath, GameProfileLoader gameProfileLoader) throws InterruptedException, IOException, DownloadFailException {
         state = DOWNLADING;
         if (needVania) {
-            stage = "VANILLA";
             VaniaGameInstaller vaniaGameInstaller = new VaniaGameInstaller();
+            stage = "JRE";
+            JreInstaller jreInstaller = new JreInstaller();
+            jreInstaller.addObserver(new InstallObserver());
+            jreInstaller.download(vaniaGameInstaller.getGame(gameProfileLoader.getVersion()).javaVersion.majorVersion, App.gamePath);
+            state = EXTRACTING;
+            change();
+            jreInstaller.extract(App.gamePath);
+
+            state = DOWNLADING;
+            stage = "VANILLA";
+            change();
             vaniaGameInstaller.addObserver(new InstallObserver());
             vaniaGameInstaller.installGame(installPath, gameProfileLoader.getVersion());
+
             if (Objects.equals(gameProfileLoader.getRawGameType(), "FORGE")) {
                 stage = "FORGE";
                 ForgeInstaller forgeInstaller = new ForgeInstaller();
@@ -99,11 +114,15 @@ public class FullGameInstaller extends Observable {
         private long oldValue = 0;
         private long oldForge = 0;
         private long oldCustom = 0;
-        private boolean forgeFirst = true;
-
+        private long oldJre = 0;
         @Override
         public void update(Object subObject) {
-            if (subObject instanceof VaniaGameInstaller gameInstaller) {
+            if(subObject instanceof JreInstaller jreInstaller){
+                state = DOWNLADING;
+                long current = jreInstaller.downloaded;
+                downloaded += current - oldJre;
+                oldJre = current;
+            } else if (subObject instanceof VaniaGameInstaller gameInstaller) {
                 state = DOWNLADING;
                 long current = gameInstaller.downloaded;
                 downloaded += current - oldValue;

@@ -22,6 +22,8 @@ public class Game {
 
     public Arguments arguments;
 
+    public JavaVersion javaVersion;
+
     public static class Download {
         public Libraries.Downloads.Artifact client;
     }
@@ -101,6 +103,11 @@ public class Game {
     public static class ArgValue {
         public List<Rules> rules = new ArrayList<>();
         public List<String> values = new ArrayList<>();
+    }
+
+    public static class JavaVersion{
+        public String component;
+        public String majorVersion;
     }
 
     public static class ArgValueDeserialize implements JsonDeserializer<ArgValue> {
