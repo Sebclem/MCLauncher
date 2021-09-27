@@ -40,6 +40,7 @@ public class CustomDownloader extends Observable{
     private Logger logger = LogManager.getLogger();
     private Downloader downloader;
     private String customURL = "https://mcupdater.seb6596.ovh/";
+    private String customSub = "resources/";
 
     private CustomManifestItem[] manifest = null;
     private List<CustomManifestItem> needDownload = new ArrayList<>();
@@ -102,7 +103,7 @@ public class CustomDownloader extends Observable{
 
         for (CustomManifestItem item : needDownload) {
             logger.debug(item.id);
-            downloader = new Downloader(new URL(customURL + item.path.replaceAll(" ", "%20")), path + item.path);
+            downloader = new Downloader(new URL(customURL + customSub + item.path.replaceAll(" ", "%20")), path + item.path);
             downloader.addObserver(new DlObserver());
             while (downloader.getStatus() == Downloader.DOWNLOADING) {
                 Thread.sleep(10);
