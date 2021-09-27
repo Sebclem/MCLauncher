@@ -59,7 +59,7 @@ public class MsaLogin extends AbstractLogin {
             try {
                 MsaAccessTokenResponse refreshTokenResponse = refreshAccessToken(account.getRefreshToken());
                 LocalDateTime expireDate = LocalDateTime.now().plusSeconds(refreshTokenResponse.expires_in);
-                account.setAccessToken(refreshTokenResponse.access_token);
+                account.setClientToken(refreshTokenResponse.access_token);
                 account.setRefreshToken(refreshTokenResponse.refresh_token);
                 account.setTokenExpireDate(expireDate);
             } catch (IOException | InterruptedException e) {
@@ -70,13 +70,13 @@ public class MsaLogin extends AbstractLogin {
         try {
             XblTokenResponse xblTokenResponse;
             try{
-                xblTokenResponse = getXblToken(account.getAccessToken());
+                xblTokenResponse = getXblToken(account.getClientToken());
             } catch (LoginException e) {
 //              Token is maybe revoked ? Try to refresh it !
                 logger.warn("Fail to get Xbl token. MSA token is maybe revoked/expired. Refreshing it...");
                 MsaAccessTokenResponse refreshTokenResponse = refreshAccessToken(account.getRefreshToken());
                 LocalDateTime expireDate = LocalDateTime.now().plusSeconds(refreshTokenResponse.expires_in);
-                account.setAccessToken(refreshTokenResponse.access_token);
+                account.setClientToken(refreshTokenResponse.access_token);
                 account.setRefreshToken(refreshTokenResponse.refresh_token);
                 account.setTokenExpireDate(expireDate);
                 xblTokenResponse = getXblToken(account.getAccessToken());
@@ -88,7 +88,7 @@ public class MsaLogin extends AbstractLogin {
                     minecraftProfileResponse.id,
                     minecraftProfileResponse.name,
                     minecraftTokenResponse.access_token,
-                    account.getAccessToken(),
+                    account.getClientToken(),
                     account.getTokenExpireDate(),
                     account.getRefreshToken(),
                     null
