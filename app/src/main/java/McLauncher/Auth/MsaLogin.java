@@ -144,6 +144,7 @@ public class MsaLogin extends AbstractLogin {
                                 null
                         );
                         SaveUtils.getINSTANCE().save(super.account);
+                        this.account = super.account;
                         loginSuccess();
 
                     } catch (URISyntaxException | IOException | InterruptedException | LoginException e) {
