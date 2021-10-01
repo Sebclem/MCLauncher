@@ -393,6 +393,7 @@ public class Controller implements Initializable {
                 if (gameProfileLoader.getAccount() == null) {
                     throw new TokenRefreshException();
                 }
+                saveUtils.save(gameProfileLoader.getAccount());
 
                 Platform.runLater(() -> {
                     progressBar.setProgress(-1);
