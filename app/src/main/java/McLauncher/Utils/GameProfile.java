@@ -178,8 +178,8 @@ public class GameProfile {
         String rawArgs = SaveUtils.getINSTANCE().get("defaultJvmArgs");
         rawArgs = replaceAllValues(rawArgs);
         List<String> list = new ArrayList<>(List.of(rawArgs.split("\\|")));
-        if(gameProfileLoader.getRawGameType().equals("FORGE")){
-            String rawForgeArgs = SaveUtils.getINSTANCE().get("forgeJvmArgs");
+        if(gameProfileLoader.getRawGameType().equals("FORGE") || gameProfileLoader.getRawGameType().equals("FABRIC")){
+            String rawForgeArgs = SaveUtils.getINSTANCE().get("modLoaderJvmArgs");
             rawForgeArgs = replaceAllValues(rawForgeArgs);
             list.addAll(0, List.of(rawForgeArgs.split("\\|")));
         }
@@ -191,7 +191,7 @@ public class GameProfile {
         rawArgs = replaceAllValues(rawArgs);
         List<String> list = new ArrayList<>(List.of(rawArgs.split("\\|")));
         if(gameProfileLoader.getRawGameType().equals("FORGE")){
-            String rawForgeArgs = SaveUtils.getINSTANCE().get("forgeGameArgs");
+            String rawForgeArgs = SaveUtils.getINSTANCE().get("modLoaderGameArgs");
             rawForgeArgs = replaceAllValues(rawForgeArgs);
             list.addAll(0, List.of(rawForgeArgs.split("\\|")));
         }

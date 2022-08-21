@@ -145,7 +145,7 @@ public class SaveUtils {
                 prop.getProperty("packUUID"),
                 prop.getProperty("gameVersion"),
                 prop.getProperty("gameType"),
-                prop.getProperty("forgeVersion"),
+                prop.getProperty("modLoaderVersion"),
                 prop.getProperty("mainClass")
                 );
     }

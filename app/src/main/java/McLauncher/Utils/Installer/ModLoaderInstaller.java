@@ -20,16 +20,24 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class ForgeInstaller extends Observable {
+public class ModLoaderInstaller extends Observable {
     public static String libSubFolder = "libraries/";
     private final String serverUrl = "https://mcupdater.seb6596.ovh/";
-    private final String manifestUrl = "getForgeManifest/";
+    private final String forgeManifestUrl = "getForgeManifest/";
+    private final String fabricManifestUrl = "getFabricManifest/";
     private final Logger logger = LogManager.getLogger();
     public long downloaded;
     private String version;
     private Downloader downloader;
 
-    private ForgeManifest getForgeManifest(String version) throws IOException, InterruptedException {
+    private ForgeManifest getForgeManifest(String loader, String version) throws IOException, InterruptedException {
+        String manifestUrl;
+        switch (loader) {
+            case "FORGE" -> manifestUrl = forgeManifestUrl;
+            case "FABRIC" -> manifestUrl = fabricManifestUrl;
+            default -> manifestUrl = "";
+        }
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + manifestUrl + version))
                 .header("Accept", "application/json")
@@ -43,33 +51,49 @@ public class ForgeInstaller extends Observable {
         return gson.fromJson(response.body(), ForgeManifest.class);
     }
 
-    public int getTotalSize(String version) throws IOException, InterruptedException {
-        ForgeManifest manifest = getForgeManifest(version);
+    public int getTotalSize(String loader, String version) throws IOException, InterruptedException {
+        ForgeManifest manifest = getForgeManifest(loader, version);
         int size = 0;
         for (ForgeManifest.Libraries lib : manifest.libraries) {
-            size += lib.downloads.artifact.size;
+            if (lib.downloads != null) {
+                size += lib.downloads.artifact.size;
+            }
         }
         return size;
     }
 
-    public void install(String version) throws IOException, DownloadFailException, InterruptedException {
-        ForgeManifest manifest = getForgeManifest(version);
-        logger.info("Downloading forge " + version + "...");
+    public void install(String loader, String version) throws IOException, DownloadFailException, InterruptedException {
+        ForgeManifest manifest = getForgeManifest(loader, version);
+        logger.info("Downloading " + loader + " " + version + "...");
         downloader(manifest, App.gamePath);
         SaveUtils.getINSTANCE().save("mainClass", manifest.mainClass);
-        SaveUtils.getINSTANCE().save("forgeJvmArgs", VaniaGameInstaller.getArgsAsString(manifest.arguments.jvm));
-        SaveUtils.getINSTANCE().save("forgeGameArgs", VaniaGameInstaller.getArgsAsString(manifest.arguments.game));
+        SaveUtils.getINSTANCE().save("modLoaderJvmArgs", VaniaGameInstaller.getArgsAsString(manifest.arguments.jvm));
+        SaveUtils.getINSTANCE().save("modLoaderGameArgs", VaniaGameInstaller.getArgsAsString(manifest.arguments.game));
 
     }
 
     public void downloader(ForgeManifest manifest, String path) throws MalformedURLException, InterruptedException, DownloadFailException {
         for (ForgeManifest.Libraries item : manifest.libraries) {
             String url;
-            if (item.downloads.artifact.url.startsWith("/"))
-                url = serverUrl + item.downloads.artifact.url;
-            else
-                url = item.downloads.artifact.url;
-            downloader = new Downloader(new URL(url), path + libSubFolder + item.downloads.artifact.path);
+            String artifactPath;
+            if (item.downloads != null) {
+                if (item.downloads.artifact.url.startsWith("/"))
+                    url = serverUrl + item.downloads.artifact.url;
+                else
+                    url = item.downloads.artifact.url;
+                artifactPath = item.downloads.artifact.path;
+            } else {
+                url = item.url;
+
+//              0: group
+//              1: artifact id
+//              2: version
+                String[] spitted = item.name.split(":");
+                artifactPath = spitted[0].replaceAll("\\.", "/") + "/" + spitted[1] + "/" + spitted[2] + "/" + spitted[1] + "-" + spitted[2] + ".jar";
+                url = url + artifactPath;
+            }
+
+            downloader = new Downloader(new URL(url), path + libSubFolder + artifactPath);
             downloader.addObserver(new DlObserver());
             while (downloader.getStatus() == Downloader.DOWNLOADING) {
                 Thread.sleep(10);

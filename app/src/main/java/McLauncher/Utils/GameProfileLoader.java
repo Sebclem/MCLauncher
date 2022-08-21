@@ -25,7 +25,7 @@ public class GameProfileLoader {
     private SaveUtils saveUtils;
     private String profileURL = "https://mcupdater.seb6596.ovh/profile.json";
     private Logger  logger = LogManager.getLogger();
-    private String forgeVersion;
+    private String modLoaderVersion;
 
 
     public GameProfileLoader() {
@@ -61,7 +61,7 @@ public class GameProfileLoader {
             this.packUUID = profile.packUUID;
             this.version = profile.gameVersion;
             this.rawGameType = profile.gameType;
-            this.forgeVersion = profile.forgeVersion;
+            this.modLoaderVersion = profile.modLoaderVersion;
         } catch (IOException e) {
             logger.catching(e);
             throw new RefreshProfileFailException(e.getMessage());
@@ -128,11 +128,11 @@ public class GameProfileLoader {
     }
 
 
-    public String getForgeVersion() {
-        return forgeVersion;
+    public String getModLoaderVersion() {
+        return modLoaderVersion;
     }
 
-    public void setForgeVersion(String forgeVersion) {
-        this.forgeVersion = forgeVersion;
+    public void setModLoaderVersion(String modLoaderVersion) {
+        this.modLoaderVersion = modLoaderVersion;
     }
 }
