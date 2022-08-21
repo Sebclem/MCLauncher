@@ -30,6 +30,7 @@ public class Game {
 
     public static class Libraries {
         public String name;
+        public String url;
         public Downloads downloads;
         public List<Rules> rules = new ArrayList<>();
 

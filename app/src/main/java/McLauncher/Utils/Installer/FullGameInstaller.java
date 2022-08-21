@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Objects;
 
 
 public class FullGameInstaller extends Observable {
@@ -44,9 +43,9 @@ public class FullGameInstaller extends Observable {
             needVania = true;
             JreInstaller jreInstaller = new JreInstaller();
             jreSize = jreInstaller.getTotalSize(vaniaGameInstaller.getGame(gameProfileLoader.getVersion()).javaVersion.majorVersion);
-            if (gameProfileLoader.getRawGameType().equals("FORGE")) {
-                ForgeInstaller forgeInstaller = new ForgeInstaller();
-                forgeSize = forgeInstaller.getTotalSize(gameProfileLoader.getForgeVersion());
+            if (gameProfileLoader.getRawGameType().equals("FORGE") || gameProfileLoader.getRawGameType().equals("FABRIC")) {
+                ModLoaderInstaller modLoaderInstaller = new ModLoaderInstaller();
+                forgeSize = modLoaderInstaller.getTotalSize(gameProfileLoader.getRawGameType(), gameProfileLoader.getModLoaderVersion());
             }
         }
 
@@ -75,11 +74,11 @@ public class FullGameInstaller extends Observable {
             vaniaGameInstaller.addObserver(new InstallObserver());
             vaniaGameInstaller.installGame(installPath, gameProfileLoader.getVersion());
 
-            if (Objects.equals(gameProfileLoader.getRawGameType(), "FORGE")) {
+            if (gameProfileLoader.getRawGameType().equals("FORGE") || gameProfileLoader.getRawGameType().equals("FABRIC")) {
                 stage = "FORGE";
-                ForgeInstaller forgeInstaller = new ForgeInstaller();
-                forgeInstaller.addObserver(new InstallObserver());
-                forgeInstaller.install(gameProfileLoader.getForgeVersion());
+                ModLoaderInstaller modLoaderInstaller = new ModLoaderInstaller();
+                modLoaderInstaller.addObserver(new InstallObserver());
+                modLoaderInstaller.install(gameProfileLoader.getRawGameType(), gameProfileLoader.getModLoaderVersion());
             }
 
         }
@@ -115,9 +114,10 @@ public class FullGameInstaller extends Observable {
         private long oldForge = 0;
         private long oldCustom = 0;
         private long oldJre = 0;
+
         @Override
         public void update(Object subObject) {
-            if(subObject instanceof JreInstaller jreInstaller){
+            if (subObject instanceof JreInstaller jreInstaller) {
                 state = DOWNLADING;
                 long current = jreInstaller.downloaded;
                 downloaded += current - oldJre;
@@ -128,8 +128,8 @@ public class FullGameInstaller extends Observable {
                 downloaded += current - oldValue;
                 oldValue = current;
 
-            } else if (subObject instanceof ForgeInstaller forgeInstaller) {
-                long current = forgeInstaller.downloaded;
+            } else if (subObject instanceof ModLoaderInstaller modLoaderInstaller) {
+                long current = modLoaderInstaller.downloaded;
                 downloaded += current - oldForge;
                 oldForge = current;
             } else if (subObject instanceof CustomDownloader customDownloader) {

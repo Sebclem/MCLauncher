@@ -4,14 +4,14 @@ public class GameProfile {
     public String packUUID;
     public String gameVersion;
     public String gameType;
-    public String forgeVersion;
+    public String modLoaderVersion;
     public transient String mainClass;
 
-    public GameProfile(String packUUID, String gameVersion, String gameType, String forgeVersion, String mainClass) {
+    public GameProfile(String packUUID, String gameVersion, String gameType, String modLoaderVersion, String mainClass) {
         this.packUUID = packUUID;
         this.gameVersion = gameVersion;
         this.gameType = gameType;
-        this.forgeVersion = forgeVersion;
+        this.modLoaderVersion = modLoaderVersion;
         this.mainClass = mainClass;
     }
 
