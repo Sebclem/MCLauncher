@@ -9,15 +9,15 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.10'
-    id "org.beryx.jlink" version "2.24.1"
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id "org.beryx.jlink" version "2.26.0"
 }
 
-sourceCompatibility = 16
-targetCompatibility = 16
+sourceCompatibility = 17
+targetCompatibility = 17
 
 javafx {
-    version = "17"
+    version = "20"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.web']
 }
 

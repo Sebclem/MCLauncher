@@ -25,7 +25,7 @@ public class VaniaGameInstaller extends Observable {
     public static String sysLibSubFolder = "sysLib/";
     private final Logger logger = LogManager.getLogger();
     private final String manifestUrl = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
-    private final String resourcesURL = "http://resources.download.minecraft.net/";
+    private final String resourcesURL = "https://resources.download.minecraft.net/";
     public long totalSize = 0;
     public long downloaded = 0;
 
