@@ -39,7 +39,7 @@ public class CustomDownloader extends Observable{
 
     private Logger logger = LogManager.getLogger();
     private Downloader downloader;
-    private String customURL = "https://mcupdater.seb6596.ovh/";
+    private String customURL = "https://mcupdater.sebclem.fr/";
     private String customSub = "resources/";
 
     private CustomManifestItem[] manifest = null;
