@@ -22,7 +22,7 @@ import java.net.http.HttpResponse;
 
 public class ModLoaderInstaller extends Observable {
     public static String libSubFolder = "libraries/";
-    private final String serverUrl = "https://mcupdater.seb6596.ovh/";
+    private final String serverUrl = "https://mcupdater.sebclem.fr/";
     private final String forgeManifestUrl = "getForgeManifest/";
     private final String fabricManifestUrl = "getFabricManifest/";
     private final Logger logger = LogManager.getLogger();

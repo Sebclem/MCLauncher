@@ -23,7 +23,7 @@ public class GameProfileLoader {
     private String rawGameType;
 
     private SaveUtils saveUtils;
-    private String profileURL = "https://mcupdater.seb6596.ovh/profile.json";
+    private String profileURL = "https://mcupdater.sebclem.fr/profile.json";
     private Logger  logger = LogManager.getLogger();
     private String modLoaderVersion;
 
